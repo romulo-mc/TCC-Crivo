@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import Recurso
+from .serializers import RecursoSerializer
 
-# Create your views here.
+class RecursoViewSet(viewsets.ModelViewSet):
+    queryset = Recurso.objects.all()
+    serializer_class = RecursoSerializer
