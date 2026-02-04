@@ -1,7 +1,7 @@
 from django.db import models
 
 class Recurso(models.Model):
-    # Opções para o campo 'tipo' (O que vai aparecer no dropdown)
+    # Opções para o campo 'tipo'
     TIPO_CHOICES = [
         ('FILME', 'Filme'),
         ('SERIE', 'Série'),
@@ -22,17 +22,17 @@ class Recurso(models.Model):
     # Conteúdo
     link_acesso = models.URLField("Link para acessar (Netflix, PDF, YouTube)", blank=True, null=True)
     
-    # Imagem (Usaremos URL por enquanto para não complicar com upload de arquivos agora)
+    # Imagem
     url_capa = models.URLField("URL da Imagem de Capa", blank=True, null=True)
 
-    # Auditoria (Para saber quando foi criado)
+    # Auditoria
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Recurso"
         verbose_name_plural = "Recursos do Acervo"
-        ordering = ['-criado_em'] # Mostra os mais recentes primeiro
+        ordering = ['-criado_em']
 
     def __str__(self):
         return f"{self.titulo} ({self.get_tipo_display()})"
