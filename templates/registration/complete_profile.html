@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header bg-white border-0 pt-4 px-5 text-center">
+                    <h2 class="fw-bold text-primary">Olá, {{ user.first_name }}! 👋</h2>
+                    <p class="text-muted">Vamos configurar seu perfil na comunidade.</p>
+                    
+                    <div class="progress mt-3" style="height: 5px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted">Etapa 2 de 2</small>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <h5 class="mb-3 text-secondary border-bottom pb-2">Identidade & Visual</h5>
+                        
+                        <div class="mb-4 text-center">
+                            <label class="form-label d-block fw-bold">Foto de Perfil</label>
+                            {{ form.foto }}
+                        </div>
+
+                        <div class="mb-4 bg-light p-3 rounded">
+                            <label class="form-label fw-bold">Bio / Sobre mim</label>
+                            {{ form.bio }}
+                            
+                            <div class="form-check form-switch mt-2">
+                                {{ form.show_bio }}
+                                <label class="form-check-label small text-muted" for="{{ form.show_bio.id_for_label }}">
+                                    Tornar minha biografia pública no perfil
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 bg-light p-3 rounded">
+                            <label class="form-label fw-bold">Descrição Física (Acessibilidade)</label>
+                            {{ form.descricao_fisica }}
+                            <div class="form-text small mb-2">Descreva sua aparência para pessoas com deficiência visual.</div>
+                            
+                            <div class="form-check form-switch mt-2">
+                                {{ form.show_descricao_fisica }}
+                                <label class="form-check-label small text-muted" for="{{ form.show_descricao_fisica.id_for_label }}">
+                                    Mostrar descrição física publicamente
+                                </label>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-5 text-secondary border-bottom pb-2">Dados Pessoais</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Data de Nascimento</label>
+                                {{ form.data_nascimento }}
+                                <div class="form-check form-switch mt-1">
+                                    {{ form.show_idade }}
+                                    <label class="form-check-label small text-muted">Mostrar apenas faixa etária</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Gênero</label>
+                                {{ form.genero }}
+                                <div class="form-check form-switch mt-1">
+                                    {{ form.show_genero }}
+                                    <label class="form-check-label small text-muted">Mostrar no perfil</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-2">
+                             <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Pronomes</label>
+                                {{ form.pronomes }}
+                                <div class="form-check form-switch mt-1">
+                                    {{ form.show_pronomes }}
+                                    <label class="form-check-label small text-muted">Mostrar no perfil</label>
+                                </div>
+                            </div>
+                             <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Localização (País/Estado)</label>
+                                <div class="input-group">
+                                    {{ form.pais }}
+                                    {{ form.estado }}
+                                </div>
+                                <div class="form-check form-switch mt-1">
+                                    {{ form.show_localizacao }}
+                                    <label class="form-check-label small text-muted">Mostrar localização</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-5 text-secondary border-bottom pb-2">Relação com o Tema</h5>
+                        
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                {{ form.is_pcd }}
+                                <label class="form-check-label fw-bold" for="{{ form.is_pcd.id_for_label }}">Sou Pessoa com Deficiência (PCD)</label>
+                            </div>
+                            <div class="ms-4 mb-3">
+                                <label class="small text-muted">CID (Opcional)</label>
+                                {{ form.cid }}
+                            </div>
+
+                            <div class="form-check mb-2">
+                                {{ form.is_profissional_saude }}
+                                <label class="form-check-label fw-bold" for="{{ form.is_profissional_saude.id_for_label }}">Sou Profissional de Saúde</label>
+                            </div>
+                            <div class="ms-4 p-3 bg-light rounded mb-3">
+                                <div class="row">
+                                    <div class="col-6 mb-2"><label class="small">Profissão</label>{{ form.profissao }}</div>
+                                    <div class="col-6 mb-2"><label class="small">Conselho (Ex: CRM)</label>{{ form.conselho }}</div>
+                                    <div class="col-8 mb-2"><label class="small">Nº Registro</label>{{ form.registro_profissional }}</div>
+                                    <div class="col-4 mb-2"><label class="small">UF</label>{{ form.uf_registro }}</div>
+                                    <div class="col-12">
+                                        <div class="form-check form-switch">
+                                            {{ form.exibir_registro }}
+                                            <label class="form-check-label small">Exibir registro publicamente (Selo Profissional)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-check">
+                                {{ form.is_aliado }}
+                                <label class="form-check-label" for="{{ form.is_aliado.id_for_label }}">Sou Aliado / Interessado</label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-lg fw-bold text-white" style="background-color: #90E0AA; border-radius: 20px;">
+                                Finalizar Cadastro <i class="bi bi-check-circle-fill ms-2"></i>
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-link text-muted">Pular esta etapa por enquanto</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
