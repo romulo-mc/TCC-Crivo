@@ -13,27 +13,22 @@
             overflow-x: hidden;
         }
         
-        /* A Top Bar já é sticky-top, mas vamos garantir o z-index alto */
         .navbar-crivo { 
             background-color: #4A90E2; 
             z-index: 1040; /* Fica acima de tudo */
         }
         
-        /* --- ESTILO DA SIDEBAR FIXA --- */
         #sidebar-wrapper {
             transition: all 0.3s ease;
             width: 280px;
             overflow: hidden;
-            
-            /* A MÁGICA ACONTECE AQUI: */
-            position: sticky; 
-            top: 56px; /* Altura exata da navbar (para colar nela) */
-            height: calc(100vh - 56px); /* Ocupa exatamente o resto da tela */
-            overflow-y: auto; /* Se o menu for gigante, só ele rola */
+            position: fixed; 
+            top: 56px;
+            height: calc(100vh - 56px);
+            overflow-y: auto;
             z-index: 1000;
         }
         
-        /* Sidebar Fechada (Mini) */
         #sidebar-wrapper.toggled {
             width: 80px;
         }
@@ -52,7 +47,6 @@
             display: none;
         }
 
-        /* Botão Menu */
         .btn-menu-acessivel {
             background: transparent;
             border: 2px solid white;
@@ -112,10 +106,7 @@
         const sidebar = document.getElementById("sidebar-wrapper");
 
         toggleButton.onclick = function() {
-            // Adiciona ou remove a classe que esconde a sidebar
             sidebar.classList.toggle("toggled");
-
-            // Acessibilidade: Avisa aos leitores de tela se está aberto ou fechado
             const isClosed = sidebar.classList.contains("toggled");
             toggleButton.setAttribute("aria-expanded", !isClosed);
         };
