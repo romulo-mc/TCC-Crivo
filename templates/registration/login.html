@@ -1,52 +1,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            
-            <div class="card shadow border-0" style="border-radius: 15px;">
-                <div class="card-body p-4 p-md-5">
-                    
-                    <div class="text-center mb-4">
-                        <h3 class="fw-bold">Bem-vindo(a)!</h3>
-                        <p class="text-muted small">Faça login para continuar</p>
-                    </div>
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-10 col-lg-8">
+        
+        <div class="card shadow-lg border-0" style="border-radius: 30px; overflow: hidden;">
+            <div class="row g-0">
+                
+                <div class="col-md-5 d-none d-md-flex flex-column align-items-center justify-content-center p-5" style="background-color: #fcfcfc;">
+                    <i class="bi bi-puzzle-fill" style="font-size: 8rem; color: #90E0AA;"></i> 
+                    <h3 class="mt-4 text-center fw-bold" style="color: #333;">Mude o Foco</h3>
+                </div>
+
+                <div class="col-md-7 p-5" style="background-color: #F8F9FA;">
+                    <h2 class="mb-4 fw-bold text-dark">Entrar</h2>
 
                     <form method="post">
                         {% csrf_token %}
                         
                         {% if form.errors %}
-                            <div class="alert alert-danger small py-2">
-                                Usuário ou senha incorretos.
-                            </div>
+                            <div class="alert alert-danger" style="border-radius: 15px;">Usuário ou senha incorretos.</div>
                         {% endif %}
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Usuário</label>
-                            <input type="text" name="username" class="form-control" required autofocus>
+                            <label class="form-label fw-bold text-secondary">Usuário</label>
+                            <input type="text" name="username" class="form-control form-control-lg" style="border-radius: 15px; background-color: #E0F0F5; border: none;" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Senha</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <label class="form-label fw-bold text-secondary">Senha</label>
+                            <input type="password" name="password" class="form-control form-control-lg" style="border-radius: 15px; background-color: #E0F0F5; border: none;" required>
                         </div>
 
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 10px;">Entrar</button>
+                        <div class="d-grid gap-2 mb-4 mt-4">
+                            <button type="submit" class="btn btn-lg fw-bold" style="background-color: #FFB684; border-radius: 20px; color: #333;">
+                                Entrar
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <span class="text-muted">Ainda não tem conta?</span>
+                            <a href="{% url 'signup' %}" class="fw-bold text-decoration-none" style="color: #C490FF;">Cadastre-se</a>
                         </div>
                     </form>
-
-                    <div class="text-center mt-4">
-                        <p class="small text-muted">
-                            Não tem conta? <a href="{% url 'signup' %}" class="text-decoration-none fw-bold">Cadastre-se</a>
-                        </p>
-                    </div>
-
                 </div>
-            </div>
 
+            </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
