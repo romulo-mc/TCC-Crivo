@@ -195,6 +195,31 @@
         document.getElementById('nome_arquivo').textContent = fileName;
     });
 
+    const paisSelect = document.getElementById('id_pais');
+    const estadoSelect = document.getElementById('id_estado');
+
+    function checkLocalizacao() {
+        if (paisSelect.value && paisSelect.value !== 'BR') {
+            estadoSelect.value = 'ESTR';
+            
+            estadoSelect.style.pointerEvents = 'none'; 
+            estadoSelect.style.backgroundColor = '#e9ecef';
+            estadoSelect.setAttribute('tabindex', '-1');
+        } else {
+            estadoSelect.style.pointerEvents = 'auto';
+            estadoSelect.style.backgroundColor = '#E0F0F5';
+            estadoSelect.removeAttribute('tabindex');
+            
+            if (estadoSelect.value === 'ESTR') {
+                estadoSelect.value = '';
+            }
+        }
+    }
+
+    paisSelect.addEventListener('change', checkLocalizacao);
+    document.addEventListener('DOMContentLoaded', checkLocalizacao);
+
+
     function toggleOutro(selectElement, divId) {
         var div = document.getElementById(divId);
         if (selectElement.value === 'OUTRO') {
