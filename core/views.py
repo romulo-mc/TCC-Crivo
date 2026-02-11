@@ -1,18 +1,7 @@
 from django.shortcuts import render
-from rest_framework import viewsets
-from .models import Recurso
-from .serializers import RecursoSerializer
+from library.models import LibraryItem 
 
+def home(request):
+    itens = LibraryItem.objects.filter(status='ATIVO').order_by('-criado_em')[:6]
 
-class RecursoViewSet(viewsets.ModelViewSet):
-    queryset = Recurso.objects.all()
-    serializer_class = RecursoSerializer
-    
-def index(request):
-    recursos = Recurso.objects.all()
-    print ("Quantos filmes achei: ",recursos.count())
-    print("Primeiro filme: ",recursos.first())
-    context = {
-        'recursos': recursos
-    }
-    return render(request, 'index.html', context)
+    return render(request, 'core/index.html', {'itens': itens})
