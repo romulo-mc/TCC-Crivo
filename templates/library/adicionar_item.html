@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white p-4 rounded-top-4">
+                    <h2 class="fw-bold mb-0"><i class="bi bi-plus-circle-dotted me-2"></i> Contribuir com o Acervo</h2>
+                    <p class="mb-0 opacity-75">Ajude a expandir nossa biblioteca de acessibilidade.</p>
+                </div>
+                
+                <div class="card-body p-5 bg-light">
+                    <form method="post" enctype="multipart/form-data" id="libraryForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm border-start border-5 border-primary">
+                            <label class="form-label fw-bold text-uppercase text-secondary small">Primeiro passo</label>
+                            <h5 class="mb-3">O que você vai cadastrar?</h5>
+                            {{ form.tipo }}
+                            <div class="form-text">Os campos abaixo mudarão conforme sua escolha.</div>
+                        </div>
+
+                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">Informações Gerais</h5>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Título</label>
+                                    {{ form.titulo }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Título Original (Opcional)</label>
+                                    {{ form.titulo_original }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Ano de Lançamento</label>
+                                    {{ form.ano_lancamento }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">País de Origem</label>
+                                    {{ form.pais_origem }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" id="label_criador">Autor / Diretor / Criador</label>
+                                    {{ form.criador }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Sinopse</label>
+                                    {{ form.sinopse }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Capa (Imagem)</label>
+                                    {{ form.capa }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm" id="secao_especifica">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary" id="titulo_especifico">Detalhes do Livro/Filme</h5>
+                            
+                            <div id="grupo_audiovisual" class="d-none">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Duração</label>
+                                        {{ form.duracao }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Gênero</label>
+                                        {{ form.genero }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Plataforma / Onde Assistir</label>
+                                        {{ form.plataforma }}
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Elenco Principal</label>
+                                        {{ form.elenco }}
+                                    </div>
+                                    
+                                    <hr class="text-muted">
+                                    <h6 class="text-muted text-uppercase small fw-bold">Acessibilidade Audiovisual</h6>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            {{ form.ator_pcd_personagem_pcd }}
+                                            <label class="form-check-label">Ator PcD interpreta personagem PcD?</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            {{ form.transcricao_disponivel }}
+                                            <label class="form-check-label">Transcrição Disponível?</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            {{ form.interprete_libras }}
+                                            <label class="form-check-label">Intérprete de Libras?</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="grupo_escrita" class="d-none">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Editora / Publicação</label>
+                                        {{ form.editora }}
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Nº Páginas</label>
+                                        {{ form.numero_paginas }}
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">ISBN / DOI</label>
+                                        {{ form.isbn }} </div>
+
+                                    <hr class="text-muted">
+                                    <h6 class="text-muted text-uppercase small fw-bold">Formatos Acessíveis</h6>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.tem_audiobook }}
+                                            <label class="form-check-label">Possui Audiobook</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.tem_braille }}
+                                            <label class="form-check-label">Possui Versão Braille</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.tem_ebook_acessivel }}
+                                            <label class="form-check-label">E-book Acessível</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm border-start border-5 border-warning">
+                            <h5 class="border-bottom pb-2 mb-3 text-warning-emphasis">Análise de Representatividade</h5>
+                            <p class="text-muted small">Esta é a parte mais importante! Ajude a classificar como o tema é abordado.</p>
+
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Tags de Condições e Gatilhos</label>
+                                    <div class="card p-3" style="max-height: 200px; overflow-y: auto;">
+                                        {{ form.tags }}
+                                    </div>
+                                    <div class="form-text">Selecione todas que se aplicam.</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Tipo de Representação</label>
+                                    {{ form.tipo_representacao }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Como a condição é retratada?</label>
+                                    {{ form.condicao_retratada }}
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label">Análise Crítica</label>
+                                    {{ form.analise_critica }}
+                                    <div class="form-text">A obra combate ou reforça o capacitismo? Pontos positivos e negativos.</div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="form-check form-switch p-3 bg-light rounded">
+                                        {{ form.participacao_pcd }}
+                                        <label class="form-check-label fw-bold ms-2">Existe participação de PcD na produção?</label>
+                                        <div class="small text-muted ms-2">Seja no elenco, direção, roteiro ou consultoria.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-success btn-lg px-5 fw-bold rounded-pill">
+                                <i class="bi bi-check-lg"></i> Cadastrar Item
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoSelect = document.getElementById('id_tipo');
+        const grupoAudiovisual = document.getElementById('grupo_audiovisual');
+        const grupoEscrita = document.getElementById('grupo_escrita');
+        const labelCriador = document.getElementById('label_criador');
+        const tituloEspecifico = document.getElementById('titulo_especifico');
+
+        function atualizarCampos() {
+            const tipo = tipoSelect.value;
+            
+            grupoAudiovisual.classList.add('d-none');
+            grupoEscrita.classList.add('d-none');
+            
+            if (tipo === 'FILME' || tipo === 'SERIE' || tipo === 'PODCAST') {
+                grupoAudiovisual.classList.remove('d-none');
+                tituloEspecifico.innerText = 'Detalhes da Produção Audiovisual';
+                
+                if (tipo === 'PODCAST') {
+                    labelCriador.innerText = 'Host / Apresentador';
+                } else {
+                    labelCriador.innerText = 'Diretor / Criador';
+                }
+                
+            } else if (tipo === 'LIVRO' || tipo === 'ARTIGO') {
+                grupoEscrita.classList.remove('d-none');
+                tituloEspecifico.innerText = 'Detalhes da Publicação';
+                labelCriador.innerText = 'Autor(a)';
+                
+            } else if (tipo === 'MUSICA') {
+                tituloEspecifico.innerText = 'Detalhes da Música';
+                labelCriador.innerText = 'Artista / Banda';
+            }
+        }
+
+        tipoSelect.addEventListener('change', atualizarCampos);
+        atualizarCampos();
+    });
+</script>
+{% endblock %}
