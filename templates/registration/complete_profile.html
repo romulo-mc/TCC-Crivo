@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 
 {% block content %}
 <div class="row justify-content-center align-items-center py-5">
@@ -52,11 +52,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold text-secondary">Descrição Física (Opcional)</label>
+                            <label class="form-label fw-bold text-secondary">Autodescrição (Opcional)</label>
                             {{ form.descricao_fisica }}
+                            <div class="form-text mb-2">Como você se descreve para pessoas com deficiência visual? (Ex: Mulher parda, de cabelos curtos...)</div>
                             <div class="form-check mt-2">
                                 {{ form.show_descricao_fisica }}
-                                <label class="form-check-label text-muted" for="{{ form.show_descricao_fisica.id_for_label }}">Manter descrição física pública no perfil</label>
+                                <label class="form-check-label text-muted" for="{{ form.show_descricao_fisica.id_for_label }}">Manter autodescrição pública no perfil</label>
                             </div>
                         </div>
 

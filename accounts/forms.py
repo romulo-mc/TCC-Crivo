@@ -38,6 +38,13 @@ class CadastroBasicoForm(forms.ModelForm):
             self.add_error('email_confirmacao', "Os e-mails não conferem.")
         return cleaned_data
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
+    
 class UserProfileForm(forms.ModelForm):    
     genero = forms.ChoiceField(choices=UserProfile.GENERO_CHOICES, widget=forms.Select(attrs={**STYLE_SELECT, 'onchange': 'toggleOutro(this, "div_genero_outro")'}), label="Gênero (Obrigatório)")
     pronomes = forms.ChoiceField(choices=UserProfile.PRONOMES_CHOICES, widget=forms.Select(attrs={**STYLE_SELECT, 'onchange': 'toggleOutro(this, "div_pronomes_outro")'}), label="Pronomes (Obrigatório)")
