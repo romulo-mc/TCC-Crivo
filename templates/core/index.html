@@ -1,37 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-5">
+<main class="container py-5">
     
-    <div class="row mb-4 align-items-center">
+    <header class="row mb-4 align-items-center">
         <div class="col-md-8">
             <h1 class="fw-bold text-dark">Acervo Crivo</h1>
             <p class="text-muted">Explore filmes, livros e produções com foco em acessibilidade e representatividade.</p>
         </div>
         <div class="col-md-4 text-md-end">
             <a href="{% url 'adicionar_item' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm">
-                <i class="bi bi-plus-lg me-2"></i> Contribuir com o Acervo
+                <i class="bi bi-plus-lg me-2" aria-hidden="true"></i> Contribuir com o Acervo
             </a>
         </div>
-    </div>
+    </header>
 
-    <div class="d-flex gap-2 mb-5 overflow-auto pb-2">
-        <button class="btn btn-outline-dark rounded-pill active">Todos</button>
-        <button class="btn btn-outline-secondary rounded-pill">Filmes</button>
-        <button class="btn btn-outline-secondary rounded-pill">Livros</button>
-        <button class="btn btn-outline-secondary rounded-pill">Séries</button>
-    </div>
+    <nav class="mb-5" aria-label="Filtrar por tipo de obra">
+        <ul class="d-flex gap-2 list-unstyled overflow-auto pb-2">
+            <li><button class="btn btn-outline-dark rounded-pill active" aria-current="page">Todos</button></li>
+            <li><button class="btn btn-outline-secondary rounded-pill">Filmes</button></li>
+            <li><button class="btn btn-outline-secondary rounded-pill">Livros</button></li>
+            <li><button class="btn btn-outline-secondary rounded-pill">Séries</button></li>
+        </ul>
+    </nav>
 
-    <div class="row g-4">
+    <section class="row g-4" aria-label="Lista de obras cadastradas">
         {% for item in itens %}
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <article class="col-sm-6 col-md-4 col-lg-3">
             <div class="card h-100 shadow-sm border-0 item-card hover-lift">
                 
                 <div class="position-relative" style="height: 300px; overflow: hidden; background-color: #f0f0f0;">
                     {% if item.capa %}
-                        <img src="{{ item.capa.url }}" class="card-img-top h-100 w-100" alt="{{ item.titulo }}" style="object-fit: cover;">
+                        <img src="{{ item.capa.url }}" class="card-img-top h-100 w-100" alt="Capa da obra {{ item.titulo }}" style="object-fit: cover;">
                     {% else %}
-                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <div class="d-flex align-items-center justify-content-center h-100 text-muted" aria-hidden="true">
                             <div class="text-center">
                                 <i class="bi bi-image fs-1"></i>
                                 <p class="small mb-0">Sem capa</p>
@@ -40,59 +42,66 @@
                     {% endif %}
                     
                     <span class="position-absolute top-0 start-0 m-2 badge bg-dark bg-opacity-75 backdrop-blur">
-                        {{ item.get_tipo_display }}
+                        <span class="visually-hidden">Tipo: </span>{{ item.get_tipo_display }}
                     </span>
                     
                     {% if item.status != 'ATIVO' %}
                     <span class="position-absolute top-0 end-0 m-2 badge bg-warning text-dark">
-                        {{ item.get_status_display }}
+                        <span class="visually-hidden">Status: </span>{{ item.get_status_display }}
                     </span>
                     {% endif %}
                 </div>
 
                 <div class="card-body">
-                    <h6 class="card-title fw-bold text-truncate" title="{{ item.titulo }}">{{ item.titulo }}</h6>
+                    <h2 class="card-title h6 fw-bold text-truncate" title="{{ item.titulo }}">{{ item.titulo }}</h2>
                     <p class="card-text small text-muted mb-1">
-                        {{ item.ano_lancamento|default:"Ano n/a" }} • {{ item.criador|truncatechars:20 }}
+                        <span class="visually-hidden">Ano de lançamento: </span>{{ item.ano_lancamento|default:"Ano n/a" }} • 
+                        <span class="visually-hidden">Responsável: </span>{{ item.diretor_autor_host|truncatechars:20 }}
                     </p>
                     
-                    <div class="mt-2">
-                        {% for tag in item.tags.all|slice:":2" %}
-                            <span class="badge bg-light text-secondary border">{{ tag.nome }}</span>
+                    <div class="mt-2" aria-label="Tags relacionadas">
+                        {% for condicao in item.condicoes.all|slice:":2" %}
+                            <span class="badge bg-light text-secondary border">{{ condicao.nome }}</span>
                         {% empty %}
-                            <span class="badge bg-light text-muted border border-0">Sem tags</span>
+                            <span class="badge bg-light text-muted border-0">Sem tags</span>
                         {% endfor %}
                     </div>
                 </div>
 
                 <div class="card-footer bg-white border-0 pt-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100 rounded-pill">Ver Detalhes</a>
+                    <a href="#" class="btn btn-outline-primary btn-sm w-100 rounded-pill" aria-label="Ver Detalhes de {{ item.titulo }}">
+                        Ver Detalhes
+                    </a>
                 </div>
             </div>
-        </div>
+        </article>
         {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="mb-3">
+        <div class="col-12 text-center py-5" role="status">
+            <div class="mb-3" aria-hidden="true">
                 <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
             </div>
-            <h3 class="fw-bold text-secondary">O acervo está vazio</h3>
+            <h2 class="fw-bold text-secondary">O acervo está vazio</h2>
             <p class="text-muted">Seja a primeira pessoa a cadastrar um filme ou livro!</p>
             <a href="{% url 'adicionar_item' %}" class="btn btn-primary mt-2">Cadastrar Agora</a>
         </div>
         {% endfor %}
-    </div>
-</div>
+    </section>
+</main>
 
 <style>
     .hover-lift {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .hover-lift:hover {
+    .hover-lift:hover, .hover-lift:focus-within {
         transform: translateY(-5px);
         box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
     }
     .backdrop-blur {
         backdrop-filter: blur(5px);
+    }
+    .btn:focus, .card a:focus {
+        outline: 3px solid #90e0aa;
+        outline-offset: 2px;
     }
 </style>
 {% endblock %}

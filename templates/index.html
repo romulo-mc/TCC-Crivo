@@ -7,40 +7,50 @@
 {% block content %}
     <div class="container" style="max-width: 900px;">
         
-        <h3 class="mb-4 text-secondary">Feed Principal</h3>
+        <h2 class="mb-4 text-secondary">Feed Principal</h2>
 
         {% for recurso in recursos %}
-        <div class="card mb-3 shadow-sm border-0">
+        <article class="card mb-3 shadow-sm border-0" aria-labelledby="post-title-{{ recurso.id }}">
             <div class="card-body p-0">
                 <div class="row g-0">
                     
                     <div class="col-1 d-flex flex-column align-items-center justify-content-center p-2 bg-light rounded-start">
-                        <button class="btn btn-sm text-secondary"><i class="bi bi-arrow-up-circle fs-4"></i></button>
-                        <span class="fw-bold my-1">12</span> <button class="btn btn-sm text-secondary"><i class="bi bi-arrow-down-circle fs-4"></i></button>
+                        <button class="btn btn-sm text-secondary" aria-label="Votar positivamente em {{ recurso.titulo }}">
+                            <i class="bi bi-arrow-up-circle fs-4" aria-hidden="true"></i>
+                        </button>
+                        
+                        <span class="fw-bold my-1" aria-label="12 votos totais">12</span> 
+                        
+                        <button class="btn btn-sm text-secondary" aria-label="Votar negativamente em {{ recurso.titulo }}">
+                            <i class="bi bi-arrow-down-circle fs-4" aria-hidden="true"></i>
+                        </button>
                     </div>
 
                     <div class="col-11 p-3">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="badge rounded-pill bg-info text-dark">{{ recurso.get_tipo_display }}</span>
+                            <span class="badge rounded-pill bg-info text-dark">
+                                <span class="visually-hidden">Tipo: </span>{{ recurso.get_tipo_display }}
+                            </span>
                             <small class="text-muted">Postado hoje</small>
                         </div>
 
-                        <h4 class="card-title fw-bold">
+                        <h3 class="card-title fw-bold h5" id="post-title-{{ recurso.id }}">
                             <a href="#" class="text-decoration-none text-dark">{{ recurso.titulo }}</a>
-                        </h4>
+                        </h3>
                         
                         <p class="card-text text-secondary">{{ recurso.sinopse|truncatewords:30 }}</p>
 
                         <div class="d-flex gap-3 mt-3">
-                            <button class="btn btn-sm btn-light text-secondary">
-                                <i class="bi bi-chat-left"></i> 5 Comentários
+                            <button class="btn btn-sm btn-light text-secondary" aria-label="5 Comentários sobre {{ recurso.titulo }}">
+                                <i class="bi bi-chat-left" aria-hidden="true"></i> 5 Comentários
                             </button>
-                            <button class="btn btn-sm btn-light text-secondary">
-                                <i class="bi bi-share"></i> Compartilhar
+                            <button class="btn btn-sm btn-light text-secondary" aria-label="Compartilhar {{ recurso.titulo }}">
+                                <i class="bi bi-share" aria-hidden="true"></i> Compartilhar
                             </button>
+                            
                             {% if recurso.link_acesso %}
-                            <a href="{{ recurso.link_acesso }}" target="_blank" class="btn btn-sm btn-outline-primary ms-auto">
-                                Acessar Mídia <i class="bi bi-box-arrow-up-right"></i>
+                            <a href="{{ recurso.link_acesso }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary ms-auto" aria-label="Acessar mídia externa de {{ recurso.titulo }}">
+                                Acessar Mídia <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
                             </a>
                             {% endif %}
                         </div>
@@ -48,9 +58,9 @@
 
                 </div>
             </div>
-        </div>
+        </article>
         {% empty %}
-            <div class="alert alert-warning">
+            <div class="alert alert-warning" role="status">
                 Nenhum post encontrado. Cadastre algo no Admin!
             </div>
         {% endfor %}

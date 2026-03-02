@@ -1,47 +1,60 @@
-<nav class="navbar navbar-expand-lg fixed-top px-3 shadow-sm" style="background-color: #4A90E2; height: 60px;">
+<nav class="navbar navbar-expand-lg fixed-top px-3 shadow-sm" style="background-color: #4A90E2; height: 60px;" aria-label="Navegação Principal">
     <div class="container-fluid">
         
         <div class="d-flex align-items-center gap-3">
             {% if user.is_authenticated %}
-            <button class="btn btn-outline-light border-0" id="menu-toggle">
-                <i class="bi bi-list fs-4"></i>
+            <button class="btn btn-outline-light border-0" id="menu-toggle" aria-label="Abrir menu lateral">
+                <i class="bi bi-list fs-4" aria-hidden="true"></i>
             </button>
             {% endif %}
 
             <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="{% url 'home' %}">
-                <i class="bi bi-puzzle-fill"></i> Crivo
+                <i class="bi bi-puzzle-fill" aria-hidden="true"></i> 
+                <span>Crivo</span>
             </a>
         </div>
 
         {% if user.is_authenticated %}
-        <form class="d-none d-md-flex mx-auto" style="width: 40%;">
+        <form class="d-none d-md-flex mx-auto" style="width: 40%;" role="search">
             <div class="input-group">
-                <span class="input-group-text bg-white border-0 rounded-start-pill"><i class="bi bi-search"></i></span>
-                <input class="form-control border-0 rounded-end-pill" type="search" placeholder="Pesquisar no acervo..." aria-label="Search">
+                <label for="navbar-search" class="visually-hidden">Pesquisar no acervo</label>
+                <span class="input-group-text bg-white border-0 rounded-start-pill">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </span>
+                <input id="navbar-search" class="form-control border-0 rounded-end-pill" type="search" placeholder="Pesquisar no acervo..." aria-label="Pesquisar no acervo">
             </div>
         </form>
         {% endif %}
 
         <div class="d-flex align-items-center gap-3 ms-auto">
-            <a href="#" class="text-white fs-5" title="Acessibilidade"><i class="bi bi-universal-access-circle"></i></a>
+            <a href="#" class="text-white fs-5" title="Opções de Acessibilidade" aria-label="Abrir painel de acessibilidade">
+                <i class="bi bi-universal-access-circle" aria-hidden="true"></i>
+            </a>
             
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle gap-2" data-bs-toggle="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle gap-2" 
+                   id="userDropdown" 
+                   data-bs-toggle="dropdown" 
+                   aria-expanded="false" 
+                   aria-haspopup="true"
+                   aria-label="Menu do usuário">
+                    
                     {% if user.is_authenticated %}
                         {% if user.profile.foto %}
-                            <img src="{{ user.profile.foto.url }}" class="rounded-circle border border-2 border-white" style="width: 32px; height: 32px; object-fit: cover;">
+                            <img src="{{ user.profile.foto.url }}" alt="" class="rounded-circle border border-2 border-white" style="width: 32px; height: 32px; object-fit: cover;">
                         {% else %}
-                            <div class="rounded-circle bg-light d-flex justify-content-center align-items-center text-primary fw-bold" style="width: 32px; height: 32px;">
+                            <div class="rounded-circle bg-light d-flex justify-content-center align-items-center text-primary fw-bold" style="width: 32px; height: 32px;" aria-hidden="true">
                                 {{ user.username|first|upper }}
                             </div>
                         {% endif %}
                         <span class="d-none d-lg-inline small fw-bold">{{ user.username }}</span>
                     {% else %}
-                        <i class="bi bi-person-circle fs-4"></i>
+                        <i class="bi bi-person-circle fs-4" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline small ms-1">Visitante</span>
                     {% endif %}
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow">
+
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                     {% if user.is_authenticated %}
                         <li><h6 class="dropdown-header">Olá, {{ user.first_name|default:user.username }}</h6></li>
                         <li><a class="dropdown-item" href="#">Meu Perfil</a></li>
@@ -61,3 +74,23 @@
         </div>
     </div>
 </nav>
+
+<style>
+    .navbar a:focus, .navbar button:focus {
+        outline: 2px solid white !important;
+        outline-offset: 4px;
+        box-shadow: none !important;
+    }
+    
+    .visually-hidden {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0,0,0,0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+</style>

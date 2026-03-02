@@ -1,37 +1,19 @@
 from django.contrib import admin
-from .models import LibraryItem, Categoria, ItemVote, Review
+from .models import Condicao, Gatilho, LibraryItem, Review
 
-@admin.register(Categoria)
-class CategoriaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'tipo')
-    list_filter = ('tipo',)
+# Registrando as novas categorias separadas
+admin.site.register(Condicao)
+admin.site.register(Gatilho)
+admin.site.register(Review)
 
 @admin.register(LibraryItem)
 class LibraryItemAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'tipo', 'status', 'ano_lancamento', 'usuario_criador')
-    list_filter = ('tipo', 'status', 'tags')
-    search_fields = ('titulo', 'criador', 'sinopse')
-    fieldsets = (
-        ('Identificação', {
-            'fields': ('status', 'tipo', 'titulo', 'titulo_original', 'ano_lancamento', 'pais_origem', 'criador', 'usuario_criador')
-        }),
-        ('Mídia', {
-            'fields': ('capa', 'link_acesso')
-        }),
-        ('Descrição', {
-            'fields': ('sinopse',)
-        }),
-        ('Crivo / Acessibilidade', {
-            'fields': ('tags', 'tipo_representacao', 'condicao_retratada', 'descricao_detalhada_tema', 'analise_critica', 'participacao_pcd', 'classificacao_etaria')
-        }),
-        ('Detalhes Específicos', {
-            'fields': ('duracao', 'genero', 'plataforma', 'elenco', 'ator_pcd_personagem_pcd', 'editora', 'isbn', 'tem_audiobook', 'tem_ebook_acessivel', 'artista_pcd')
-        }),
-    )
+    list_display = ('titulo', 'tipo', 'status', 'usuario_criador', 'criado_em')
+    list_filter = ('status', 'tipo')
+    search_fields = ('titulo', 'diretor_autor_host')
+    actions = ['aprovar_itens']
 
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('item', 'user', 'nota', 'criado_em')
-    list_filter = ('nota',)
-
-admin.site.register(ItemVote)
+    # Uma ação rápida para você aprovar vários itens de uma vez só!
+    def aprovar_itens(self, request, queryset):
+        queryset.update(status='ATIVO')
+    aprovar_itens.short_description = "Aprovar itens selecionados"

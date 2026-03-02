@@ -52,8 +52,12 @@ class UserProfileForm(forms.ModelForm):
     pais = forms.ChoiceField(choices=UserProfile.PAIS_CHOICES, widget=forms.Select(attrs=STYLE_SELECT), label="País (Obrigatório)")
     estado = forms.ChoiceField(choices=UserProfile.UF_CHOICES, widget=forms.Select(attrs=STYLE_SELECT), label="Estado/UF (Obrigatório)")
     
-    uf_registro = forms.ChoiceField(choices=UserProfile.UF_CHOICES, widget=forms.Select(attrs=STYLE_SELECT), required=False, label="UF do Conselho")
-
+    uf_registro = forms.ChoiceField(
+        choices=[('', '---')] + list(UserProfile.UF_CHOICES), 
+        widget=forms.Select(attrs=STYLE_SELECT), 
+        required=False, 
+        label="UF do Conselho"
+    )
     data_nascimento = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', **STYLE_INPUT}), label="Data de Nascimento (Obrigatório)")
 
     class Meta:

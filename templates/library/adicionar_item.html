@@ -2,275 +2,368 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-primary text-white p-4 rounded-top-4">
-                    <h2 class="fw-bold mb-0"><i class="bi bi-plus-circle-dotted me-2"></i> Contribuir com o Acervo</h2>
-                    <p class="mb-0 opacity-75">Ajude a expandir nossa biblioteca de acessibilidade.</p>
-                </div>
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-header bg-primary text-white p-4 rounded-top-4">
+            <h2 class="fw-bold mb-0">Adicionar ao Acervo</h2>
+        </div>
+        
+        <div class="card-body p-4 bg-light">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 
-                <div class="card-body p-5 bg-light">
-                    <form method="post" enctype="multipart/form-data" id="libraryForm">
-                        {% csrf_token %}
-                        
-                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm border-start border-5 border-primary">
-                            <label class="form-label fw-bold text-uppercase text-secondary small">Primeiro passo</label>
-                            <h5 class="mb-3">O que você vai cadastrar?</h5>
-                            {{ form.tipo }}
-                            <div class="form-text">Os campos abaixo mudarão conforme sua escolha.</div>
-                        </div>
-
-                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm">
-                            <h5 class="border-bottom pb-2 mb-3 text-primary">Informações Gerais</h5>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label fw-bold">Título</label>
-                                    {{ form.titulo }}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Título Original (Opcional)</label>
-                                    {{ form.titulo_original }}
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Ano de Lançamento</label>
-                                    {{ form.ano_lancamento }}
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">País de Origem</label>
-                                    {{ form.pais_origem }}
-                                </div>
-                                
-                                <div class="col-md-12">
-                                    <label class="form-label fw-bold" id="label_criador">Autor / Diretor / Criador</label>
-                                    {{ form.criador }}
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">Sinopse</label>
-                                    {{ form.sinopse }}
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Capa (Imagem)</label>
-                                    {{ form.capa }}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Link de Acesso (Netflix, YouTube, PDF...)</label>
-                                    {{ form.link_acesso }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm" id="secao_especifica">
-                            <h5 class="border-bottom pb-2 mb-3 text-primary" id="titulo_especifico">Detalhes Específicos</h5>
-                            
-                            <div id="grupo_audiovisual" class="d-none">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Duração</label>
-                                        {{ form.duracao }}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Gênero</label>
-                                        {{ form.genero }}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Plataforma</label>
-                                        {{ form.plataforma }}
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Elenco Principal</label>
-                                        {{ form.elenco }}
-                                    </div>
-                                    
-                                    <hr class="text-muted">
-                                    <h6 class="text-muted text-uppercase small fw-bold">Acessibilidade Audiovisual</h6>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="form-check form-switch">
-                                            {{ form.ator_pcd_personagem_pcd }}
-                                            <label class="form-check-label">Ator PcD interpreta personagem PcD?</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check form-switch">
-                                            {{ form.transcricao_disponivel }}
-                                            <label class="form-check-label">Transcrição Disponível?</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check form-switch">
-                                            {{ form.interprete_libras }}
-                                            <label class="form-check-label">Intérprete de Libras?</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="grupo_escrita" class="d-none">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Editora / Publicação</label>
-                                        {{ form.editora }}
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Nº Páginas</label>
-                                        {{ form.numero_paginas }}
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">ISBN / DOI</label>
-                                        {{ form.isbn }}
-                                    </div>
-                                    
-                                    <div class="col-md-12">
-                                        <label class="form-label">Tipo de Artigo (Se for artigo)</label>
-                                        {{ form.tipo_artigo_especifico }}
-                                    </div>
-
-                                    <hr class="text-muted">
-                                    <h6 class="text-muted text-uppercase small fw-bold">Formatos Acessíveis</h6>
-
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            {{ form.tem_audiobook }}
-                                            <label class="form-check-label">Possui Audiobook</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            {{ form.tem_braille }}
-                                            <label class="form-check-label">Possui Versão Braille</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            {{ form.tem_ebook_acessivel }}
-                                            <label class="form-check-label">E-book Acessível</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="grupo_musica" class="d-none">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Álbum</label>
-                                        {{ form.album }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Link para a Letra</label>
-                                        {{ form.letra_url }}
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-check form-switch">
-                                            {{ form.artista_pcd }}
-                                            <label class="form-check-label">O artista/banda possui integrantes com deficiência?</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4 bg-white p-4 rounded-3 shadow-sm border-start border-5 border-warning">
-                            <h5 class="border-bottom pb-2 mb-3 text-warning-emphasis">Análise de Representatividade</h5>
-                            <p class="text-muted small">Esta é a parte mais importante! Ajude a classificar como o tema é abordado.</p>
-
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label fw-bold">Tags de Condições e Gatilhos</label>
-                                    <div class="card p-3" style="max-height: 200px; overflow-y: auto;">
-                                        {{ form.tags }}
-                                    </div>
-                                    <div class="form-text">Selecione todas que se aplicam.</div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Tipo de Representação</label>
-                                    {{ form.tipo_representacao }}
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Como a condição é retratada?</label>
-                                    {{ form.condicao_retratada }}
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Classificação Etária</label>
-                                    {{ form.classificacao_etaria }}
-                                </div>
-                                
-                                <div class="col-12">
-                                    <label class="form-label">Análise Crítica</label>
-                                    {{ form.analise_critica }}
-                                    <div class="form-text">A obra combate ou reforça o capacitismo? Pontos positivos e negativos.</div>
-                                </div>
-                                
-                                <div class="col-12">
-                                    <div class="form-check form-switch p-3 bg-light rounded">
-                                        {{ form.participacao_pcd }}
-                                        <label class="form-check-label fw-bold ms-2">Existe participação de PcD na produção?</label>
-                                        <div class="small text-muted ms-2">Seja no elenco, direção, roteiro ou consultoria.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg px-4">Cancelar</a>
-                            <button type="submit" class="btn btn-success btn-lg px-5 fw-bold rounded-pill">
-                                <i class="bi bi-check-lg"></i> Cadastrar Item
-                            </button>
-                        </div>
-
-                    </form>
+                <div class="mb-4 bg-white p-4 rounded-3 shadow-sm border-start border-5 border-primary">
+                    <h5 class="mb-3"><label for="id_tipo">O que você vai cadastrar?</label></h5>
+                    {{ item_form.tipo }}
                 </div>
-            </div>
+
+                <div id="formulario_completo" class="d-none" aria-live="polite">
+
+                    <div class="mb-4 bg-white p-4 rounded-3 shadow-sm">
+                        <h5 class="text-primary border-bottom pb-2">Informações Gerais</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label for="id_titulo" class="fw-bold">Título</label>{{ item_form.titulo }}</div>
+                            <div class="col-md-6" id="div_titulo_original"><label for="id_titulo_original">Título Original</label>{{ item_form.titulo_original }}</div>
+                            <div class="col-md-3"><label for="id_ano_lancamento">Ano Lançamento</label>{{ item_form.ano_lancamento }}</div>
+                            <div class="col-md-3"><label for="id_pais_origem">País</label>{{ item_form.pais_origem }}</div>
+                            <div class="col-md-3" id="div_idioma"><label for="id_idioma">Idioma</label>{{ item_form.idioma }}</div>
+                            <div class="col-md-3" id="div_classificacao"><label for="id_classificacao_indicativa">Classificação</label>{{ item_form.classificacao_indicativa }}</div>
+                            <div class="col-md-6"><label for="id_capa">Capa/Imagem</label>{{ item_form.capa }}</div>
+                            <div class="col-md-6"><label for="id_link_acesso">Link/Onde encontrar (Opcional)</label>{{ item_form.link_acesso }}</div>
+                            <div class="col-12" id="div_sinopse"><label for="id_sinopse">Sinopse</label>{{ item_form.sinopse }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 bg-white p-4 rounded-3 shadow-sm" id="secao_tecnica">
+                        <h5 class="text-primary border-bottom pb-2">Informações Técnicas</h5>
+                        <div class="row g-3">
+                            <div class="col-12"><label for="id_diretor_autor_host" class="fw-bold" id="label_criador">Responsável</label>{{ item_form.diretor_autor_host }}</div>
+                            <div class="col-md-4" id="div_duracao"><label for="id_duracao">Duração</label>{{ item_form.duracao }}</div>
+                            <div class="col-md-4" id="div_genero"><label for="id_genero">Gênero</label>{{ item_form.genero }}</div>
+                            <div class="col-md-4" id="div_album"><label for="id_album">Álbum</label>{{ item_form.album }}</div>
+                            <div class="col-md-4" id="div_distribuidora"><label for="id_distribuidora_editora" id="label_distribuidora">Distribuidora</label>{{ item_form.distribuidora_editora }}</div>
+                            <div class="col-md-4" id="div_plataforma"><label for="id_plataforma">Plataforma</label>{{ item_form.plataforma }}</div>
+                            <div class="col-md-4" id="div_temporadas_paginas"><label for="id_numero_temporadas_paginas" id="label_temporadas">Nº Temporadas</label>{{ item_form.numero_temporadas_paginas }}</div>
+                            <div class="col-md-4" id="div_isbn_doi"><label for="id_isbn_doi" id="label_isbn">ISBN/DOI</label>{{ item_form.isbn_doi }}</div>
+                            
+                            <div class="col-12 mt-3" id="div_elenco"><label for="id_elenco_principal">Elenco Principal</label>{{ item_form.elenco_principal }}</div>
+                            <div class="col-md-6 mt-2" id="div_personagem_pcd">
+                                <div class="form-check form-switch">{{ item_form.tem_personagem_pcd }}<label class="form-check-label" for="id_tem_personagem_pcd">Tem personagem PcD?</label></div>
+                            </div>
+                            <div class="col-md-6 mt-2" id="div_ator_pcd">
+                                <div class="form-check form-switch">{{ item_form.ator_pcd_interpreta }}<label class="form-check-label" for="id_ator_pcd_interpreta">Ator PcD interpreta?</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 bg-white p-4 rounded-3 shadow-sm border-start border-5 border-warning">
+                        <h5 class="text-warning-emphasis border-bottom pb-2">Relação com Deficiência</h5>
+                        <div class="row g-3">
+                            
+                            <div class="col-md-6">
+                                <label class="fw-bold d-block mb-2">Condições Relacionadas</label>
+                                <button type="button" class="btn btn-outline-primary w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#modalCondicoes" aria-haspopup="dialog" aria-expanded="false">
+                                    <i class="bi bi-search me-2" aria-hidden="true"></i> Selecionar Condições
+                                </button>
+                                <div id="badges_condicoes" class="mt-2" aria-live="polite"></div>
+                                <div class="d-none" aria-hidden="true">{{ item_form.condicoes }}</div>
+                                <div class="mt-3"><label for="id_condicao_outra" class="small text-muted">Outra condição (não listada):</label>{{ item_form.condicao_outra }}</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="fw-bold text-danger d-block mb-2">Gatilhos / Alertas</label>
+                                <button type="button" class="btn btn-outline-danger w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#modalGatilhos" aria-haspopup="dialog" aria-expanded="false">
+                                    <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i> Selecionar Gatilhos
+                                </button>
+                                <div id="badges_gatilhos" class="mt-2" aria-live="polite"></div>
+                                <div class="d-none" aria-hidden="true">{{ item_form.gatilhos }}</div>
+                                <div class="mt-3"><label for="id_gatilho_outro" class="small text-muted">Outro gatilho (não listado):</label>{{ item_form.gatilho_outro }}</div>
+                            </div>
+                            
+                            <div class="col-md-6 mt-4">
+                                <label for="id_tipo_representacao" class="fw-bold">Tipo de Representação</label>
+                                {{ item_form.tipo_representacao }}
+                                <div id="div_tipo_outro" class="mt-2 d-none">
+                                    <label for="id_tipo_representacao_outro" class="visually-hidden">Especificar outro tipo de representação</label>
+                                    {{ item_form.tipo_representacao_outro }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-4">
+                                <label for="id_abordagem" class="fw-bold">Abordagem</label>
+                                {{ item_form.abordagem }}
+                                <div id="div_abordagem_outro" class="mt-2 d-none">
+                                    <label for="id_abordagem_outro" class="visually-hidden">Especificar outra abordagem</label>
+                                    {{ item_form.abordagem_outro }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mt-4"><label for="id_descricao_representacao" class="fw-bold">Descrição da Representação</label>
+                                {{ item_form.descricao_representacao }}
+                                {% if item_form.descricao_representacao.errors %}
+                                    <div class="text-danger small fw-bold" role="alert">{{ item_form.descricao_representacao.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-12"><label for="id_analise_critica" class="fw-bold">Análise Crítica</label>{{ item_form.analise_critica }}</div>
+                            <div class="col-md-6"><label for="id_pontos_positivos">Pontos Positivos</label>{{ item_form.pontos_positivos }}</div>
+                            <div class="col-md-6"><label for="id_pontos_problematicos">Pontos Problemáticos</label>{{ item_form.pontos_problematicos }}</div>
+                            <div class="col-md-6"><label for="id_combate_ou_reforca">A Obra:</label>{{ item_form.combate_ou_reforca }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 text-white p-4 rounded-3 shadow-sm" style="background-color: #2c3e50;">
+                        <h5 class="border-bottom pb-2 text-white">Avaliação da Obra</h5>
+                        <div class="row g-3">
+                            <div class="col-md-4"><label for="id_nota_geral" class="fw-bold">Nota Geral (1 a 5)</label>{{ review_form.nota_geral }}</div>
+                            <div class="col-md-4"><label for="id_nota_representatividade" class="fw-bold">Representatividade (1 a 5)</label>{{ review_form.nota_representatividade }}</div>
+                            <div class="col-md-4"><label for="id_nota_critica" class="fw-bold">Impacto Crítico (1 a 5)</label>{{ review_form.nota_critica }}</div>
+                            <div class="col-12 mt-3"><label for="id_comentario_justificativa">Justificativa Rápida</label>{{ review_form.comentario_justificativa }}</div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-success btn-lg px-5 fw-bold rounded-pill">Enviar Cadastro</button>
+                    </div>
+                
+                </div> 
+            </form>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="modalCondicoes" tabindex="-1" aria-labelledby="modalCondicoesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold" id="modalCondicoesLabel">Selecionar Condições</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar modal"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <input type="text" class="form-control mb-3" id="searchCondicoes" aria-label="Pesquisar condição" placeholder="Pesquisar condição..." onkeyup="filtrarModal('searchCondicoes', 'accordionCondicoes')">
+          <div class="accordion" id="accordionCondicoes">
+            {% for categoria, itens in condicoes_dict.items %}
+            <div class="accordion-item categoria-item">
+              <h2 class="accordion-header" id="headingCond{{ forloop.counter }}">
+                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCond{{ forloop.counter }}" aria-expanded="false" aria-controls="collapseCond{{ forloop.counter }}">
+                  {{ categoria }}
+                </button>
+              </h2>
+              <div id="collapseCond{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingCond{{ forloop.counter }}">
+                <div class="accordion-body">
+                  {% for item in itens %}
+                  <div class="form-check item-pesquisavel">
+                    <input class="form-check-input sync-condicao" type="checkbox" value="{{ item.id }}" id="modal_cond_{{ item.id }}" data-nome="{{ item.nome }}">
+                    <label class="form-check-label" for="modal_cond_{{ item.id }}">{{ item.nome }}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Pronto</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalGatilhos" tabindex="-1" aria-labelledby="modalGatilhosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title fw-bold" id="modalGatilhosLabel">Selecionar Gatilhos / Alertas</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar modal"></button>
+        </div>
+        <div class="modal-body bg-light">
+          <input type="text" class="form-control mb-3" id="searchGatilhos" aria-label="Pesquisar gatilho" placeholder="Pesquisar gatilho..." onkeyup="filtrarModal('searchGatilhos', 'accordionGatilhos')">
+          <div class="accordion" id="accordionGatilhos">
+            {% for categoria, itens in gatilhos_dict.items %}
+            <div class="accordion-item categoria-item">
+              <h2 class="accordion-header" id="headingGat{{ forloop.counter }}">
+                <button class="accordion-button collapsed fw-bold text-danger" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGat{{ forloop.counter }}" aria-expanded="false" aria-controls="collapseGat{{ forloop.counter }}">
+                  {{ categoria }}
+                </button>
+              </h2>
+              <div id="collapseGat{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingGat{{ forloop.counter }}">
+                <div class="accordion-body">
+                  {% for item in itens %}
+                  <div class="form-check item-pesquisavel">
+                    <input class="form-check-input sync-gatilho" type="checkbox" value="{{ item.id }}" id="modal_gat_{{ item.id }}" data-nome="{{ item.nome }}">
+                    <label class="form-check-label" for="modal_gat_{{ item.id }}">{{ item.nome }}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Pronto</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 <script>
+    const selectTipoRep = document.getElementById('id_tipo_representacao');
+    const divTipoOutro = document.getElementById('div_tipo_outro');
+    
+    if(selectTipoRep) {
+        selectTipoRep.addEventListener('change', function() {
+            if (this.value === 'OUTRO') { divTipoOutro.classList.remove('d-none'); } 
+            else { divTipoOutro.classList.add('d-none'); document.getElementById('id_tipo_representacao_outro').value = ''; }
+        });
+    }
+
+    const selectAbordagem = document.getElementById('id_abordagem');
+    const divAbordagemOutro = document.getElementById('div_abordagem_outro');
+    
+    if(selectAbordagem) {
+        selectAbordagem.addEventListener('change', function() {
+            if (this.value === 'OUTRO') { divAbordagemOutro.classList.remove('d-none'); } 
+            else { divAbordagemOutro.classList.add('d-none'); document.getElementById('id_abordagem_outro').value = ''; }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const tipoSelect = document.getElementById('id_tipo');
+        const formCompleto = document.getElementById('formulario_completo');
         
-        const grupoAudiovisual = document.getElementById('grupo_audiovisual');
-        const grupoEscrita = document.getElementById('grupo_escrita');
-        const grupoMusica = document.getElementById('grupo_musica');
-        
-        const labelCriador = document.getElementById('label_criador');
-        const tituloEspecifico = document.getElementById('titulo_especifico');
+        const campos = {
+            titulo_original: document.getElementById('div_titulo_original'),
+            idioma: document.getElementById('div_idioma'),
+            classificacao: document.getElementById('div_classificacao'),
+            sinopse: document.getElementById('div_sinopse'),
+            duracao: document.getElementById('div_duracao'),
+            genero: document.getElementById('div_genero'),
+            distribuidora: document.getElementById('div_distribuidora'),
+            plataforma: document.getElementById('div_plataforma'),
+            temporadas_paginas: document.getElementById('div_temporadas_paginas'),
+            isbn_doi: document.getElementById('div_isbn_doi'),
+            album: document.getElementById('div_album'),
+            elenco: document.getElementById('div_elenco'),
+            personagem_pcd: document.getElementById('div_personagem_pcd'),
+            ator_pcd: document.getElementById('div_ator_pcd')
+        };
+
+        const labels = {
+            criador: document.getElementById('label_criador'),
+            distribuidora: document.getElementById('label_distribuidora'),
+            temporadas: document.getElementById('label_temporadas'),
+            isbn: document.getElementById('label_isbn')
+        };
+
+        function resetarCampos() {
+            for (let key in campos) { if (campos[key]) campos[key].style.display = 'none'; }
+        }
 
         function atualizarCampos() {
             const tipo = tipoSelect.value;
             
-            grupoAudiovisual.classList.add('d-none');
-            grupoEscrita.classList.add('d-none');
-            grupoMusica.classList.add('d-none');
+            if (!tipo) {
+                formCompleto.classList.add('d-none');
+                return;
+            }
             
-            if (tipo === 'FILME' || tipo === 'SERIE' || tipo === 'PODCAST') {
-                grupoAudiovisual.classList.remove('d-none');
-                tituloEspecifico.innerText = 'Detalhes da Produção Audiovisual';
-                
-                if (tipo === 'PODCAST') {
-                    labelCriador.innerText = 'Host / Apresentador';
-                } else {
-                    labelCriador.innerText = 'Diretor / Criador';
-                }
-                
-            } else if (tipo === 'LIVRO' || tipo === 'ARTIGO') {
-                grupoEscrita.classList.remove('d-none');
-                tituloEspecifico.innerText = 'Detalhes da Publicação';
-                labelCriador.innerText = 'Autor(a)';
-                
-            } else if (tipo === 'MUSICA') {
-                grupoMusica.classList.remove('d-none');
-                tituloEspecifico.innerText = 'Detalhes da Música';
-                labelCriador.innerText = 'Artista / Banda';
+            formCompleto.classList.remove('d-none');
+            resetarCampos();
+            
+            if (tipo === 'FILME') {
+                ['titulo_original', 'idioma', 'classificacao', 'sinopse', 'duracao', 'genero', 'distribuidora', 'plataforma', 'elenco', 'personagem_pcd', 'ator_pcd'].forEach(c => { if(campos[c]) campos[c].style.display = 'block'; });
+                labels.criador.innerText = 'Direção'; labels.distribuidora.innerText = 'Distribuidora';
+            } 
+            else if (tipo === 'SERIE') {
+                ['titulo_original', 'idioma', 'classificacao', 'sinopse', 'duracao', 'genero', 'plataforma', 'temporadas_paginas', 'elenco', 'personagem_pcd', 'ator_pcd'].forEach(c => { if(campos[c]) campos[c].style.display = 'block'; });
+                labels.criador.innerText = 'Criador / Showrunner'; labels.temporadas.innerText = 'Nº de Temporadas';
+            }
+            else if (tipo === 'LIVRO') {
+                ['titulo_original', 'idioma', 'sinopse', 'genero', 'distribuidora', 'temporadas_paginas', 'isbn_doi'].forEach(c => { if(campos[c]) campos[c].style.display = 'block'; });
+                labels.criador.innerText = 'Autor(a)'; labels.distribuidora.innerText = 'Editora'; 
+                labels.temporadas.innerText = 'Nº de Páginas'; labels.isbn.innerText = 'ISBN';
+            }
+            else if (tipo === 'ARTIGO') {
+                ['idioma', 'isbn_doi'].forEach(c => { if(campos[c]) campos[c].style.display = 'block'; });
+                labels.criador.innerText = 'Autor(a)'; labels.isbn.innerText = 'DOI';
+            }
+            else if (tipo === 'MUSICA') {
+                ['duracao', 'genero', 'album'].forEach(c => { if(campos[c]) campos[c].style.display = 'block'; });
+                labels.criador.innerText = 'Artista / Banda';
+            }
+            else if (tipo === 'PODCAST') {
+                ['duracao', 'plataforma'].forEach(c => { if(campos[c]) campos[c].style.display = 'block'; });
+                labels.criador.innerText = 'Host / Apresentador';
             }
         }
-
+        
         tipoSelect.addEventListener('change', atualizarCampos);
-        atualizarCampos();
+        atualizarCampos(); 
+    });
+
+    function filtrarModal(inputId, accordionId) {
+        let input = document.getElementById(inputId).value.toLowerCase();
+        let accordion = document.getElementById(accordionId);
+        let categorias = accordion.getElementsByClassName('categoria-item');
+
+        for (let i = 0; i < categorias.length; i++) {
+            let itens = categorias[i].getElementsByClassName('item-pesquisavel');
+            let temItemVisivel = false;
+
+            for (let j = 0; j < itens.length; j++) {
+                let texto = itens[j].innerText.toLowerCase();
+                if (texto.includes(input)) {
+                    itens[j].style.display = "";
+                    temItemVisivel = true;
+                } else {
+                    itens[j].style.display = "none";
+                }
+            }
+            categorias[i].style.display = temItemVisivel ? "" : "none";
+        }
+    }
+
+    function setupModalSync(checkboxClass, hiddenSelectId, badgeContainerId, badgeColorClass) {
+        const checkboxes = document.querySelectorAll('.' + checkboxClass);
+        const hiddenSelect = document.getElementById(hiddenSelectId);
+        const badgeContainer = document.getElementById(badgeContainerId);
+
+        checkboxes.forEach(chk => {
+            chk.addEventListener('change', function() {
+                const option = hiddenSelect.querySelector(`option[value="${this.value}"]`);
+                if(option) option.selected = this.checked;
+                atualizarBadges();
+            });
+        });
+
+        function atualizarBadges() {
+            badgeContainer.innerHTML = ''; 
+            checkboxes.forEach(chk => {
+                if (chk.checked) {
+                    const nomeStr = chk.getAttribute('data-nome');
+                    const span = document.createElement('span');
+                    span.className = `badge ${badgeColorClass} me-1 mb-1 p-2 border d-inline-flex align-items-center`;
+                    span.innerHTML = `
+                        ${nomeStr} 
+                        <button type="button" class="btn-close btn-close-white ms-2" style="font-size: 0.65em;" aria-label="Remover ${nomeStr}" onclick="desmarcarItem('${chk.id}')"></button>
+                    `;
+                    badgeContainer.appendChild(span);
+                }
+            });
+        }
+    }
+
+    function desmarcarItem(checkboxId) {
+        const chk = document.getElementById(checkboxId);
+        if (chk) {
+            chk.checked = false;
+            chk.dispatchEvent(new Event('change'));
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupModalSync('sync-condicao', 'id_condicoes', 'badges_condicoes', 'bg-primary text-white');
+        setupModalSync('sync-gatilho', 'id_gatilhos', 'badges_gatilhos', 'bg-danger text-white');
     });
 </script>
 {% endblock %}

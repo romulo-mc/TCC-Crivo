@@ -1,15 +1,15 @@
 {% extends 'base_auth.html' %}
 
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+<main class="row justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="col-md-10 col-lg-8">
         
         <div class="card shadow-lg border-0" style="border-radius: 30px; overflow: hidden;">
             <div class="row g-0">
                 
-                <div class="col-md-5 d-none d-md-flex flex-column align-items-center justify-content-center p-5" style="background-color: #fcfcfc;">
+                <div class="col-md-5 d-none d-md-flex flex-column align-items-center justify-content-center p-5" style="background-color: #fcfcfc;" aria-hidden="true">
                     <i class="bi bi-puzzle-fill" style="font-size: 8rem; color: #90E0AA;"></i> 
-                    <h3 class="mt-4 text-center fw-bold" style="color: #333;">Mude o Foco</h3>
+                    <h1 class="h3 mt-4 text-center fw-bold" style="color: #333;">Mude o Foco</h1>
                 </div>
 
                 <div class="col-md-7 p-5" style="background-color: #F8F9FA;">
@@ -19,17 +19,19 @@
                         {% csrf_token %}
                         
                         {% if form.errors %}
-                            <div class="alert alert-danger" style="border-radius: 15px;">Usuário ou senha incorretos.</div>
+                            <div class="alert alert-danger" style="border-radius: 15px;" role="alert">
+                                <i class="bi bi-exclamation-circle-fill me-2"></i> Usuário ou senha incorretos.
+                            </div>
                         {% endif %}
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold text-secondary">Usuário</label>
-                            <input type="text" name="username" class="form-control form-control-lg" style="border-radius: 15px; background-color: #E0F0F5; border: none;" required>
+                            <label for="id_username" class="form-label fw-bold text-secondary">Usuário</label>
+                            <input type="text" name="username" id="id_username" class="form-control form-control-lg" style="border-radius: 15px; background-color: #E0F0F5; border: none;" autocomplete="username" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold text-secondary">Senha</label>
-                            <input type="password" name="password" class="form-control form-control-lg" style="border-radius: 15px; background-color: #E0F0F5; border: none;" required>
+                            <label for="id_password" class="form-label fw-bold text-secondary">Senha</label>
+                            <input type="password" name="password" id="id_password" class="form-control form-control-lg" style="border-radius: 15px; background-color: #E0F0F5; border: none;" autocomplete="current-password" required>
                         </div>
 
                         <div class="d-grid gap-2 mb-4 mt-4">
@@ -49,5 +51,18 @@
         </div>
 
     </div>
-</div>
+</main>
+
+<style>
+    .form-control:focus {
+        outline: 3px solid #90E0AA;
+        box-shadow: none;
+        background-color: #f0faff !important;
+    }
+    
+    .btn:focus {
+        outline: 3px solid #C490FF;
+        outline-offset: 2px;
+    }
+</style>
 {% endblock %}

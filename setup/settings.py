@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'core',
     'accounts',
     'library',
+    'forum',
+    'educacao',
 ]
 
 MIDDLEWARE = [
