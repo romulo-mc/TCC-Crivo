@@ -6,13 +6,14 @@ class Categoria(models.Model):
     descricao = models.TextField(blank=True)
     slug = models.SlugField(unique=True)
 
-    def __cl__str__(self):
+    def __str__(self):
         return self.nome
 
 class Topico(models.Model):
     titulo = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='topicos')
+    outra_categoria = models.CharField(max_length=100, blank=True, null=True, help_text="Se selecionou 'Outro', especifique aqui.")
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     conteudo = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
@@ -24,20 +25,23 @@ class Topico(models.Model):
         return self.titulo
     
     @property
-    def total_likes(self):
-        return self.likes.count()
-
-    @property
-    def total_deslikes(self):
-        return self.deslikes.count()
+    def total_votos(self):
+        return self.likes.count() - self.deslikes.count()
 
 class Resposta(models.Model):
     topico = models.ForeignKey(Topico, on_delete=models.CASCADE, related_name='respostas')
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     conteudo = models.TextField()
     data_postagem = models.DateTimeField(auto_now_add=True)
+    pai = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='filhas')
     likes = models.ManyToManyField(User, related_name='resposta_likes', blank=True)
     deslikes = models.ManyToManyField(User, related_name='resposta_deslikes', blank=True)
     
     def __str__(self):
-        return f"Resposta de {self.autor.username} em {self.topico.titulo}"
+        if self.pai:
+            return f"Réplica de {self.autor.username} ao comentário {self.pai.id}"
+        return f"Comentário de {self.autor.username} no tópico {self.topico.titulo}"
+
+    @property
+    def total_votos(self):
+        return self.likes.count() - self.deslikes.count()

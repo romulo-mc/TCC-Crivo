@@ -1,6 +1,5 @@
 <aside id="sidebar-wrapper" class="border-end shadow-sm d-flex flex-column" role="complementary">
     <nav class="py-3 mb-auto" aria-label="Menu lateral">
-        
         <ul class="nav flex-column mb-4">
             <li class="nav-item">
                 <a href="{% url 'home' %}" class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-3 px-3">
@@ -8,74 +7,28 @@
                     <span class="link-text">Página Inicial</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-3 px-3">
-                    <i class="bi bi-bell fs-5" aria-hidden="true"></i> 
-                    <span class="link-text">Notificações</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-3 px-3">
-                    <i class="bi bi-collection-play fs-5" aria-hidden="true"></i> 
-                    <span class="link-text">Biblioteca</span>
-                </a>
-            </li>
-        </ul>
+            </ul>
 
         <hr class="my-2 mx-3 border-dark border-2 opacity-25" aria-hidden="true">
 
         <div class="px-3 mt-4 mb-2">
-            <h2 id="heading-explorar" class="text-uppercase fw-bold text-dark m-0 link-text fs-6" style="letter-spacing: 1px;">Explorar</h2>
+            <h2 id="heading-sidebar" class="text-uppercase fw-bold text-dark m-0 link-text fs-6" style="letter-spacing: 1px;">
+                {% block sidebar_title %}Explorar{% endblock %}
+            </h2>
         </div>
         
-        <ul class="nav flex-column" aria-labelledby="heading-explorar">
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark py-3 px-3 d-flex gap-3 align-items-center">
-                    <i class="bi bi-stars fs-5" aria-hidden="true"></i> 
-                    <span class="link-text fw-semibold">Novidades</span>
-                </a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="#" class="nav-link text-dark py-3 px-3 d-flex gap-3 align-items-center">
-                    <i class="bi bi-fire fs-5" aria-hidden="true"></i> 
-                    <span class="link-text fw-semibold">Em Alta</span>
-                </a>
-            </li>
-
-            <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-newspaper" aria-hidden="true"></i> <span class="link-text">Artigos</span></a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-book" aria-hidden="true"></i> <span class="link-text">Livros</span></a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-tv" aria-hidden="true"></i> <span class="link-text">Séries</span></a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-film" aria-hidden="true"></i> <span class="link-text">Filmes</span></a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-music-note-beamed" aria-hidden="true"></i> <span class="link-text">Música</span></a></li>
-            <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-mic" aria-hidden="true"></i> <span class="link-text">Podcasts</span></a></li>
+        <ul class="nav flex-column" aria-labelledby="heading-sidebar">
+            {% block sidebar_items %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-dark py-3 px-3 d-flex gap-3 align-items-center">
+                        <i class="bi bi-stars fs-5" aria-hidden="true"></i> 
+                        <span class="link-text fw-semibold">Novidades</span>
+                    </a>
+                </li>
+                {% endblock %}
         </ul>
     </nav>
 
-    <nav class="p-3 border-top" aria-label="Links de suporte e configurações">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark d-flex gap-3 align-items-center mb-2">
-                    <i class="bi bi-gear fs-5" aria-hidden="true"></i> <span class="link-text">Configurações</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link text-dark d-flex gap-3 align-items-center">
-                    <i class="bi bi-info-circle fs-5" aria-hidden="true"></i> <span class="link-text">Sobre</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <nav class="p-3 border-top" aria-label="Links de suporte">
+        </nav>
 </aside>
-
-<style>
-    #sidebar-wrapper .nav-link:focus {
-        background-color: rgba(74, 144, 226, 0.1);
-        outline: 2px solid #4A90E2;
-        outline-offset: -2px;
-        border-radius: 8px;
-    }
-
-    .link-text {
-        white-space: nowrap;
-    }
-</style>

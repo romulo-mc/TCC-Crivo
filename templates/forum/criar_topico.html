@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-4" id="main-content">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="fw-bold mb-4">Iniciar Discussão</h1>
+            
+            <form method="post" class="card shadow-sm p-4 border-0">
+                {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3 {% if field.name == 'outra_categoria' %}d-none{% endif %}" id="div_{{ field.id_for_label }}">
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {{ field.errors }}
+                        </div>
+                    {% endfor %}
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Publicar Discussão</button>
+                    <a href="{% url 'lista_forum' %}" class="btn btn-light rounded-pill px-4">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectCategoria = document.getElementById('id_categoria');
+        const inputOutra = document.getElementById('id_outra_categoria');
+        const divOutra = document.getElementById('div_id_outra_categoria');
+
+        if (!divOutra || !inputOutra) return;
+
+        function verificarCategoria() {
+            const textoSelecionado = selectCategoria.options[selectCategoria.selectedIndex].text;
+            
+            if (textoSelecionado.includes('Outro')) {
+                divOutra.classList.remove('d-none');
+                inputOutra.classList.remove('d-none');
+                
+                inputOutra.required = true;
+                inputOutra.focus();
+            } else {
+                divOutra.classList.add('d-none');
+                inputOutra.classList.add('d-none');
+                inputOutra.required = false;
+                inputOutra.value = '';
+            }
+        }
+
+        selectCategoria.addEventListener('change', verificarCategoria);
+        verificarCategoria();
+    });
+</script>
+{% endblock %}

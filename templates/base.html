@@ -121,6 +121,28 @@
                 toggleButton.setAttribute("aria-expanded", !isToggled);
             });
         }
+    function votar(slugOrId, tipo, isResposta = false) {
+    const url = isResposta 
+        ? `/forum/resposta/${slugOrId}/votar/${tipo}/` 
+        : `/forum/topico/${slugOrId}/votar/${tipo}/`;
+
+    fetch(url, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const elementId = isResposta ? `votos-resp-${slugOrId}` : `votos-${slugOrId}`;
+        const contador = document.getElementById(elementId);
+        if (contador) {
+            contador.innerText = data.total;
+            contador.style.transition = "transform 0.1s";
+            contador.style.transform = "scale(1.2)";
+            setTimeout(() => contador.style.transform = "scale(1)", 100);
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+}
     </script>
 </body>
 </html>

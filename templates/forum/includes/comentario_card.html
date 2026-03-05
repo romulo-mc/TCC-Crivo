@@ -1,0 +1,42 @@
+<div class="mb-3 {% if node.pai %}ms-4 border-start ps-3{% endif %}" 
+     style="border-left: 2px solid #dee2e6 !important;"> <div class="card border shadow-sm p-3" role="article" aria-label="Comentário de {{ node.autor.username }}">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="small">
+                <span class="fw-bold text-primary">@{{ node.autor.username }}</span>
+                <time class="text-muted ms-2">{{ node.data_postagem|date:"d M, H:i" }}</time>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2" role="group" aria-label="Votação do comentário">
+                <button onclick="votar('{{ node.id }}', 'like', true)" 
+                        class="btn btn-sm btn-link p-0 shadow-none {% if user in node.likes.all %}text-primary{% else %}text-muted{% endif %}"
+                        aria-label="Curtir" aria-pressed="{% if user in node.likes.all %}true{% else %}false{% endif %}">
+                    <i class="bi bi-caret-up-fill fs-5"></i>
+                </button>
+                
+                <span id="votos-resp-{{ node.id }}" class="fw-bold small" aria-live="polite">
+                    {{ node.total_votos }}
+                </span>
+                
+                <button onclick="votar('{{ node.id }}', 'deslike', true)" 
+                        class="btn btn-sm btn-link p-0 shadow-none {% if user in node.deslikes.all %}text-danger{% else %}text-muted{% endif %}"
+                        aria-label="Descurtir" aria-pressed="{% if user in node.deslikes.all %}true{% else %}false{% endif %}">
+                    <i class="bi bi-caret-down-fill fs-5"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="text-secondary mb-2" tabindex="0">
+            {{ node.conteudo|linebreaks }}
+        </div>
+        
+        <button class="btn btn-sm btn-link p-0 text-decoration-none text-muted fw-bold" 
+                onclick="responderA({{ node.id }}, '{{ node.autor.username }}')"
+                aria-label="Responder ao comentário de {{ node.autor.username }}">
+            <i class="bi bi-reply me-1"></i>Responder
+        </button>
+    </div>
+
+    {% for filha in node.filhas.all %}
+        {% include 'forum/includes/comentario_card.html' with node=filha %}
+    {% endfor %}
+</div>

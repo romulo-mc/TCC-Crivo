@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-4" id="main-content">
+    <nav class="mb-4" aria-label="Navegação de retorno">
+        <a href="{% url 'lista_forum' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i>Voltar ao Fórum
+        </a>
+    </nav>
+
+    <article class="card border-0 shadow-sm mb-5" role="main">
+        <div class="card-body p-4">
+            <header class="mb-3">
+                <span class="badge bg-info text-dark mb-2">{{ topico.categoria.nome }}</span>
+                <h1 class="fw-bold h2">{{ topico.titulo }}</h1>
+                <p class="text-muted small">Postado por {{ topico.autor.username }} em {{ topico.data_criacao|date:"d/m/Y H:i" }}</p>
+            </header>
+            
+            <div class="content fs-5 mb-4 text-dark" tabindex="0">
+                {{ topico.conteudo|linebreaks }}
+            </div>
+
+            <div class="d-flex gap-3 border-top pt-3">
+                <div class="btn-group shadow-sm rounded-pill overflow-hidden" role="group" aria-label="Votação do tópico">
+                    <button onclick="votar('{{ topico.slug }}', 'like')" 
+                            class="btn btn-outline-primary border-0 {% if user in topico.likes.all %}active{% endif %}"
+                            aria-label="Curtir" id="btn-like-{{ topico.slug }}">
+                        <i class="bi bi-hand-thumbs-up"></i> 
+                        <span id="votos-{{ topico.slug }}" class="ms-1">{{ topico.total_votos }}</span>
+                    </button>
+                    <button onclick="votar('{{ topico.slug }}', 'deslike')" 
+                            class="btn btn-outline-danger border-0 {% if user in topico.deslikes.all %}active{% endif %}"
+                            aria-label="Descurtir">
+                        <i class="bi bi-hand-thumbs-down"></i>
+                    </button>
+                </div>
+                <button onclick="compartilharTopico()" class="btn btn-light rounded-pill text-secondary shadow-sm" id="btn-compartilhar">
+                    <i class="bi bi-share"></i> <span id="texto-compartilhar">Compartilhar</span>
+                </button>
+            </div>
+        </div>
+    </article>
+
+    <section aria-labelledby="comments-title">
+        <h2 id="comments-title" class="h4 fw-bold mb-4">{{ topico.respostas.count }} Respostas</h2>
+        <div class="respostas-list">
+            {% for resposta in respostas %}
+                {% include 'forum/includes/comentario_card.html' with node=resposta %}
+            {% empty %}
+                <p class="text-muted italic">Ainda não há respostas.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if user.is_authenticated %}
+    <section class="mt-5 pt-4 border-top" id="secao-resposta">
+        <div class="card p-4 shadow-sm border-0 bg-white">
+            <h3 class="h5 fw-bold mb-3" id="titulo-form">Sua Resposta</h3>
+            <div id="respondendo-a" class="badge bg-secondary mb-3 d-none p-2">
+                <span>Respondendo a...</span>
+                <button type="button" class="btn-close btn-close-white ms-2" style="font-size: 0.5em" onclick="cancelarResposta()"></button>
+            </div>
+            <form method="post" id="form-comentario">
+                {% csrf_token %}
+                <input type="hidden" name="pai_id" id="pai_id_input" value="">
+                <textarea name="conteudo" class="form-control mb-3" rows="4" placeholder="Escreva seu comentário..." required></textarea>
+                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow">Publicar</button>
+            </form>
+        </div>
+    </section>
+    {% endif %}
+</main>
+
+<script>
+    function responderA(id, nomeAutor) {
+        const inputPai = document.getElementById('pai_id_input');
+        const badgeRespondendo = document.getElementById('respondendo-a');
+        const tituloForm = document.getElementById('titulo-form');
+        const formContainer = document.getElementById('secao-resposta');
+
+        if (inputPai && badgeRespondendo) {
+            inputPai.value = id;
+            badgeRespondendo.querySelector('span').innerText = `Respondendo para @${nomeAutor}`;
+            badgeRespondendo.classList.remove('d-none');
+            tituloForm.innerText = "Sua Réplica";
+            formContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function cancelarResposta() {
+        document.getElementById('pai_id_input').value = '';
+        document.getElementById('respondendo-a').classList.add('d-none');
+        document.getElementById('titulo-form').innerText = "Sua Resposta";
+    }
+
+    function compartilharTopico() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('btn-compartilhar');
+        const texto = document.getElementById('texto-compartilhar');
+        
+        texto.innerText = "Link Copiado!";
+        btn.classList.replace('btn-light', 'btn-success');
+        btn.classList.replace('text-secondary', 'text-white');
+        
+        setTimeout(() => {
+            texto.innerText = "Compartilhar";
+            btn.classList.replace('btn-success', 'btn-light');
+            btn.classList.replace('text-white', 'text-secondary');
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}
