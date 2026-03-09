@@ -7,6 +7,7 @@ import uuid
 from django.http import JsonResponse
 
 def lista_forum(request):
+    request.session['ultimo_contexto'] = 'forum'
     topicos = Topico.objects.filter(ativa=True).order_by('-data_criacao')
     categorias = Categoria.objects.all()
     return render(request, 'forum/lista.html', {'topicos': topicos, 'categorias': categorias})
@@ -68,8 +69,14 @@ def votar_topico(request, slug, tipo):
         else:
             topico.deslikes.add(request.user)
             topico.likes.remove(request.user)
+            
+    user_voto = 'nenhum'
+    if request.user in topico.likes.all():
+        user_voto = 'like'
+    elif request.user in topico.deslikes.all():
+        user_voto = 'deslike'
     
-    return JsonResponse({'total': topico.total_votos})
+    return JsonResponse({'total': topico.total_votos, 'user_voto': user_voto})
 
 @login_required
 def votar_resposta(request, id, tipo):
@@ -87,4 +94,10 @@ def votar_resposta(request, id, tipo):
             resposta.deslikes.add(request.user)
             resposta.likes.remove(request.user)
             
-    return JsonResponse({'total': resposta.total_votos})
+    user_voto = 'nenhum'
+    if request.user in resposta.likes.all():
+        user_voto = 'like'
+    elif request.user in resposta.deslikes.all():
+        user_voto = 'deslike'
+            
+    return JsonResponse({'total': resposta.total_votos, 'user_voto': user_voto})
