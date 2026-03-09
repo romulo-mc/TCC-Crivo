@@ -103,7 +103,18 @@ class LibraryItem(TimeStampedModel):
     pontos_problematicos = models.TextField(blank=True)
 
     def __str__(self): return self.titulo
+    @property
+    def elenco_lista(self):
+        if self.elenco_principal:
+            return [ator.strip() for ator in self.elenco_principal.split(',') if ator.strip()]
+        return []
 
+    @property
+    def media_notas(self):
+        from django.db.models import Avg
+        media = self.reviews.aggregate(Avg('nota_geral'))['nota_geral__avg']
+        return round(media, 1) if media else 0
+    
 class Review(TimeStampedModel):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
