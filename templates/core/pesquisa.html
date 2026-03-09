@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    
+    <header class="mb-5 border-bottom pb-4 text-center text-md-start">
+        <h1 class="fw-bold text-primary mb-3">Resultados da Pesquisa</h1>
+        
+        <div aria-live="polite" class="fs-5 text-secondary">
+            <p class="mb-1">
+                Buscando por: <strong class="text-dark">"{{ query }}"</strong> 
+                em <span class="badge bg-secondary text-white">{% if escopo == 'geral' %}Todo o site{% elif escopo == 'forum' %}Fórum{% else %}Acervo{% endif %}</span>
+            </p>
+            <p class="fw-bold text-dark mb-0">
+                Total encontrado: {{ total }} resultado(s).
+            </p>
+        </div>
+    </header>
+
+    {% if total == 0 %}
+        <div class="text-center py-5 my-5 bg-white rounded-4 shadow-sm border">
+            <div class="display-1 text-muted mb-3" aria-hidden="true">
+                <i class="bi bi-search"></i>
+            </div>
+            <h2 class="h3 fw-bold text-dark">Nenhum resultado encontrado</h2>
+            <p class="text-muted fs-5 px-3">Tente usar palavras diferentes, sinônimos ou altere o filtro de pesquisa na barra superior.</p>
+            <a href="{% url 'lista_forum' %}" class="btn btn-primary rounded-pill px-5 py-2 mt-3 fw-bold shadow-sm">
+                Voltar ao Fórum
+            </a>
+        </div>
+    {% else %}
+        <div class="row g-5">
+            
+            {% if resultados_library %}
+            <section class="col-12" aria-labelledby="heading-library">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-collection-play-fill fs-3 text-success me-3" aria-hidden="true"></i>
+                    <h2 id="heading-library" class="h3 fw-bold mb-0">
+                        Recursos no Acervo 
+                        <span class="badge bg-success-subtle text-success ms-2 rounded-pill fs-6">{{ resultados_library|length }} <span class="visually-hidden">itens encontrados</span></span>
+                    </h2>
+                </div>
+                
+                <div class="row g-4">
+                    {% for obra in resultados_library %}
+                    <article class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm hover-lift bg-white rounded-4 overflow-hidden position-relative">
+                            <div class="card-body p-4">
+                                <span class="badge bg-dark mb-3">{{ obra.get_tipo_display }}</span>
+                                
+                                <h3 class="h5 fw-bold mb-2">
+                                    <a href="#" class="text-dark text-decoration-none stretched-link">
+                                        {{ obra.titulo }}
+                                    </a>
+                                </h3>
+                                
+                                <p class="small text-muted mb-3">
+                                    <span class="visually-hidden">Criador ou Diretor: </span>
+                                    <i class="bi bi-person me-1" aria-hidden="true"></i>{{ obra.diretor_autor_host|default:"Autor desconhecido" }}
+                                </p>
+                                
+                                <p class="text-secondary mb-0" style="font-size: 0.95rem;">
+                                    {{ obra.sinopse|truncatechars:120 }}
+                                </p>
+                            </div>
+                            <div class="card-footer border-0 bg-transparent pt-0 pb-3 px-4">
+                                {% if obra.tem_personagem_pcd %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle"><i class="bi bi-person-wheelchair me-1"></i>Rep. PcD</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if resultados_forum %}
+            <section class="col-12" aria-labelledby="heading-forum">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-chat-square-text-fill fs-3 text-primary me-3" aria-hidden="true"></i>
+                    <h2 id="heading-forum" class="h3 fw-bold mb-0">
+                        Discussões no Fórum 
+                        <span class="badge bg-primary-subtle text-primary ms-2 rounded-pill fs-6">{{ resultados_forum|length }} <span class="visually-hidden">tópicos encontrados</span></span>
+                    </h2>
+                </div>
+                
+                <div class="d-flex flex-column gap-3">
+                    {% for topico in resultados_forum %}
+                    <article class="card border-0 shadow-sm hover-lift bg-white rounded-4 position-relative">
+                        <div class="card-body p-4">
+                            <div class="d-flex w-100 justify-content-between align-items-start mb-2 gap-3">
+                                <h3 class="h5 fw-bold mb-0">
+                                    <a href="{% url 'detalhe_topico' topico.slug %}" class="text-dark text-decoration-none stretched-link">
+                                        {{ topico.titulo }}
+                                    </a>
+                                </h3>
+                                <time class="small text-muted whitespace-nowrap" datetime="{{ topico.data_criacao|date:'Y-m-d' }}">{{ topico.data_criacao|date:"d/m/Y" }}</time>
+                            </div>
+                            
+                            <p class="mb-3 text-secondary" style="font-size: 0.95rem; max-width: 95%;">
+                                {{ topico.conteudo|truncatechars:180 }}
+                            </p>
+                            
+                            <div class="d-flex flex-wrap gap-3 align-items-center mt-auto">
+                                <span class="badge bg-light text-dark border px-2 py-1">
+                                    <span class="visually-hidden">Categoria: </span>{{ topico.categoria.nome }}
+                                </span>
+                                
+                                <span class="text-muted small d-flex align-items-center" aria-label="{{ topico.respostas.count }} respostas">
+                                    <i class="bi bi-chat-left-text me-1 text-primary" aria-hidden="true"></i>
+                                    <span aria-hidden="true">{{ topico.respostas.count }}</span>
+                                </span>
+                                
+                                <span class="text-muted small d-flex align-items-center" aria-label="Saldo de votos: {{ topico.total_votos }}">
+                                    <i class="bi bi-hand-thumbs-up me-1 text-success" aria-hidden="true"></i>
+                                    <span aria-hidden="true">{{ topico.total_votos }}</span>
+                                </span>
+                                
+                                <span class="text-muted small ms-auto">
+                                    <span class="visually-hidden">Autor: </span>@{{ topico.autor.username }}
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+        </div>
+    {% endif %}
+
+</main>
+{% endblock %}

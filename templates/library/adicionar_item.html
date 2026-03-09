@@ -2,6 +2,12 @@
 
 {% block content %}
 <div class="container py-5">
+        <nav class="mb-4" aria-label="Navegação">
+        <a href="{% url 'lista_library' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Voltar ao Acervo
+        </a>
+    </nav>
+
     <div class="card shadow border-0 rounded-4">
         <div class="card-header bg-primary text-white p-4 rounded-top-4">
             <h2 class="fw-bold mb-0">Adicionar ao Acervo</h2>

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    
+    <nav class="mb-4" aria-label="Navegação">
+        <a href="{% url 'lista_library' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Voltar ao Acervo
+        </a>
+    </nav>
+
+    <header class="mb-5 border-bottom pb-4">
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+            <span class="badge bg-dark fs-6 rounded-pill px-3">{{ item.get_tipo_display }}</span>
+            <h1 class="fw-bold text-dark mb-0">{{ item.titulo }}</h1>
+        </div>
+        {% if item.titulo_original %}
+            <p class="text-muted fs-5 mb-0 fst-italic">Título Original: {{ item.titulo_original }}</p>
+        {% endif %}
+    </header>
+
+    <div class="row g-5">
+        <aside class="col-lg-4" aria-labelledby="ficha-tecnica">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                {% if item.capa %}
+                    <img src="{{ item.capa.url }}" class="w-100 object-fit-cover" alt="Capa da obra {{ item.titulo }}" style="max-height: 500px;">
+                {% else %}
+                    <div class="bg-light d-flex flex-column align-items-center justify-content-center text-secondary p-5" style="height: 400px;" aria-hidden="true">
+                        <i class="bi bi-image display-1 mb-3"></i>
+                        <span class="fw-bold text-uppercase">Sem Imagem</span>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body p-4 bg-white">
+                    <h2 id="ficha-tecnica" class="h5 fw-bold border-bottom pb-2 mb-3 text-primary">Ficha Técnica</h2>
+                    
+                    <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-secondary">
+                        <li><strong class="text-dark">Lançamento:</strong> {{ item.ano_lancamento|default:"N/A" }}</li>
+                        <li><strong class="text-dark">País:</strong> {{ item.pais_origem|default:"N/A" }}</li>
+                        <li><strong class="text-dark">Idioma:</strong> {{ item.idioma|default:"N/A" }}</li>
+                        <li><strong class="text-dark">Responsável:</strong> {{ item.diretor_autor_host|default:"N/A" }}</li>
+                        {% if item.duracao %}<li><strong class="text-dark">Duração:</strong> {{ item.duracao }}</li>{% endif %}
+                        {% if item.genero %}<li><strong class="text-dark">Gênero:</strong> {{ item.genero }}</li>{% endif %}
+                    </ul>
+                    
+                    {% if item.link_acesso %}
+                        <a href="{{ item.link_acesso }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary w-100 mt-4 rounded-pill fw-bold">
+                            <i class="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i>Onde Encontrar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if item.condicoes.exists %}
+            <div class="card border-0 shadow-sm rounded-4 bg-primary-subtle border border-primary-subtle p-4 mb-4" aria-labelledby="condicoes-relacionadas">
+                <h3 id="condicoes-relacionadas" class="h6 fw-bold text-primary mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-universal-access fs-5" aria-hidden="true"></i> Condições Abordadas
+                </h3>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for condicao in item.condicoes.all %}
+                        <span class="badge bg-primary text-white px-3 py-2 rounded-pill text-wrap text-start lh-base" style="max-width: 100%;">{{ condicao.nome }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if item.gatilhos.exists %}
+            <div class="card border-0 shadow-sm rounded-4 bg-danger-subtle border border-danger-subtle p-4" aria-labelledby="alertas-gatilhos">
+                <h3 id="alertas-gatilhos" class="h6 fw-bold text-danger mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-5" aria-hidden="true"></i> Alertas de Gatilho
+                </h3>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for gatilho in item.gatilhos.all %}
+                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill">{{ gatilho.nome }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </aside>
+
+        <div class="col-lg-8">
+            
+            <section class="mb-5" aria-labelledby="sinopse-obra">
+                <h2 id="sinopse-obra" class="h4 fw-bold text-dark mb-3">Sinopse</h2>
+                <div class="fs-6 text-secondary lh-lg" tabindex="0">
+                    {{ item.sinopse|linebreaks|default:"Sinopse não cadastrada." }}
+                </div>
+            </section>
+
+            <section class="mb-5 card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5 border-start border-5 border-primary" aria-labelledby="analise-rep">
+                <h2 id="analise-rep" class="h4 fw-bold text-primary mb-4 border-bottom pb-3">Análise de Representatividade</h2>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <h3 class="h6 fw-bold text-dark text-uppercase opacity-75">Abordagem Identificada</h3>
+                        <p class="fs-5 text-secondary">{{ item.get_abordagem_display|default:"Não especificado" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 fw-bold text-dark text-uppercase opacity-75">Tipo de Personagem</h3>
+                        <p class="fs-5 text-secondary">{{ item.get_tipo_representacao_display|default:"Não especificado" }}</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="h6 fw-bold text-dark text-uppercase opacity-75 mb-2">Descrição pelo Cadastrador</h3>
+                    <p class="text-dark bg-light p-3 rounded-3 fst-italic">"{{ item.descricao_representacao }}"</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-success-subtle rounded-3 h-100">
+                            <h3 class="h6 fw-bold text-success mb-2"><i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>Pontos Positivos</h3>
+                            <p class="mb-0 text-dark small">{{ item.pontos_positivos|default:"Nenhum ponto listado." }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-warning-subtle rounded-3 h-100">
+                            <h3 class="h6 fw-bold text-warning-emphasis mb-2"><i class="bi bi-exclamation-circle-fill me-2" aria-hidden="true"></i>Pontos Problemáticos</h3>
+                            <p class="mb-0 text-dark small">{{ item.pontos_problematicos|default:"Nenhum ponto listado." }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section aria-labelledby="avaliacoes-obra">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                    <h2 id="avaliacoes-obra" class="h4 fw-bold text-dark mb-0">Avaliações da Comunidade</h2>
+                    <span class="badge bg-warning text-dark fs-5 rounded-pill shadow-sm d-flex align-items-center gap-2" aria-label="Média Geral de {{ item.media_notas }}">
+                        <i class="bi bi-star-fill" aria-hidden="true"></i> {{ item.media_notas|default:"0.0" }} <small class="fw-normal">({{ total_avaliacoes }} votos)</small>
+                    </span>
+                </div>
+
+                {% if review_autor %}
+                <div class="card border border-primary-subtle shadow-sm rounded-4 mb-4 bg-primary bg-opacity-10">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-person-circle fs-3 text-primary" aria-hidden="true"></i>
+                                <div>
+                                    <h3 class="h6 fw-bold text-dark mb-0">@{{ review_autor.user.username }} <span class="badge bg-primary ms-2 small">Autor do Cadastro</span></h3>
+                                    <small class="text-muted">{{ review_autor.criado_em|date:"d M, Y" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-dark mb-0">"{{ review_autor.comentario_justificativa }}"</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    {% if not ja_avaliou %}
+                    <div class="card border-0 shadow-sm rounded-4 bg-white mt-5">
+                        <div class="card-header bg-light border-bottom-0 pt-4 px-4 rounded-top-4">
+                            <h3 class="h5 fw-bold text-dark mb-0">Deixe sua avaliação</h3>
+                            <p class="text-muted small">Ajude a comunidade dando suas notas (a justificativa é exclusiva do autor da postagem).</p>
+                        </div>
+                        <div class="card-body px-4 pb-4">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label for="id_nota_geral" class="fw-bold mb-1">Nota Geral</label>
+                                        {{ form.nota_geral }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="id_nota_representatividade" class="fw-bold mb-1 text-primary">Representatividade</label>
+                                        {{ form.nota_representatividade }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="id_nota_critica" class="fw-bold mb-1 text-warning-emphasis">Qualidade Crítica</label>
+                                        {{ form.nota_critica }}
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold w-100">Confirmar Notas</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success mt-4 rounded-4 shadow-sm border-0 text-center" role="alert">
+                        <i class="bi bi-check-circle-fill fs-4 d-block mb-2"></i>
+                        <span class="fw-bold">Obrigado!</span> Você já avaliou esta obra. Sua nota faz parte da média.
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </section>
+
+        </div>
+    </div>
+</main>
+
+<style>
+    .focus-ring-custom:focus-within { outline: 3px solid #4A90E2; outline-offset: 4px; }
+    .lh-lg { line-height: 1.8 !important; }
+</style>
+{% endblock %}

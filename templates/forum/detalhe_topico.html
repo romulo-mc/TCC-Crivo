@@ -23,15 +23,17 @@
             <div class="d-flex gap-3 border-top pt-3">
                 <div class="btn-group shadow-sm rounded-pill overflow-hidden" role="group" aria-label="Votação do tópico">
                     <button onclick="votar('{{ topico.slug }}', 'like')" 
+                            id="btn-like-topico-{{ topico.slug }}"
                             class="btn btn-outline-primary border-0 {% if user in topico.likes.all %}active{% endif %}"
-                            aria-label="Curtir" id="btn-like-{{ topico.slug }}">
-                        <i class="bi bi-hand-thumbs-up"></i> 
+                            aria-label="Curtir">
+                        <i class="bi {% if user in topico.likes.all %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %}"></i> 
                         <span id="votos-{{ topico.slug }}" class="ms-1">{{ topico.total_votos }}</span>
                     </button>
                     <button onclick="votar('{{ topico.slug }}', 'deslike')" 
+                            id="btn-deslike-topico-{{ topico.slug }}"
                             class="btn btn-outline-danger border-0 {% if user in topico.deslikes.all %}active{% endif %}"
                             aria-label="Descurtir">
-                        <i class="bi bi-hand-thumbs-down"></i>
+                        <i class="bi {% if user in topico.deslikes.all %}bi-hand-thumbs-down-fill{% else %}bi-hand-thumbs-down{% endif %}"></i>
                     </button>
                 </div>
                 <button onclick="compartilharTopico()" class="btn btn-light rounded-pill text-secondary shadow-sm" id="btn-compartilhar">

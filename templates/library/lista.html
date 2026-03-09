@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    
+    <header class="row mb-5 align-items-center g-3">
+        <div class="col-md-7 col-lg-8">
+            <h1 class="fw-bold text-dark mb-2">Acervo Crivo</h1>
+            <p class="text-secondary fs-5 mb-0">Explore e avalie produções com foco em representatividade.</p>
+        </div>
+        <div class="col-md-5 col-lg-4 d-flex gap-2 justify-content-md-end">
+            <button class="btn btn-outline-primary rounded-pill px-4 shadow-sm fw-bold d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#modalFiltros" aria-label="Abrir filtros avançados">
+                <i class="bi bi-sliders" aria-hidden="true"></i> Filtros
+                {% if tipos_selecionados or condicoes_selecionadas %}
+                    <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle"><span class="visually-hidden">Filtros ativos</span></span>
+                {% endif %}
+            </button>
+            <a href="{% url 'adicionar_item' %}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold d-flex align-items-center gap-2">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i> Contribuir
+            </a>
+        </div>
+    </header>
+
+    <section class="row g-4" aria-label="Lista de obras cadastradas">
+        {% for item in itens %}
+        <article class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card h-100 shadow-sm border-0 hover-lift bg-white rounded-4 overflow-hidden position-relative focus-ring-custom">
+                
+                <div class="position-relative bg-light border-bottom" style="height: 240px;">
+                    {% if item.capa %}
+                        <img src="{{ item.capa.url }}" class="w-100 h-100 object-fit-cover" alt="Capa de {{ item.titulo }}">
+                    {% else %}
+                        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-secondary opacity-50" aria-hidden="true">
+                            <i class="bi bi-film display-4 mb-2"></i>
+                            <span class="small text-uppercase fw-bold">{{ item.get_tipo_display }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="position-absolute top-0 start-0 w-100 d-flex justify-content-between p-3">
+                        <span class="badge bg-dark bg-opacity-75 backdrop-blur shadow-sm border border-secondary px-3 py-2 rounded-pill">
+                            <span class="visually-hidden">Formato: </span>{{ item.get_tipo_display }}
+                        </span>
+                        
+                        <span class="badge bg-warning text-dark shadow-sm border border-warning px-2 py-2 rounded-pill d-flex align-items-center gap-1" aria-label="Nota geral: {{ item.media_notas }} de 5">
+                            <i class="bi bi-star-fill" aria-hidden="true"></i> <span class="fw-bold">{{ item.media_notas|default:"-" }}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 d-flex flex-column">
+                    <h2 class="card-title h5 fw-bold mb-1 text-dark">
+                        <a href="{% url 'detalhe_item' item.id %}" class="text-decoration-none text-dark stretched-link">
+                            {{ item.titulo }}
+                        </a>
+                    </h2>
+                    
+                    <p class="small text-muted mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-calendar-event" aria-hidden="true"></i> {{ item.ano_lancamento|default:"N/A" }} 
+                        <span class="vr"></span> 
+                        <span class="text-truncate"><span class="visually-hidden">Responsável: </span>{{ item.diretor_autor_host|default:"Desconhecido" }}</span>
+                    </p>
+                    
+                    {% if item.elenco_lista %}
+                    <div class="mb-3" aria-label="Elenco principal">
+                        <span class="visually-hidden">Elenco:</span>
+                        {% for ator in item.elenco_lista|slice:":3" %}
+                            <span class="badge bg-light text-secondary border fw-normal me-1 mb-1 text-wrap text-start lh-base" style="max-width: 100%;">{{ ator }}</span>
+                        {% endfor %}
+                        {% if item.elenco_lista|length > 3 %}
+                            <span class="badge bg-light text-secondary border fw-normal">...</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-auto pt-3 border-top d-flex flex-wrap gap-1" aria-label="Condições abordadas">
+                        {% for condicao in item.condicoes.all|slice:":2" %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 text-wrap text-start lh-base" style="max-width: 100%;">
+                                <i class="bi bi-tag-fill me-1" aria-hidden="true"></i>{{ condicao.nome }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent border-0 pt-0 pb-4 px-4 position-relative" style="z-index: 2;">
+                    <a href="{% url 'detalhe_item' item.id %}" class="btn btn-outline-primary w-100 rounded-pill fw-bold btn-ver-detalhes">
+                        Ver Detalhes
+                    </a>
+                </div>
+                
+            </div> </article>
+        
+        {% empty %}
+        <div class="col-12 text-center py-5 my-5 bg-white rounded-4 shadow-sm border">
+            <div class="display-1 text-muted mb-3" aria-hidden="true"><i class="bi bi-search"></i></div>
+            <h2 class="h3 fw-bold text-dark">Nenhum item encontrado</h2>
+            <p class="text-muted fs-5 px-3">Tente remover alguns filtros ou cadastre uma nova obra no acervo.</p>
+            <a href="{% url 'lista_library' %}" class="btn btn-outline-primary rounded-pill px-5 mt-2">Limpar Filtros</a>
+        </div>
+        {% endfor %}
+    </section>
+</main>
+
+<div class="modal fade" id="modalFiltros" tabindex="-1" aria-labelledby="modalFiltrosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            
+            <form method="GET" action="{% url 'lista_library' %}">
+                <div class="modal-header bg-light border-bottom-0 pb-0 pt-4 px-4">
+                    <h2 class="modal-title h4 fw-bold text-dark" id="modalFiltrosLabel">Filtros Avançados</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar filtros"></button>
+                </div>
+                
+                <div class="modal-body px-4 py-4">
+                    
+                    <fieldset class="mb-4">
+                        <legend class="h6 fw-bold text-primary border-bottom pb-2 mb-3">Formato da Obra</legend>
+                        <div class="row g-2">
+                            {% for valor, nome in tipos_disponiveis %}
+                            <div class="col-4 col-md-3">
+                                <div class="form-check form-switch p-0 m-0 custom-switch-card">
+                                    <input class="form-check-input visually-hidden" type="checkbox" name="tipo" value="{{ valor }}" id="filtro_tipo_{{ valor }}" {% if valor in tipos_selecionados %}checked{% endif %}>
+                                    <label class="form-check-label w-100 p-2 text-center border rounded-3 bg-white small" for="filtro_tipo_{{ valor }}">{{ nome }}</label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    <ul class="nav nav-tabs mb-3" id="filtroTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold" id="cond-tab" data-bs-toggle="tab" data-bs-target="#cond-tab-pane" type="button" role="tab" aria-controls="cond-tab-pane" aria-selected="true">Condições Representadas</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold text-danger" id="gat-tab" data-bs-toggle="tab" data-bs-target="#gat-tab-pane" type="button" role="tab" aria-controls="gat-tab-pane" aria-selected="false">Gatilhos / Alertas</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="filtroTabsContent">
+                        
+                        <div class="tab-pane fade show active" id="cond-tab-pane" role="tabpanel" aria-labelledby="cond-tab" tabindex="0">
+                            <input type="text" class="form-control mb-3" id="searchCondFiltro" aria-label="Pesquisar condição" placeholder="Pesquisar condição..." onkeyup="filtrarAcordeon('searchCondFiltro', 'accCondFiltro')">
+                            
+                            <div class="accordion" id="accCondFiltro">
+                                {% for categoria, itens in condicoes_dict.items %}
+                                <div class="accordion-item categoria-item">
+                                    <h3 class="accordion-header" id="headFiltroCond{{ forloop.counter }}">
+                                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#colFiltroCond{{ forloop.counter }}" aria-expanded="false" aria-controls="colFiltroCond{{ forloop.counter }}">
+                                            {{ categoria }}
+                                        </button>
+                                    </h3>
+                                    <div id="colFiltroCond{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headFiltroCond{{ forloop.counter }}">
+                                        <div class="accordion-body d-flex flex-wrap gap-2">
+                                            {% for item in itens %}
+                                            <div class="form-check p-0 m-0 custom-tag-checkbox item-pesquisavel">
+                                                <input class="form-check-input visually-hidden" type="checkbox" name="condicoes" value="{{ item.id }}" id="filtro_cond_{{ item.id }}" {% if item.id in condicoes_selecionadas %}checked{% endif %}>
+                                                <label class="form-check-label badge bg-light text-secondary border px-3 py-2 fs-6 rounded-pill" for="filtro_cond_{{ item.id }}">{{ item.nome }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="gat-tab-pane" role="tabpanel" aria-labelledby="gat-tab" tabindex="0">
+                            <input type="text" class="form-control mb-3" id="searchGatFiltro" aria-label="Pesquisar gatilho" placeholder="Pesquisar gatilho..." onkeyup="filtrarAcordeon('searchGatFiltro', 'accGatFiltro')">
+                            
+                            <div class="accordion" id="accGatFiltro">
+                                {% for categoria, itens in gatilhos_dict.items %}
+                                <div class="accordion-item categoria-item">
+                                    <h3 class="accordion-header" id="headFiltroGat{{ forloop.counter }}">
+                                        <button class="accordion-button collapsed fw-bold text-danger" type="button" data-bs-toggle="collapse" data-bs-target="#colFiltroGat{{ forloop.counter }}" aria-expanded="false" aria-controls="colFiltroGat{{ forloop.counter }}">
+                                            {{ categoria }}
+                                        </button>
+                                    </h3>
+                                    <div id="colFiltroGat{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headFiltroGat{{ forloop.counter }}">
+                                        <div class="accordion-body d-flex flex-wrap gap-2">
+                                            {% for item in itens %}
+                                            <div class="form-check p-0 m-0 custom-tag-checkbox custom-tag-danger item-pesquisavel">
+                                                <input class="form-check-input visually-hidden" type="checkbox" name="gatilhos" value="{{ item.id }}" id="filtro_gat_{{ item.id }}" {% if item.id in gatilhos_selecionadas %}checked{% endif %}>
+                                                <label class="form-check-label badge bg-light text-secondary border px-3 py-2 fs-6 rounded-pill" for="filtro_gat_{{ item.id }}">{{ item.nome }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="modal-footer bg-light border-top-0 pt-0 pb-4 px-4 d-flex justify-content-between">
+                    <a href="{% url 'lista_library' %}" class="btn btn-link text-danger text-decoration-none fw-bold px-0">Limpar Filtros</a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Aplicar Filtros</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease; will-change: transform; }
+    .hover-lift:hover, .hover-lift:focus-within { transform: translateY(-4px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.1)!important; }
+    .focus-ring-custom:focus-within { outline: 3px solid #4A90E2; outline-offset: 4px; }
+    .stretched-link:focus { outline: none; }
+    .backdrop-blur { backdrop-filter: blur(8px); }
+    
+    .custom-switch-card input:checked + label { background-color: #e9f2fb !important; border-color: #4A90E2 !important; color: #4A90E2 !important; font-weight: bold; }
+    .custom-switch-card label { cursor: pointer; transition: all 0.2s; }
+    .custom-switch-card label:hover { background-color: #f8f9fa; }
+
+    .custom-tag-checkbox input:checked + label { background-color: #4A90E2 !important; color: white !important; border-color: #4A90E2 !important; }
+    .custom-tag-checkbox label { cursor: pointer; transition: all 0.2s; font-weight: 500;}
+    .custom-tag-checkbox label:hover { border-color: #adb5bd !important; }
+
+    .custom-tag-danger input:checked + label { background-color: #dc3545 !important; color: white !important; border-color: #dc3545 !important; }
+
+    .hover-lift:hover .btn-ver-detalhes,
+    .hover-lift:focus-within .btn-ver-detalhes {
+        background-color: #4A90E2;
+        color: white;
+    }
+    
+    .btn-ver-detalhes:hover {
+        background-color: #357ABD !important;
+        transform: scale(1.02);
+        transition: transform 0.2s;
+    }
+</style>
+
+<script>
+    function filtrarAcordeon(inputId, accordionId) {
+        let input = document.getElementById(inputId).value.toLowerCase();
+        let accordion = document.getElementById(accordionId);
+        let categorias = accordion.getElementsByClassName('categoria-item');
+
+        for (let i = 0; i < categorias.length; i++) {
+            let itens = categorias[i].getElementsByClassName('item-pesquisavel');
+            let temItemVisivel = false;
+
+            for (let j = 0; j < itens.length; j++) {
+                let texto = itens[j].innerText.toLowerCase();
+                if (texto.includes(input)) {
+                    itens[j].style.display = "";
+                    temItemVisivel = true;
+                } else {
+                    itens[j].style.display = "none";
+                }
+            }
+            categorias[i].style.display = temItemVisivel ? "" : "none";
+        }
+    }
+</script>
+{% endblock %}

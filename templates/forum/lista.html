@@ -19,31 +19,37 @@
 <main class="container py-4" id="main-content">
     <header class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="fw-bold">Fórum Comunitário</h1>
-        <a href="#" class="btn btn-primary rounded-pill px-4">
+        <a href="{% url 'criar_topico' %}" class="btn btn-primary rounded-pill px-4">
             <i class="bi bi-plus-circle me-2"></i> Iniciar Discussão
         </a>
     </header>
 
     <div class="row g-4">
         {% for topico in topicos %}
-        <article class="col-12">
+<article class="col-12">
             <div class="card shadow-sm border-0 hover-lift h-100">
                 <div class="card-body d-flex align-items-start gap-3">
                     
-                <div class="d-flex flex-column align-items-center">
-                    <button onclick="event.stopPropagation(); votar('{{ topico.slug }}', 'like')" 
-                            class="btn btn-outline-primary border-0"
-                            aria-label="Curtir">
-                        <i class="bi bi-hand-thumbs-up"></i> 
-                        <span id="votos-{{ topico.slug }}">{{ topico.total_votos }}</span>
-                    </button>
-
-                    <button onclick="event.stopPropagation(); votar('{{ topico.slug }}', 'deslike')" 
-                            class="btn btn-outline-danger border-0"
-                            aria-label="Descurtir">
-                        <i class="bi bi-hand-thumbs-down"></i>
-                    </button>
-                </div>
+                    <div class="d-flex flex-column align-items-center position-relative" style="z-index: 2;">
+                        
+                        <button onclick="votar('{{ topico.slug }}', 'like')" 
+                                id="btn-like-topico-{{ topico.slug }}"
+                                class="btn btn-outline-primary border-0 rounded-circle d-flex align-items-center justify-content-center transition-all {% if user in topico.likes.all %}active{% endif %}"
+                                style="width: 35px; height: 35px;"
+                                aria-label="Curtir">
+                            <i class="bi {% if user in topico.likes.all %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %}"></i> 
+                        </button>
+                        
+                        <span id="votos-{{ topico.slug }}" class="fw-bold my-1 text-dark fs-5">{{ topico.total_votos }}</span>
+                        
+                        <button onclick="votar('{{ topico.slug }}', 'deslike')" 
+                                id="btn-deslike-topico-{{ topico.slug }}"
+                                class="btn btn-outline-danger border-0 rounded-circle d-flex align-items-center justify-content-center transition-all {% if user in topico.deslikes.all %}active{% endif %}"
+                                style="width: 35px; height: 35px;"
+                                aria-label="Descurtir">
+                            <i class="bi {% if user in topico.deslikes.all %}bi-hand-thumbs-down-fill{% else %}bi-hand-thumbs-down{% endif %}"></i>
+                        </button>
+                    </div>
 
                     <div class="flex-grow-1">
                         <div class="mb-1">
@@ -66,11 +72,12 @@
                         </p>
                     </div>
 
-                    <div class="text-end d-none d-md-block">
-                        <span class="badge bg-light text-dark border p-2">
-                            <i class="bi bi-chat-left-text me-1"></i> {{ topico.respostas.count }}
+                    <div class="text-end d-none d-md-block position-relative" style="z-index: 2;">
+                        <span class="badge bg-light text-dark border p-2 fs-6 shadow-sm">
+                            <i class="bi bi-chat-left-text text-primary me-1"></i> {{ topico.respostas.count }}
                         </span>
                     </div>
+                    
                 </div>
             </div>
         </article>
