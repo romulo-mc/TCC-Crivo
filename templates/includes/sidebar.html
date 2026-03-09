@@ -1,34 +1,92 @@
 <aside id="sidebar-wrapper" class="border-end shadow-sm d-flex flex-column" role="complementary">
-    <nav class="py-3 mb-auto" aria-label="Menu lateral">
-        <ul class="nav flex-column mb-4">
+    
+    <nav class="py-3" aria-label="Menu Principal">
+        <ul class="nav flex-column mb-0 gap-2">
+            
             <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-3 px-3">
+                <a href="{% if '/forum/' in request.path %}{% url 'lista_forum' %}{% elif '/library/' in request.path %}{% url 'home' %}{% else %}{% url 'home' %}{% endif %}" 
+                   class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3">
                     <i class="bi bi-house-door fs-5" aria-hidden="true"></i> 
                     <span class="link-text">Página Inicial</span>
                 </a>
             </li>
-            </ul>
 
-        <hr class="my-2 mx-3 border-dark border-2 opacity-25" aria-hidden="true">
+            <li class="nav-item">
+                <a href="{% url 'lista_forum' %}" 
+                   class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/forum/' in request.path %}bg-white bg-opacity-50{% endif %}">
+                    <i class="bi bi-people fs-5" aria-hidden="true"></i> 
+                    <span class="link-text">Fórum</span>
+                </a>
+            </li>
 
-        <div class="px-3 mt-4 mb-2">
-            <h2 id="heading-sidebar" class="text-uppercase fw-bold text-dark m-0 link-text fs-6" style="letter-spacing: 1px;">
-                {% block sidebar_title %}Explorar{% endblock %}
-            </h2>
-        </div>
-        
-        <ul class="nav flex-column" aria-labelledby="heading-sidebar">
-            {% block sidebar_items %}
+            <li class="nav-item">
+                <a href="{% url 'lista_library' %}" 
+                   class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/library/' in request.path %}bg-white bg-opacity-50{% endif %}">
+                    <i class="bi bi-collection-play fs-5" aria-hidden="true"></i> 
+                    <span class="link-text">Acervo</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2">
+                    <i class="bi bi-lightbulb fs-5" aria-hidden="true"></i> 
+                    <span class="link-text">Recursos Educativos</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <hr class="my-1 mx-3 border-dark border-1 opacity-25" aria-hidden="true">
+
+    <nav class="py-2 mb-auto" aria-label="Menu de Contexto">
+        <ul class="nav flex-column gap-1">
+
+            {% if '/forum/' in request.path %}
+                <li class="nav-item px-3 mt-3 mb-1">
+                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text" style="letter-spacing: 1px;">Explorar Fórum</span>
+                </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link text-dark py-3 px-3 d-flex gap-3 align-items-center">
+                    <a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center">
                         <i class="bi bi-stars fs-5" aria-hidden="true"></i> 
                         <span class="link-text fw-semibold">Novidades</span>
                     </a>
                 </li>
-                {% endblock %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center">
+                        <i class="bi bi-fire fs-5" aria-hidden="true"></i> 
+                        <span class="link-text fw-semibold">Em alta</span>
+                    </a>
+                </li>
+            
+            {% elif '/library/' in request.path %}
+                <li class="nav-item px-3 mt-3 mb-1">
+                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text" style="letter-spacing: 1px;">Categorias</span>
+                </li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-film fs-5"></i><span class="link-text fw-semibold">Filmes</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-tv fs-5"></i><span class="link-text fw-semibold">Séries</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-book fs-5"></i><span class="link-text fw-semibold">Livros</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-music-note-beamed fs-5"></i><span class="link-text fw-semibold">Músicas</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-mic fs-5"></i><span class="link-text fw-semibold">Podcasts</span></a></li>
+                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-file-text fs-5"></i><span class="link-text fw-semibold">Artigos</span></a></li>
+            {% endif %}
+
         </ul>
     </nav>
 
-    <nav class="p-3 border-top" aria-label="Links de suporte">
-        </nav>
+    <nav class="p-3 border-top border-dark border-opacity-25" aria-label="Links adicionais">
+        <ul class="nav flex-column gap-1">
+            <li class="nav-item">
+                <a href="{% url 'home' %}" class="nav-link text-dark py-2 px-2 d-flex gap-3 align-items-center">
+                    <i class="bi bi-info-circle fs-5" aria-hidden="true"></i>
+                    <span class="link-text fw-semibold">Sobre o projeto</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-dark py-2 px-2 d-flex gap-3 align-items-center">
+                    <i class="bi bi-gear fs-5" aria-hidden="true"></i>
+                    <span class="link-text fw-semibold">Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </aside>

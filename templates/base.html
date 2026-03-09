@@ -108,6 +108,29 @@
 
     </div>
 
+    {% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1055;">
+        {% for message in messages %}
+            <div class="toast align-items-center text-white bg-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}primary{% endif %} border-0 shadow-lg" 
+                 role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold fs-6 d-flex align-items-center gap-2">
+                        {% if message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill fs-5"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill fs-5"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar notificação"></button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -140,9 +163,51 @@
             contador.style.transform = "scale(1.2)";
             setTimeout(() => contador.style.transform = "scale(1)", 100);
         }
+
+        const prefix = isResposta ? 'resp' : 'topico';
+        const btnLike = document.getElementById(`btn-like-${prefix}-${slugOrId}`);
+        const btnDeslike = document.getElementById(`btn-deslike-${prefix}-${slugOrId}`);
+
+        if (btnLike && btnDeslike) {
+            btnLike.classList.remove('active');
+            btnDeslike.classList.remove('active');
+            
+            btnLike.querySelector('i').className = 'bi bi-hand-thumbs-up';
+            btnDeslike.querySelector('i').className = 'bi bi-hand-thumbs-down';
+
+            if (data.user_voto === 'like') {
+                btnLike.classList.add('active');
+                btnLike.querySelector('i').className = 'bi bi-hand-thumbs-up-fill';
+            } else if (data.user_voto === 'deslike') {
+                btnDeslike.classList.add('active');
+                btnDeslike.querySelector('i').className = 'bi bi-hand-thumbs-down-fill';
+            }
+        }
     })
     .catch(error => console.error('Erro:', error));
 }
+    document.addEventListener("DOMContentLoaded", function() {
+        const path = window.location.pathname;
+        const scopeSelect = document.getElementById("navbar-search-scope");
+        
+        if (scopeSelect) {
+            if (path.includes("/forum/")) {
+                scopeSelect.value = "forum";
+            } 
+            else if (path.includes("/library/")) {
+                scopeSelect.value = "library";
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl)
+        });
+        toastList.forEach(toast => toast.show());
+    });
+
     </script>
 </body>
 </html>

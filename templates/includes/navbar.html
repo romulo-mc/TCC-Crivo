@@ -8,20 +8,42 @@
             </button>
             {% endif %}
 
-            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="{% url 'home' %}">
+            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" 
+            href="{% if '/forum/' in request.path %}
+                        {% url 'lista_forum' %}
+                    {% elif '/library/' in request.path %}
+                        {% url 'lista_library' %}
+                    {% elif request.session.ultimo_contexto == 'forum' %}
+                        {% url 'lista_forum' %}
+                    {% elif request.session.ultimo_contexto == 'library' %}
+                        {% url 'lista_library' %}
+                    {% else %}
+                        {% url 'home' %}
+                    {% endif %}"
+            aria-label="Página Inicial">
                 <i class="bi bi-puzzle-fill" aria-hidden="true"></i> 
                 <span>Crivo</span>
             </a>
         </div>
 
         {% if user.is_authenticated %}
-        <form class="d-none d-md-flex mx-auto" style="width: 40%;" role="search">
-            <div class="input-group">
-                <label for="navbar-search" class="visually-hidden">Pesquisar no acervo</label>
-                <span class="input-group-text bg-white border-0 rounded-start-pill">
+        <form action="{% url 'pesquisa_geral' %}" method="GET" class="d-none d-md-flex mx-auto" style="width: 50%;" role="search">
+            <input type="hidden" name="origem" value="{{ request.path }}">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                
+                <label for="navbar-search-scope" class="visually-hidden">Onde pesquisar?</label>
+                <select name="escopo" id="navbar-search-scope" class="form-select border-0 text-secondary fw-bold" style="max-width: 130px; background-color: #f8f9fa;">
+                    <option value="geral">Todo o site</option>
+                    <option value="forum">Fórum</option>
+                    <option value="library">Acervo</option>
+                </select>
+                
+                <label for="navbar-search" class="visually-hidden">Termo de pesquisa</label>
+                <input id="navbar-search" name="q" class="form-control border-0" type="search" placeholder="Pesquisar..." aria-label="Pesquisar no site" required>
+                
+                <button class="btn btn-light border-0 text-primary" type="submit" aria-label="Buscar">
                     <i class="bi bi-search" aria-hidden="true"></i>
-                </span>
-                <input id="navbar-search" class="form-control border-0 rounded-end-pill" type="search" placeholder="Pesquisar no acervo..." aria-label="Pesquisar no acervo">
+                </button>
             </div>
         </form>
         {% endif %}
