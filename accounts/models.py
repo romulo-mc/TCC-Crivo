@@ -1,8 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
+from django.utils.text import slugify
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    
+    slug = models.SlugField(max_length=150, unique=True, blank=True)
 
     
     PAIS_CHOICES = [
@@ -13,6 +19,7 @@ class UserProfile(models.Model):
     ]
 
     UF_CHOICES = [
+        ('', '---'),
         ('AC', 'Acre'), ('AL', 'Alagoas'), ('AP', 'Amapá'), ('AM', 'Amazonas'),
         ('BA', 'Bahia'), ('CE', 'Ceará'), ('DF', 'Distrito Federal'), ('ES', 'Espírito Santo'),
         ('GO', 'Goiás'), ('MA', 'Maranhão'), ('MT', 'Mato Grosso'), ('MS', 'Mato Grosso do Sul'),
@@ -77,3 +84,29 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"Perfil de {self.user.username}"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            nome_base = self.user.first_name if self.user.first_name else self.user.username
+            slug_base = slugify(nome_base)
+            
+            if not slug_base:
+                slug_base = 'usuario'
+                
+            self.slug = f"{slug_base}-{str(uuid.uuid4())[:6]}"
+            
+        super().save(*args, **kwargs)
+    
+@receiver(post_save, sender=User)
+def criar_perfil_usuario(sender, instance, created, **kwargs):
+    if created:
+        nome_base = instance.first_name if instance.first_name else 'usuario'
+        slug_base = slugify(nome_base)
+        slug_unico = f"{slug_base}-{str(uuid.uuid4())[:6]}"
+        UserProfile.objects.create(user=instance, slug=slug_unico)
+
+@receiver(post_save, sender=User)
+def salvar_perfil_usuario(sender, instance, **kwargs):
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
+        

@@ -7,7 +7,15 @@ class CategoriaAdmin(admin.ModelAdmin):
 
 @admin.register(Topico)
 class TopicoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'categoria', 'autor', 'data_criacao')
+    list_display = ('titulo', 'categoria', 'autor', 'status', 'data_criacao')
+    list_filter = ('status', 'categoria', 'data_criacao')
+    search_fields = ('titulo', 'autor__username', 'conteudo')
+    list_editable = ('status',) 
     prepopulated_fields = {'slug': ('titulo',)}
 
-admin.site.register(Resposta)
+@admin.register(Resposta)
+class RespostaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'topico', 'autor', 'status', 'data_postagem')
+    list_filter = ('status', 'data_postagem')
+    search_fields = ('conteudo', 'autor__username')
+    list_editable = ('status',)

@@ -45,6 +45,7 @@ class LibraryItem(TimeStampedModel):
     TIPO_CHOICES = [('FILME', 'Filme'), ('SERIE', 'Série'), ('LIVRO', 'Livro'), ('MUSICA', 'Música'), ('PODCAST', 'Podcast'), ('ARTIGO', 'Artigo')]
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
     usuario_criador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='itens_cadastrados')
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
     

@@ -8,14 +8,14 @@ from django.http import JsonResponse
 
 def lista_forum(request):
     request.session['ultimo_contexto'] = 'forum'
-    topicos = Topico.objects.filter(ativa=True).order_by('-data_criacao')
+    topicos = Topico.objects.filter(ativa=True, status='APROVADO').order_by('-data_criacao')
     categorias = Categoria.objects.all()
     return render(request, 'forum/lista.html', {'topicos': topicos, 'categorias': categorias})
 
 @login_required
 def detalhe_topico(request, slug):
-    topico = get_object_or_404(Topico, slug=slug)
-    respostas_raiz = topico.respostas.filter(pai__isnull=True).order_by('-data_postagem')
+    topico = get_object_or_404(Topico, slug=slug, status='APROVADO')
+    respostas_raiz = topico.respostas.filter(pai__isnull=True, status='APROVADO').order_by('-data_postagem')
     
     if request.method == 'POST':
         conteudo = request.POST.get('conteudo')

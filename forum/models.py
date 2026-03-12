@@ -10,11 +10,18 @@ class Categoria(models.Model):
         return self.nome
 
 class Topico(models.Model):
+    STATUS_CHOICES = [
+        ('PENDENTE', 'Pendente'),
+        ('APROVADO', 'Aprovado'),
+        ('REJEITADO', 'Rejeitado')
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='APROVADO')
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
     titulo = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='topicos')
     outra_categoria = models.CharField(max_length=100, blank=True, null=True, help_text="Se selecionou 'Outro', especifique aqui.")
-    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    autor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='topicos')
     conteudo = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
     ativa = models.BooleanField(default=True)
@@ -29,6 +36,13 @@ class Topico(models.Model):
         return self.likes.count() - self.deslikes.count()
 
 class Resposta(models.Model):
+    STATUS_CHOICES = [
+        ('PENDENTE', 'Pendente'),
+        ('APROVADO', 'Aprovado'),
+        ('REJEITADO', 'Rejeitado')
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='APROVADO')
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
     topico = models.ForeignKey(Topico, on_delete=models.CASCADE, related_name='respostas')
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     conteudo = models.TextField()

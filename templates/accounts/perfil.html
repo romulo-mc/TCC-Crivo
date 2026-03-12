@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white position-relative">
+        <div class="bg-primary bg-opacity-10" style="height: 120px;"></div>
+        <div class="card-body px-4 pb-4 pt-0 position-relative">
+            <div class="d-flex flex-column flex-md-row align-items-md-end gap-3" style="margin-top: -50px;">
+                
+                <div class="position-relative">
+                    {% if perfil.foto %}
+                        <img src="{{ perfil.foto.url }}" alt="Foto de perfil de {{ user_perfil.first_name }}" class="rounded-circle border border-4 border-white shadow-sm object-fit-cover" style="width: 120px; height: 120px; background-color: white;">
+                    {% else %}
+                        <div class="rounded-circle border border-4 border-white shadow-sm d-flex align-items-center justify-content-center bg-secondary text-white fw-bold" style="width: 120px; height: 120px; font-size: 3.5rem;">
+                            {{ user_perfil.username|make_list|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="flex-grow-1 mb-2 mb-md-0 mt-3 mt-md-0">
+                    <h1 class="h3 fw-bold mb-0 text-dark">
+                        {{ user_perfil.first_name|default:user_perfil.username }}
+                    </h1>
+                    <p class="text-muted mb-0 fs-5">@{{ perfil.slug }}</p>
+                </div>
+                
+                {% if is_dono %}
+                <div class="mt-3 mt-md-0 pb-2">
+                    <a href="{% url 'complete_profile' %}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Perfil
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <aside class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h2 class="h5 fw-bold border-bottom pb-2 mb-4 text-dark">Sobre</h2>
+                
+                <ul class="list-unstyled d-flex flex-column gap-4 mb-0 text-secondary">
+                    
+                    <li>
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-person-badge fs-4 text-primary"></i>
+                            <div>
+                                <strong class="text-dark d-block mb-1">Identidade</strong>
+                                
+                                {% if is_dono %}
+                                    {% if not perfil.show_genero and not perfil.show_pronomes %}<i class="bi bi-lock-fill text-warning small me-1" title="Privado"></i>{% endif %}
+                                    <span class="badge bg-light text-dark border mb-1">
+                                        {% if perfil.pronomes == 'OUTRO' %}{{ perfil.pronomes_outro }}{% else %}{{ perfil.get_pronomes_display|default:"Pronomes ñ info." }}{% endif %}
+                                    </span>
+                                    <span class="badge bg-light text-dark border">
+                                        {% if perfil.genero == 'OUTRO' %}{{ perfil.genero_outro }}{% else %}{{ perfil.get_genero_display|default:"Gênero ñ info." }}{% endif %}
+                                    </span>
+                                {% else %}
+                                    {% if not perfil.show_genero and not perfil.show_pronomes %}
+                                        <span class="text-muted fst-italic"><i class="bi bi-lock-fill small me-1"></i>Informação Privada</span>
+                                    {% else %}
+                                        {% if perfil.show_pronomes %}
+                                            <span class="badge bg-light text-dark border mb-1">{% if perfil.pronomes == 'OUTRO' %}{{ perfil.pronomes_outro }}{% else %}{{ perfil.get_pronomes_display|default:"Pronomes ñ info." }}{% endif %}</span>
+                                        {% endif %}
+                                        {% if perfil.show_genero %}
+                                            <span class="badge bg-light text-dark border">{% if perfil.genero == 'OUTRO' %}{{ perfil.genero_outro }}{% else %}{{ perfil.get_genero_display|default:"Gênero ñ info." }}{% endif %}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-geo-alt fs-4 text-danger"></i>
+                            <div>
+                                <strong class="text-dark d-block mb-1">Localização</strong>
+                                {% if is_dono %}
+                                    {% if not perfil.show_localizacao %}<i class="bi bi-lock-fill text-warning small me-1" title="Privado"></i>{% endif %}
+                                    {{ perfil.get_estado_display|default:"Estado não info." }}, {{ perfil.get_pais_display|default:"BR" }}
+                                {% elif perfil.show_localizacao %}
+                                    {{ perfil.get_estado_display|default:"Estado não info." }}, {{ perfil.get_pais_display|default:"BR" }}
+                                {% else %}
+                                    <span class="text-muted fst-italic"><i class="bi bi-lock-fill small me-1"></i>Informação Privada</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-quote fs-4 text-success"></i>
+                            <div>
+                                <strong class="text-dark d-block mb-1">Biografia</strong>
+                                {% if is_dono %}
+                                    {% if not perfil.show_bio %}<i class="bi bi-lock-fill text-warning small me-1" title="Privado"></i>{% endif %}
+                                    {{ perfil.bio|default:"Nenhuma biografia adicionada." }}
+                                {% elif perfil.show_bio %}
+                                    {{ perfil.bio|default:"Nenhuma biografia adicionada." }}
+                                {% else %}
+                                    <span class="text-muted fst-italic"><i class="bi bi-lock-fill small me-1"></i>Informação Privada</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-eye fs-4 text-info"></i>
+                            <div>
+                                <strong class="text-dark d-block mb-1">Autodescrição Visual</strong>
+                                {% if is_dono %}
+                                    {% if not perfil.show_descricao_fisica %}<i class="bi bi-lock-fill text-warning small me-1" title="Privado"></i>{% endif %}
+                                    {{ perfil.descricao_fisica|default:"Não fornecida." }}
+                                {% elif perfil.show_descricao_fisica %}
+                                    {{ perfil.descricao_fisica|default:"Não fornecida." }}
+                                {% else %}
+                                    <span class="text-muted fst-italic"><i class="bi bi-lock-fill small me-1"></i>Informação Privada</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </aside>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                
+                <div class="card-header bg-white border-bottom-0 pt-3 px-3">
+                    <ul class="nav nav-tabs card-header-tabs" id="perfilTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold px-4" id="acervo-tab" data-bs-toggle="tab" data-bs-target="#acervo" type="button" role="tab" aria-controls="acervo" aria-selected="true">
+                                <i class="bi bi-collection-play me-2"></i>Acervo ({{ itens_acervo.count }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold px-4" id="topicos-tab" data-bs-toggle="tab" data-bs-target="#topicos" type="button" role="tab" aria-controls="topicos" aria-selected="false">
+                                <i class="bi bi-chat-square-text me-2"></i>Tópicos ({{ topicos.count }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold px-4" id="respostas-tab" data-bs-toggle="tab" data-bs-target="#respostas" type="button" role="tab" aria-controls="respostas" aria-selected="false">
+                                <i class="bi bi-reply me-2"></i>Comentários ({{ respostas.count }})
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body p-4 bg-light" style="min-height: 400px;">
+                    <div class="tab-content" id="perfilTabsContent">
+                        
+                        <div class="tab-pane fade show active" id="acervo" role="tabpanel" aria-labelledby="acervo-tab">
+                            <div class="d-flex flex-column gap-3">
+                                {% for item in itens_acervo %}
+                                <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                                    <div class="card-body d-flex align-items-center gap-3 p-3">
+                                        <div class="bg-secondary bg-opacity-10 rounded-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 80px;">
+                                            {% if item.capa %}<img src="{{ item.capa.url }}" class="w-100 h-100 object-fit-cover rounded-2" alt="Capa">{% else %}<i class="bi bi-film fs-3 text-secondary"></i>{% endif %}
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h3 class="h6 fw-bold mb-1">
+                                                {% if item.status == 'ATIVO' %}<a href="{% url 'detalhe_item' item.id %}" class="text-dark text-decoration-none">{{ item.titulo }}</a>{% else %}<span class="text-dark">{{ item.titulo }}</span>{% endif %}
+                                            </h3>
+                                            <div class="d-flex gap-2 align-items-center small">
+                                                <span class="badge bg-light text-secondary border">{{ item.get_tipo_display }}</span>
+                                                {% if is_dono %}
+                                                    {% if item.status == 'PENDENTE' %}<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Em Moderação</span>
+                                                    {% elif item.status == 'REJEITADO' %}<span class="badge bg-danger text-white"><i class="bi bi-x-circle me-1"></i>Negado</span>
+                                                    {% else %}<span class="badge bg-success text-white"><i class="bi bi-check-circle me-1"></i>Aprovado</span>{% endif %}
+                                                {% endif %}
+                                            </div>
+                                            {% if is_dono and item.status == 'REJEITADO' and item.motivo_rejeicao %}
+                                                <div class="mt-2 p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2"></i><p>Nenhuma obra cadastrada.</p></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="topicos" role="tabpanel" aria-labelledby="topicos-tab">
+                            <div class="list-group list-group-flush rounded-3 shadow-sm gap-2">
+                                {% for topico in topicos %}
+                                <div class="list-group-item p-3 border-0 rounded-3 shadow-sm mb-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-info text-dark small">{{ topico.categoria.nome }}</span>
+                                        {% if is_dono %}
+                                            {% if topico.status == 'REJEITADO' %}<span class="badge bg-danger text-white"><i class="bi bi-x-circle me-1"></i>Ocultado pela Moderação</span>
+                                            {% elif topico.status == 'PENDENTE' %}<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Em Análise</span>{% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <h3 class="h6 fw-bold mb-1">
+                                        {% if topico.status == 'APROVADO' %}<a href="{% url 'detalhe_topico' topico.slug %}" class="text-dark text-decoration-none">{{ topico.titulo }}</a>{% else %}<span class="text-dark">{{ topico.titulo }}</span>{% endif %}
+                                    </h3>
+                                    <p class="mb-2 text-muted small text-truncate">{{ topico.conteudo }}</p>
+                                    {% if is_dono and topico.status == 'REJEITADO' and topico.motivo_rejeicao %}
+                                        <div class="p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ topico.motivo_rejeicao }}</div>
+                                    {% endif %}
+                                </div>
+                                {% empty %}
+                                <div class="text-center py-5 text-muted"><i class="bi bi-chat-square text-muted fs-1 d-block mb-2"></i><p>Nenhum tópico criado.</p></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="respostas" role="tabpanel" aria-labelledby="respostas-tab">
+                            <div class="d-flex flex-column gap-3">
+                                {% for resposta in respostas %}
+                                <div class="card border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div class="small text-muted">
+                                                Respondeu em: <a href="{% url 'detalhe_topico' resposta.topico.slug %}" class="fw-bold text-decoration-none">{{ resposta.topico.titulo }}</a>
+                                            </div>
+                                            {% if is_dono %}
+                                                {% if resposta.status == 'REJEITADO' %}<span class="badge bg-danger text-white small">Ocultado</span>
+                                                {% elif resposta.status == 'PENDENTE' %}<span class="badge bg-warning text-dark small">Em Análise</span>{% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <p class="mb-1 text-dark">"{{ resposta.conteudo|truncatechars:200 }}"</p>
+                                        <small class="text-muted"><i class="bi bi-calendar-event me-1"></i>{{ resposta.data_postagem|date:"d/m/Y H:i" }}</small>
+                                        
+                                        {% if is_dono and resposta.status == 'REJEITADO' and resposta.motivo_rejeicao %}
+                                            <div class="mt-2 p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ resposta.motivo_rejeicao }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center py-5 text-muted"><i class="bi bi-reply fs-1 d-block mb-2"></i><p>Nenhum comentário postado.</p></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

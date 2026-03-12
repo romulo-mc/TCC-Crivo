@@ -4,3 +4,11 @@ __pycache__/
 db.sqlite3
 .env
 .DS_Store
+perfil/
+media/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+limpa_migrations.py

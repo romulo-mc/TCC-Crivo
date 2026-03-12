@@ -76,20 +76,43 @@
                     {% endif %}
                 </a>
 
-                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" aria-labelledby="userDropdown">
                     {% if user.is_authenticated %}
-                        <li><h6 class="dropdown-header">Olá, {{ user.first_name|default:user.username }}</h6></li>
-                        <li><a class="dropdown-item" href="#">Meu Perfil</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header fs-6">Olá, {{ user.first_name|default:user.username }}</h6></li>
+                        
                         <li>
-                            <form action="{% url 'logout' %}" method="post">
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'perfil_usuario' user.profile.slug %}">
+                                <i class="bi bi-person-circle text-primary fs-5" aria-hidden="true"></i> Meu Perfil
+                            </a>
+                        </li>
+                        
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'complete_profile' %}">
+                                <i class="bi bi-gear text-secondary fs-5" aria-hidden="true"></i> Configurações
+                            </a>
+                        </li>
+                        
+                        <li><hr class="dropdown-divider my-1"></li>
+                        
+                        <li>
+                            <form action="{% url 'logout' %}" method="post" class="m-0">
                                 {% csrf_token %}
-                                <button type="submit" class="dropdown-item text-danger">Sair</button>
+                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2">
+                                    <i class="bi bi-box-arrow-right fs-5" aria-hidden="true"></i> Sair
+                                </button>
                             </form>
                         </li>
                     {% else %}
-                        <li><a class="dropdown-item" href="{% url 'login' %}">Entrar</a></li>
-                        <li><a class="dropdown-item" href="{% url 'signup' %}">Cadastrar</a></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'login' %}">
+                                <i class="bi bi-box-arrow-in-right text-primary fs-5"></i> Entrar
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'signup' %}">
+                                <i class="bi bi-person-plus text-success fs-5"></i> Cadastrar
+                            </a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>

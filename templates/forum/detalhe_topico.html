@@ -13,7 +13,29 @@
             <header class="mb-3">
                 <span class="badge bg-info text-dark mb-2">{{ topico.categoria.nome }}</span>
                 <h1 class="fw-bold h2">{{ topico.titulo }}</h1>
-                <p class="text-muted small">Postado por {{ topico.autor.username }} em {{ topico.data_criacao|date:"d/m/Y H:i" }}</p>
+                <div class="text-muted small d-flex align-items-center gap-2 mb-3">
+                    <span>Postado por</span>
+                    
+                    {% if topico.autor %}
+                        {% if not topico.autor.is_active %}
+                            <span class="text-secondary"><del>{{ topico.autor.username }}</del></span>
+                            <span class="badge bg-dark rounded-pill" style="font-size: 0.7em;">Banido</span>
+                        {% else %}
+                            <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none d-flex align-items-center gap-1 fw-bold text-primary">
+                                {% if topico.autor.profile.foto %}
+                                    <img src="{{ topico.autor.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover" style="width: 20px; height: 20px;">
+                                {% else %}
+                                    <i class="bi bi-person-circle fs-6"></i>
+                                {% endif %}
+                                @{{ topico.autor.profile.slug }}
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <span class="fst-italic text-secondary badge bg-light border text-dark"><i class="bi bi-person-x me-1"></i>Conta Deletada</span>
+                    {% endif %}
+                    
+                    <span>em {{ topico.data_criacao|date:"d/m/Y H:i" }}</span>
+                </div>
             </header>
             
             <div class="content fs-5 mb-4 text-dark" tabindex="0">
