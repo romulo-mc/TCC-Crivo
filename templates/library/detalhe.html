@@ -3,16 +3,27 @@
 {% block content %}
 <main class="container py-5" id="main-content" tabindex="-1">
     
-    <nav class="mb-4" aria-label="Navegação">
+    <nav class="mb-4 d-flex justify-content-between align-items-center" aria-label="Navegação">
         <a href="{% url 'lista_library' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
             <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Voltar ao Acervo
         </a>
+        
+        {% if request.user == item.usuario_criador or request.user.is_superuser %}
+            <a href="{% url 'editar_item' item.id %}" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
+                <i class="bi bi-pencil-square me-1"></i>Editar Ficha Técnica
+            </a>
+        {% endif %}
     </nav>
 
     <header class="mb-5 border-bottom pb-4">
         <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
-            <span class="badge bg-dark fs-6 rounded-pill px-3">{{ item.get_tipo_display }}</span>
+            <span class="badge bg-dark fs-6 rounded-pill px-3 text-break">{{ item.get_tipo_display }}</span>
             <h1 class="fw-bold text-dark mb-0">{{ item.titulo }}</h1>
+            {% if item.editado %}
+                <span class="fst-italic text-secondary small mt-1" title="Ficha atualizada em {{ item.data_atualizacao|date:'d/m/Y H:i' }}">
+                    <i class="bi bi-pencil"></i> (Editado)
+                </span>
+            {% endif %}
         </div>
         {% if item.titulo_original %}
             <p class="text-muted fs-5 mb-0 fst-italic">Título Original: {{ item.titulo_original }}</p>
@@ -33,7 +44,6 @@
                 
                 <div class="card-body p-4 bg-white">
                     <h2 id="ficha-tecnica" class="h5 fw-bold border-bottom pb-2 mb-3 text-primary">Ficha Técnica</h2>
-                    
                     <ul class="list-unstyled mb-0 d-flex flex-column gap-2 text-secondary">
                         <li><strong class="text-dark">Lançamento:</strong> {{ item.ano_lancamento|default:"N/A" }}</li>
                         <li><strong class="text-dark">País:</strong> {{ item.pais_origem|default:"N/A" }}</li>
@@ -82,7 +92,7 @@
             
             <section class="mb-5" aria-labelledby="sinopse-obra">
                 <h2 id="sinopse-obra" class="h4 fw-bold text-dark mb-3">Sinopse</h2>
-                <div class="fs-6 text-secondary lh-lg" tabindex="0">
+                <div class="fs-6 text-secondary lh-lg text-break" tabindex="0">
                     {{ item.sinopse|linebreaks|default:"Sinopse não cadastrada." }}
                 </div>
             </section>
@@ -103,20 +113,20 @@
 
                 <div class="mb-4">
                     <h3 class="h6 fw-bold text-dark text-uppercase opacity-75 mb-2">Descrição pelo Cadastrador</h3>
-                    <p class="text-dark bg-light p-3 rounded-3 fst-italic">"{{ item.descricao_representacao }}"</p>
+                    <p class="text-dark bg-light p-3 rounded-3 fst-italic text-break">"{{ item.descricao_representacao }}"</p>
                 </div>
 
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="p-3 bg-success-subtle rounded-3 h-100">
                             <h3 class="h6 fw-bold text-success mb-2"><i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>Pontos Positivos</h3>
-                            <p class="mb-0 text-dark small">{{ item.pontos_positivos|default:"Nenhum ponto listado." }}</p>
+                            <p class="mb-0 text-dark small text-break">{{ item.pontos_positivos|default:"Nenhum ponto listado." }}</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="p-3 bg-warning-subtle rounded-3 h-100">
                             <h3 class="h6 fw-bold text-warning-emphasis mb-2"><i class="bi bi-exclamation-circle-fill me-2" aria-hidden="true"></i>Pontos Problemáticos</h3>
-                            <p class="mb-0 text-dark small">{{ item.pontos_problematicos|default:"Nenhum ponto listado." }}</p>
+                            <p class="mb-0 text-dark small text-break">{{ item.pontos_problematicos|default:"Nenhum ponto listado." }}</p>
                         </div>
                     </div>
                 </div>
@@ -130,29 +140,65 @@
                     </span>
                 </div>
 
-                {% if review_autor %}
-                <div class="card border border-primary-subtle shadow-sm rounded-4 mb-4 bg-primary bg-opacity-10">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-person-circle fs-3 text-primary" aria-hidden="true"></i>
-                                <div>
-                                    <h3 class="h6 fw-bold text-dark mb-0">@{{ review_autor.user.username }} <span class="badge bg-primary ms-2 small">Autor do Cadastro</span></h3>
-                                    <small class="text-muted">{{ review_autor.criado_em|date:"d M, Y" }}</small>
+                <div class="d-flex flex-column gap-3 mb-5">
+                    {% for review in reviews %}
+                        <div class="card border border-light shadow-sm rounded-4 {% if review.user == item.usuario_criador %}bg-primary bg-opacity-10 border-primary-subtle{% endif %}">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                        {% if not review.user.is_active %}
+                                            <span class="text-secondary"><del>@{{ review.user.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
+                                        {% else %}
+                                            <a href="{% url 'perfil_usuario' review.user.profile.slug %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-2">
+                                                {% if review.user.profile.foto %}
+                                                    <img src="{{ review.user.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-white" style="width: 28px; height: 28px;">
+                                                {% else %}
+                                                    <i class="bi bi-person-circle fs-5"></i>
+                                                {% endif %}
+                                                @{{ review.user.profile.slug }}
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if review.user == item.usuario_criador %}
+                                            <span class="badge bg-primary small">Autor do Cadastro</span>
+                                        {% endif %}
+
+                                        <small class="text-muted ms-1">&bull; {{ review.criado_em|date:"d M, Y" }}</small>
+                                        
+                                        {% if review.editado %}
+                                            <small class="fst-italic text-secondary ms-1"><i class="bi bi-pencil"></i> (Editado)</small>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if request.user == review.user %}
+                                        <a href="{% url 'editar_review' review.id %}" class="btn btn-sm btn-link text-secondary p-0 text-decoration-none" title="Editar Avaliação">
+                                            <i class="bi bi-pencil-square fs-5"></i>
+                                        </a>
+                                    {% endif %}
                                 </div>
+                                
+                                <div class="d-flex gap-2 mb-3 mt-2">
+                                    <span class="badge bg-light text-dark border">Geral: <i class="bi bi-star-fill text-warning"></i> {{ review.nota_geral }}</span>
+                                    <span class="badge bg-light text-dark border">Representatividade: <i class="bi bi-star-fill text-primary"></i> {{ review.nota_representatividade }}</span>
+                                    <span class="badge bg-light text-dark border">Crítica: <i class="bi bi-star-fill text-danger"></i> {{ review.nota_critica }}</span>
+                                </div>
+
+                                {% if review.comentario_justificativa %}
+                                    <p class="text-dark mb-0 fs-6 text-break" style="line-height: 1.6;">"{{ review.comentario_justificativa|linebreaksbr }}"</p>
+                                {% endif %}
                             </div>
                         </div>
-                        <p class="text-dark mb-0">"{{ review_autor.comentario_justificativa }}"</p>
-                    </div>
+                    {% empty %}
+                        <p class="text-muted fst-italic">Ainda não há avaliações da comunidade. Seja o primeiro!</p>
+                    {% endfor %}
                 </div>
-                {% endif %}
 
                 {% if user.is_authenticated %}
                     {% if not ja_avaliou %}
-                    <div class="card border-0 shadow-sm rounded-4 bg-white mt-5">
+                    <div class="card border-0 shadow-sm rounded-4 bg-white border-top border-4 border-warning">
                         <div class="card-header bg-light border-bottom-0 pt-4 px-4 rounded-top-4">
                             <h3 class="h5 fw-bold text-dark mb-0">Deixe sua avaliação</h3>
-                            <p class="text-muted small">Ajude a comunidade dando suas notas (a justificativa é exclusiva do autor da postagem).</p>
+                            <p class="text-muted small">Ajude a comunidade compartilhando o que você achou.</p>
                         </div>
                         <div class="card-body px-4 pb-4">
                             <form method="post">
@@ -170,15 +216,20 @@
                                         <label for="id_nota_critica" class="fw-bold mb-1 text-warning-emphasis">Qualidade Crítica</label>
                                         {{ form.nota_critica }}
                                     </div>
+                                    <div class="col-12 mt-2">
+                                        <label for="id_comentario_justificativa" class="fw-bold mb-1">Justificativa (Opcional)</label>
+                                        {{ form.comentario_justificativa }}
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold w-100">Confirmar Notas</button>
+                                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold w-100 shadow-sm">Confirmar Notas e Comentário</button>
                             </form>
                         </div>
                     </div>
                     {% else %}
                     <div class="alert alert-success mt-4 rounded-4 shadow-sm border-0 text-center" role="alert">
                         <i class="bi bi-check-circle-fill fs-4 d-block mb-2"></i>
-                        <span class="fw-bold">Obrigado!</span> Você já avaliou esta obra. Sua nota faz parte da média.
+                        <span class="fw-bold">Obrigado!</span> Você já avaliou esta obra. Sua nota faz parte da média! <br>
+                        <small class="text-muted">Deseja mudar de ideia? Use o ícone de lápis na sua avaliação acima.</small>
                     </div>
                     {% endif %}
                 {% endif %}
@@ -191,5 +242,7 @@
 <style>
     .focus-ring-custom:focus-within { outline: 3px solid #4A90E2; outline-offset: 4px; }
     .lh-lg { line-height: 1.8 !important; }
+    .hover-lift { transition: transform 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); }
 </style>
 {% endblock %}

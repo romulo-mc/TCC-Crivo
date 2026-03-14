@@ -43,41 +43,6 @@ class Gatilho(models.Model):
 class LibraryItem(TimeStampedModel):
     STATUS_CHOICES = [('PENDENTE', 'Pendente'), ('ATIVO', 'Aprovado'), ('REJEITADO', 'Rejeitado')]
     TIPO_CHOICES = [('FILME', 'Filme'), ('SERIE', 'Série'), ('LIVRO', 'Livro'), ('MUSICA', 'Música'), ('PODCAST', 'Podcast'), ('ARTIGO', 'Artigo')]
-
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
-    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
-    usuario_criador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='itens_cadastrados')
-    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
-    
-    titulo = models.CharField(max_length=200, verbose_name="Título")
-    ano_lancamento = models.PositiveIntegerField(null=True, blank=True)
-    pais_origem = models.CharField(max_length=100, blank=True)
-    idioma = models.CharField(max_length=50, blank=True)
-    classificacao_indicativa = models.CharField(max_length=20, blank=True)
-    capa = models.ImageField(upload_to='library/covers/', blank=True, null=True)
-    link_acesso = models.URLField(blank=True, null=True)
-
-    titulo_original = models.CharField(max_length=200, blank=True)
-    sinopse = models.TextField(blank=True)
-    duracao = models.CharField(max_length=50, blank=True)
-    genero = models.CharField(max_length=100, blank=True)
-    diretor_autor_host = models.CharField(max_length=200, blank=True, verbose_name="Diretor / Autor / Artista / Host")
-    distribuidora_editora = models.CharField(max_length=100, blank=True)
-    plataforma = models.CharField(max_length=200, blank=True)
-    numero_temporadas_paginas = models.PositiveIntegerField(null=True, blank=True)
-    isbn_doi = models.CharField(max_length=100, blank=True)
-    album = models.CharField(max_length=200, blank=True)
-    
-    elenco_principal = models.TextField(blank=True)
-    tem_personagem_pcd = models.BooleanField(default=False)
-    ator_pcd_interpreta = models.BooleanField(default=False)
-    
-    condicoes = models.ManyToManyField('Condicao', blank=True, related_name='itens')
-    gatilhos = models.ManyToManyField('Gatilho', blank=True, related_name='itens')
-    
-    condicao_outra = models.CharField(max_length=200, blank=True)
-    gatilho_outro = models.CharField(max_length=200, blank=True)
-    
     TIPO_REP_CHOICES = [
         ('PROTAGONISMO', 'Protagonismo'), ('COADJUVANTE', 'Coadjuvante com Arco Próprio'),
         ('MULETA', 'Personagem "Muleta" (Token)'), ('ALIVIO', 'Alívio Cômico'),
@@ -89,15 +54,42 @@ class LibraryItem(TimeStampedModel):
         ('ASSISTENCIALISTA', 'Assistencialista / Paternalista'), ('OUTRO', 'Outro (Especificar)')
     ]
     
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
+    usuario_criador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='itens_cadastrados')
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    titulo = models.CharField(max_length=200, verbose_name="Título")
+    ano_lancamento = models.PositiveIntegerField(null=True, blank=True)
+    pais_origem = models.CharField(max_length=100, blank=True)
+    idioma = models.CharField(max_length=50, blank=True)
+    classificacao_indicativa = models.CharField(max_length=20, blank=True)
+    capa = models.ImageField(upload_to='library/covers/', blank=True, null=True)
+    link_acesso = models.URLField(blank=True, null=True)
+    titulo_original = models.CharField(max_length=200, blank=True)
+    sinopse = models.TextField(blank=True)
+    duracao = models.CharField(max_length=50, blank=True)
+    genero = models.CharField(max_length=100, blank=True)
+    diretor_autor_host = models.CharField(max_length=200, blank=True, verbose_name="Diretor / Autor / Artista / Host")
+    distribuidora_editora = models.CharField(max_length=100, blank=True)
+    plataforma = models.CharField(max_length=200, blank=True)
+    numero_temporadas_paginas = models.PositiveIntegerField(null=True, blank=True)
+    isbn_doi = models.CharField(max_length=100, blank=True)
+    album = models.CharField(max_length=200, blank=True)
+    elenco_principal = models.TextField(blank=True)
+    tem_personagem_pcd = models.BooleanField(default=False)
+    ator_pcd_interpreta = models.BooleanField(default=False)
+    condicoes = models.ManyToManyField('Condicao', blank=True, related_name='itens')
+    gatilhos = models.ManyToManyField('Gatilho', blank=True, related_name='itens')
+    condicao_outra = models.CharField(max_length=200, blank=True)
+    gatilho_outro = models.CharField(max_length=200, blank=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
+    editado = models.BooleanField(default=False)
     tipo_representacao = models.CharField(max_length=50, choices=TIPO_REP_CHOICES, blank=True) 
     tipo_representacao_outro = models.CharField(max_length=100, blank=True)
-    
     abordagem = models.CharField(max_length=50, choices=ABORDAGEM_CHOICES, blank=True) 
     abordagem_outro = models.CharField(max_length=100, blank=True)
-    
     descricao_representacao = models.TextField(blank=True)
     analise_critica = models.TextField(blank=True) 
-    
     COMBATE_REFORCA = [('COMBATE', 'Combate o capacitismo'), ('REFORCA', 'Reforça o capacitismo'), ('MISTO', 'Misto'), ('NEUTRO', 'Neutro')]
     combate_ou_reforca = models.CharField(max_length=20, choices=COMBATE_REFORCA, blank=True)
     pontos_positivos = models.TextField(blank=True)
@@ -120,12 +112,12 @@ class Review(TimeStampedModel):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(LibraryItem, on_delete=models.CASCADE, related_name='reviews')
-    
     nota_geral = models.PositiveIntegerField(choices=RATING_CHOICES)
     nota_representatividade = models.PositiveIntegerField(choices=RATING_CHOICES)
     nota_critica = models.PositiveIntegerField(choices=RATING_CHOICES)
-    
     comentario_justificativa = models.TextField(blank=True, verbose_name="Justificativa das notas")
+    data_atualizacao = models.DateTimeField(auto_now=True)
+    editado = models.BooleanField(default=False)    
 
     class Meta:
         unique_together = ('user', 'item')
