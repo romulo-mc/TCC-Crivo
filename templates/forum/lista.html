@@ -67,7 +67,7 @@
                                         <del class="text-secondary">{{ topico.autor.username }}</del>
                                         <span class="badge bg-dark" style="font-size: 0.65em;">Banido</span>
                                     {% else %}
-                                        <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none fw-semibold text-primary">
+                                        <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none fw-semibold text-primary position-relative" style="z-index: 2;">
                                             @{{ topico.autor.profile.slug }}
                                         </a>
                                     {% endif %}

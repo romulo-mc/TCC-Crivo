@@ -9,7 +9,14 @@
         <div aria-live="polite" class="fs-5 text-secondary">
             <p class="mb-1">
                 Buscando por: <strong class="text-dark">"{{ query }}"</strong> 
-                em <span class="badge bg-secondary text-white">{% if escopo == 'geral' %}Todo o site{% elif escopo == 'forum' %}Fórum{% else %}Acervo{% endif %}</span>
+                em <span class="badge bg-secondary text-white">
+                    {% if escopo == 'geral' %}Todo o site
+                    {% elif escopo == 'forum' %}Fórum
+                    {% elif escopo == 'library' %}Acervo
+                    {% elif escopo == 'usuarios' %}Pessoas
+                    {% elif escopo == 'recursos' %}Recursos Educativos
+                    {% endif %}
+                </span>
             </p>
             <p class="fw-bold text-dark mb-0">
                 Total encontrado: {{ total }} resultado(s).
@@ -24,19 +31,72 @@
             </div>
             <h2 class="h3 fw-bold text-dark">Nenhum resultado encontrado</h2>
             <p class="text-muted fs-5 px-3">Tente usar palavras diferentes, sinônimos ou altere o filtro de pesquisa na barra superior.</p>
-            <a href="{% url 'lista_forum' %}" class="btn btn-primary rounded-pill px-5 py-2 mt-3 fw-bold shadow-sm">
-                Voltar ao Fórum
-            </a>
+            
+            {% if escopo == 'recursos' %}
+                <div class="alert alert-warning d-inline-block mt-2">
+                    <i class="bi bi-cone-striped me-2"></i>A área de Recursos Educativos ainda está em construção!
+                </div>
+            {% endif %}
+            
+            <div class="mt-4">
+                <a href="{% url 'lista_forum' %}" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
+                    Voltar ao Fórum
+                </a>
+            </div>
         </div>
     {% else %}
         <div class="row g-5">
             
+            {% if resultados_usuarios %}
+            <section class="col-12" aria-labelledby="heading-usuarios">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-people-fill fs-3 text-info me-3" aria-hidden="true"></i>
+                    <h2 id="heading-usuarios" class="h3 fw-bold mb-0">
+                        Pessoas 
+                        <span class="badge bg-info-subtle text-info ms-2 rounded-pill fs-6">{{ resultados_usuarios|length }} <span class="visually-hidden">pessoas encontradas</span></span>
+                    </h2>
+                </div>
+                
+                <div class="row g-4">
+                    {% for p in resultados_usuarios %}
+                    <article class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm hover-lift bg-white rounded-4 text-center position-relative">
+                            <div class="card-body p-4">
+                                <div class="mb-3">
+                                    {% if p.profile.foto %}
+                                        <img src="{{ p.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-2 border-white" style="width: 80px; height: 80px;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-light d-inline-flex justify-content-center align-items-center text-primary fw-bold shadow-sm border border-2 border-white" style="width: 80px; height: 80px; font-size: 2rem;">
+                                            {{ p.username|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <h3 class="h6 fw-bold mb-1">
+                                    <a href="{% url 'perfil_usuario' p.profile.slug %}" class="text-dark text-decoration-none stretched-link">
+                                        {{ p.first_name|default:p.username }}
+                                    </a>
+                                </h3>
+                                <p class="small text-muted mb-2">@{{ p.profile.slug }}</p>
+                                
+                                {% if p.profile.bio and p.profile.show_bio %}
+                                    <p class="text-secondary small mb-0" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                        {{ p.profile.bio }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
             {% if resultados_library %}
             <section class="col-12" aria-labelledby="heading-library">
                 <div class="d-flex align-items-center mb-4">
                     <i class="bi bi-collection-play-fill fs-3 text-success me-3" aria-hidden="true"></i>
                     <h2 id="heading-library" class="h3 fw-bold mb-0">
-                        Recursos no Acervo 
+                        Obras no Acervo 
                         <span class="badge bg-success-subtle text-success ms-2 rounded-pill fs-6">{{ resultados_library|length }} <span class="visually-hidden">itens encontrados</span></span>
                     </h2>
                 </div>
@@ -117,8 +177,13 @@
                                     <span aria-hidden="true">{{ topico.total_votos }}</span>
                                 </span>
                                 
-                                <span class="text-muted small ms-auto">
-                                    <span class="visually-hidden">Autor: </span>@{{ topico.autor.username }}
+                                <span class="text-muted small ms-auto z-2 position-relative">
+                                    <span class="visually-hidden">Autor: </span>
+                                    {% if topico.autor %}
+                                        <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none text-muted">@{{ topico.autor.profile.slug }}</a>
+                                    {% else %}
+                                        Conta Deletada
+                                    {% endif %}
                                 </span>
                             </div>
                         </div>
@@ -128,8 +193,35 @@
             </section>
             {% endif %}
 
+            {% if resultados_recursos %}
+            <section class="col-12" aria-labelledby="heading-recursos">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-journal-bookmark-fill fs-3 text-warning me-3" aria-hidden="true"></i>
+                    <h2 id="heading-recursos" class="h3 fw-bold mb-0">
+                        Recursos Educativos 
+                        <span class="badge bg-warning-subtle text-warning ms-2 rounded-pill fs-6">{{ resultados_recursos|length }} <span class="visually-hidden">recursos encontrados</span></span>
+                    </h2>
+                </div>
+                
+                <div class="row g-4">
+                    {% for recurso in resultados_recursos %}
+                        {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
         </div>
     {% endif %}
 
 </main>
+
+<style>
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+</style>
 {% endblock %}

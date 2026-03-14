@@ -1,9 +1,32 @@
-<div class="mb-3 {% if node.pai %}ms-4 border-start ps-3{% endif %}" 
-     style="border-left: 2px solid #dee2e6 !important;"> <div class="card border shadow-sm p-3" role="article" aria-label="Comentário de {{ node.autor.username }}">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div class="small">
-                <span class="fw-bold text-primary">@{{ node.autor.username }}</span>
-                <time class="text-muted ms-2">{{ node.data_postagem|date:"d M, H:i" }}</time>
+<div class="mb-3 {% if node.pai %}ms-4 border-start ps-3{% endif %}" style="border-left: 2px solid #dee2e6 !important;"> 
+    <div class="card border shadow-sm p-3 rounded-4" role="article" aria-label="Comentário de {{ node.autor.username|default:'Conta Deletada' }}">
+        
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="small d-flex align-items-center flex-wrap gap-1">
+                {% if node.autor %}
+                    {% if not node.autor.is_active %}
+                        <span class="text-secondary"><del>@{{ node.autor.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
+                    {% else %}
+                        <a href="{% url 'perfil_usuario' node.autor.profile.slug %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-1">
+                            {% if node.autor.profile.foto %}
+                                <img src="{{ node.autor.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover" style="width: 20px; height: 20px;">
+                            {% else %}
+                                <i class="bi bi-person-circle"></i>
+                            {% endif %}
+                            @{{ node.autor.profile.slug }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <span class="fst-italic text-secondary"><i class="bi bi-person-x me-1"></i>Conta Deletada</span>
+                {% endif %}
+
+                <time class="text-muted ms-1">&bull; {{ node.data_postagem|date:"d M, H:i" }}</time>
+                
+                {% if node.editado %}
+                    <span class="fst-italic text-secondary ms-1" style="font-size: 0.85em;" title="Atualizado em {{ node.data_atualizacao|date:'d/m/Y H:i' }}">
+                        <i class="bi bi-pencil"></i> (Editado)
+                    </span>
+                {% endif %}
             </div>
             
             <div class="d-flex align-items-center gap-2" role="group" aria-label="Votação do comentário">
@@ -25,15 +48,30 @@
             </div>
         </div>
         
-        <div class="text-secondary mb-2" tabindex="0">
+        {% if request.user.is_superuser and node.editado and node.conteudo_original %}
+            <div class="alert alert-warning py-2 px-3 small mb-2 border-warning border-opacity-50 rounded-3">
+                <div class="fw-bold text-warning-emphasis mb-1"><i class="bi bi-shield-lock-fill"></i> Original (Visão de Admin):</div>
+                <div class="text-dark opacity-75 fst-italic">{{ node.conteudo_original|linebreaksbr }}</div>
+            </div>
+        {% endif %}
+
+        <div class="text-dark mb-2" tabindex="0">
             {{ node.conteudo|linebreaks }}
         </div>
         
-        <button class="btn btn-sm btn-link p-0 text-decoration-none text-muted fw-bold" 
-                onclick="responderA({{ node.id }}, '{{ node.autor.username }}')"
-                aria-label="Responder ao comentário de {{ node.autor.username }}">
-            <i class="bi bi-reply me-1"></i>Responder
-        </button>
+        <div class="d-flex align-items-center gap-3 mt-1 border-top pt-2">
+            <button class="btn btn-sm btn-link p-0 text-decoration-none text-muted fw-bold" 
+                    onclick="responderA({{ node.id }}, '{% if node.autor %}{{ node.autor.username }}{% else %}Usuário{% endif %}')"
+                    aria-label="Responder ao comentário">
+                <i class="bi bi-reply me-1"></i>Responder
+            </button>
+            
+            {% if request.user == node.autor %}
+                <a href="{% url 'editar_resposta' node.id %}" class="btn btn-sm btn-link p-0 text-decoration-none text-secondary fw-bold" aria-label="Editar comentário">
+                    <i class="bi bi-pencil-square me-1"></i>Editar
+                </a>
+            {% endif %}
+        </div>
     </div>
 
     {% for filha in node.filhas.all %}

@@ -27,6 +27,9 @@ class Topico(models.Model):
     ativa = models.BooleanField(default=True)
     likes = models.ManyToManyField(User, related_name='topico_likes', blank=True)
     deslikes = models.ManyToManyField(User, related_name='topico_deslikes', blank=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
+    editado = models.BooleanField(default=False)
+    conteudo_original = models.TextField(blank=True, null=True, help_text="Visível apenas para admins")
 
     def __str__(self):
         return self.titulo

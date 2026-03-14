@@ -3,23 +3,28 @@
 {% block content %}
 <main class="container py-4" id="main-content">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h1 class="fw-bold mb-4">Iniciar Discussão</h1>
+        <div class="col-md-8 col-lg-7">
+            <h1 class="fw-bold mb-4 text-primary">
+                {% if editando %}Editar Discussão{% else %}Iniciar Discussão{% endif %}
+            </h1>
             
-            <form method="post" class="card shadow-sm p-4 border-0">
+            <form method="post" class="card shadow-sm p-4 border-0 rounded-4">
                 {% csrf_token %}
                     {% for field in form %}
-                        <div class="mb-3 {% if field.name == 'outra_categoria' %}d-none{% endif %}" id="div_{{ field.id_for_label }}">
+                        <div class="mb-4 {% if field.name == 'outra_categoria' %}d-none{% endif %}" id="div_{{ field.id_for_label }}">
+                            <label class="fw-bold mb-2 text-dark">{{ field.label }}</label>
                             {{ field }}
                             {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
+                                <div class="form-text small text-muted mt-1">{{ field.help_text }}</div>
                             {% endif %}
-                            {{ field.errors }}
+                            <div class="text-danger small mt-1">{{ field.errors }}</div>
                         </div>
                     {% endfor %}
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">Publicar Discussão</button>
-                    <a href="{% url 'lista_forum' %}" class="btn btn-light rounded-pill px-4">Cancelar</a>
+                <div class="d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                        {% if editando %}Salvar Alterações{% else %}Publicar Discussão{% endif %}
+                    </button>
+                    <a href="{% if editando %}{% url 'detalhe_topico' topico.slug %}{% else %}{% url 'lista_forum' %}{% endif %}" class="btn btn-light rounded-pill px-4 fw-bold">Cancelar</a>
                 </div>
             </form>
         </div>

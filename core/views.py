@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from library.models import LibraryItem
 from django.db.models import Q
+from django.contrib.auth.models import User
 from forum.models import Topico
 from library.models import LibraryItem
 
@@ -13,6 +13,8 @@ def pesquisa_geral(request):
     
     resultados_forum = []
     resultados_library = []
+    resultados_usuarios = []
+    resultados_recursos = []
 
     if query:
         if escopo in ['geral', 'forum']:
@@ -29,12 +31,27 @@ def pesquisa_geral(request):
                 status='ATIVO'
             ).select_related('usuario_criador').order_by('-id')
 
+        if escopo in ['geral', 'usuarios']:
+            resultados_usuarios = User.objects.filter(
+                Q(username__icontains=query) |
+                Q(first_name__icontains=query) |
+                Q(profile__slug__icontains=query),
+                is_active=True
+            ).select_related('profile').order_by('username')
+            
+        if escopo in ['geral', 'recursos']:
+            resultados_recursos = []
+
+    total = len(resultados_forum) + len(resultados_library) + len(resultados_usuarios) + len(resultados_recursos)
+
     contexto = {
         'query': query,
         'escopo': escopo,
         'resultados_forum': resultados_forum,
         'resultados_library': resultados_library,
-        'total': len(resultados_forum) + len(resultados_library)
+        'resultados_usuarios': resultados_usuarios,
+        'resultados_recursos': resultados_recursos,
+        'total': total
     }
     
     return render(request, 'core/pesquisa.html', contexto)

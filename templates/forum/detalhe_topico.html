@@ -11,21 +11,31 @@
     <article class="card border-0 shadow-sm mb-5" role="main">
         <div class="card-body p-4">
             <header class="mb-3">
-                <span class="badge bg-info text-dark mb-2">{{ topico.categoria.nome }}</span>
-                <h1 class="fw-bold h2">{{ topico.titulo }}</h1>
-                <div class="text-muted small d-flex align-items-center gap-2 mb-3">
-                    <span>Postado por</span>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill">{{ topico.categoria.nome }}</span>
                     
+                    {% if request.user == topico.autor %}
+                        <a href="{% url 'editar_topico' topico.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
+                            <i class="bi bi-pencil-square me-1"></i>Editar
+                        </a>
+                    {% endif %}
+                </div>
+
+                <h1 class="fw-bold h2 text-dark">{{ topico.titulo }}</h1>
+                
+                <div class="text-muted small d-flex flex-wrap align-items-center gap-2 mt-3 pb-3 border-bottom">
                     {% if topico.autor %}
                         {% if not topico.autor.is_active %}
                             <span class="text-secondary"><del>{{ topico.autor.username }}</del></span>
-                            <span class="badge bg-dark rounded-pill" style="font-size: 0.7em;">Banido</span>
+                            <span class="badge bg-dark rounded-pill">Banido</span>
                         {% else %}
-                            <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none d-flex align-items-center gap-1 fw-bold text-primary">
+                            <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none d-flex align-items-center gap-2 fw-bold text-primary hover-lift">
                                 {% if topico.autor.profile.foto %}
-                                    <img src="{{ topico.autor.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover" style="width: 20px; height: 20px;">
+                                    <img src="{{ topico.autor.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-white" style="width: 28px; height: 28px;">
                                 {% else %}
-                                    <i class="bi bi-person-circle fs-6"></i>
+                                    <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm border border-white" style="width: 28px; height: 28px; font-size: 0.8rem;">
+                                        {{ topico.autor.username|first|upper }}
+                                    </div>
                                 {% endif %}
                                 @{{ topico.autor.profile.slug }}
                             </a>
@@ -34,11 +44,29 @@
                         <span class="fst-italic text-secondary badge bg-light border text-dark"><i class="bi bi-person-x me-1"></i>Conta Deletada</span>
                     {% endif %}
                     
-                    <span>em {{ topico.data_criacao|date:"d/m/Y H:i" }}</span>
+                    <span class="ms-1"><i class="bi bi-calendar3 me-1"></i>{{ topico.data_criacao|date:"d/m/Y H:i" }}</span>
+                    
+                    {% if topico.editado %}
+                        <span class="fst-italic text-secondary ms-2" title="Atualizado em {{ topico.data_atualizacao|date:'d/m/Y H:i' }}">
+                            <i class="bi bi-pencil me-1"></i>(Editado)
+                        </span>
+                    {% endif %}
                 </div>
             </header>
             
-            <div class="content fs-5 mb-4 text-dark" tabindex="0">
+            {% if request.user.is_superuser and topico.editado and topico.conteudo_original %}
+                <div class="alert alert-warning border-warning border-opacity-50 shadow-sm rounded-4 mb-4">
+                    <div class="d-flex align-items-center gap-2 fw-bold text-warning-emphasis mb-2">
+                        <i class="bi bi-shield-lock-fill fs-5"></i>
+                        <span>Cofre da Moderação: Texto Original</span>
+                    </div>
+                    <div class="small text-dark opacity-75 fst-italic">
+                        {{ topico.conteudo_original|linebreaksbr }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="content fs-5 mb-5 text-dark" style="line-height: 1.7;" tabindex="0">
                 {{ topico.conteudo|linebreaks }}
             </div>
 

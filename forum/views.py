@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.utils.text import slugify
+from django.core.exceptions import PermissionDenied
 from .models import Topico, Resposta, Categoria
 from .forms import TopicoForm
 import uuid
@@ -101,3 +103,46 @@ def votar_resposta(request, id, tipo):
         user_voto = 'deslike'
             
     return JsonResponse({'total': resposta.total_votos, 'user_voto': user_voto})
+
+@login_required
+def editar_topico(request, slug):
+    topico = get_object_or_404(Topico, slug=slug)
+    if topico.autor != request.user and not request.user.is_superuser:
+        raise PermissionDenied
+        
+    if request.method == 'POST':
+        form = TopicoForm(request.POST, instance=topico)
+        if form.is_valid():
+            topico_salvo = form.save(commit=False)
+            if not topico.editado:
+                topico_banco = Topico.objects.get(pk=topico.pk)
+                topico_salvo.conteudo_original = topico_banco.conteudo
+                topico_salvo.editado = True
+                
+            topico_salvo.save()
+            return redirect('detalhe_topico', slug=topico.slug)
+    else:
+        form = TopicoForm(instance=topico)
+        
+    return render(request, 'forum/criar_topico.html', {'form': form, 'editando': True, 'topico': topico})
+
+@login_required
+def editar_resposta(request, id):
+    resposta = get_object_or_404(Resposta, id=id)
+    
+    if resposta.autor != request.user and not request.user.is_superuser:
+        raise PermissionDenied
+        
+    if request.method == 'POST':
+        novo_conteudo = request.POST.get('conteudo')
+        if novo_conteudo:
+            if not resposta.editado:
+                resposta_banco = Resposta.objects.get(pk=resposta.pk)
+                resposta.conteudo_original = resposta_banco.conteudo
+                resposta.editado = True
+                
+            resposta.conteudo = novo_conteudo
+            resposta.save()
+            return redirect('detalhe_topico', slug=resposta.topico.slug)
+
+    return render(request, 'forum/editar_resposta.html', {'resposta': resposta})
