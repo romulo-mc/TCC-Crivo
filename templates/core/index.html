@@ -1,46 +1,133 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<main class="container py-5 text-center d-flex flex-column justify-content-center" style="min-height: 70vh;">
-    
-    <div class="mb-5" aria-hidden="true">
-        <i class="bi bi-puzzle-fill text-primary" style="font-size: 5rem;"></i>
-    </div>
-    
-    <h1 class="display-4 fw-bold text-dark mb-3">Bem-vindo ao Crivo</h1>
-    <p class="lead text-muted mx-auto" style="max-width: 600px;">
-        Uma plataforma colaborativa dedicada a mapear e debater a representatividade PcD e a acessibilidade na cultura e entretenimento.
-    </p>
-
-    {% if not user.is_authenticated %}
-    <div class="d-flex justify-content-center gap-3 mt-4">
-        <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-bold">Entrar</a>
-        <a href="#" class="btn btn-outline-primary btn-lg rounded-pill px-5 fw-bold">Criar Conta</a>
-    </div>
-    
-    {% else %}
-    <div class="row justify-content-center mt-5 g-4">
-        <div class="col-md-5 col-lg-4">
-            <a href="{% url 'lista_library' %}" class="card h-100 border-0 shadow-sm text-decoration-none hover-lift p-4 bg-white rounded-4">
-                <i class="bi bi-collection-play text-success fs-1 mb-3"></i>
-                <h2 class="h4 fw-bold text-dark">Acessar o Acervo</h2>
-                <p class="text-muted small mb-0">Explore filmes, livros e séries anticapacitistas.</p>
-            </a>
+<main id="main-content">
+    <section class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-4 fw-bold text-dark mb-4">Crivo: Vivência e Diálogo <span class="text-primary">Anticapacitista</span></h1>
+                    <p class="lead text-muted mb-5" style="font-size: 1.25rem; line-height: 1.6;">
+                        Uma plataforma colaborativa desenhada para romper o silêncio, mapear representações e fortalecer a rede de apoio e conscientização sobre a deficiência.
+                    </p>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-bold focus-ring-custom">Fazer Parte da Luta</a>
+                    {% endif %}
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="{% static 'img/pcd-azul.png' %}" alt="Ilustração de união da comunidade PcD." class="img-fluid rounded-5 drop-shadow" style="max-height: 380px;">
+                </div>
+            </div>
         </div>
-        <div class="col-md-5 col-lg-4">
-            <a href="{% url 'lista_forum' %}" class="card h-100 border-0 shadow-sm text-decoration-none hover-lift p-4 bg-white rounded-4">
-                <i class="bi bi-chat-square-text text-primary fs-1 mb-3"></i>
-                <h2 class="h4 fw-bold text-dark">Ir para o Fórum</h2>
-                <p class="text-muted small mb-0">Participe das discussões e compartilhe relatos.</p>
-            </a>
-        </div>
-    </div>
-    {% endif %}
+    </section>
 
+    <section class="py-5 bg-light border-top border-bottom">
+        <div class="container py-4">
+            <div class="row align-items-center g-5 flex-row-reverse">
+                <div class="col-lg-7">
+                    <h2 class="h1 fw-bold text-dark mb-4">Desconstruindo o <span class="text-danger">Capacitismo</span></h2>
+                    <p class="text-secondary text-break mb-3 lh-lg">
+                        O capacitismo é a forma estrutural de opressão que reduz a pessoa à sua deficiência, tratando-a como um "fardo" ou uma "inspiração" vazia. Ele se manifesta em ambientes inacessíveis e em atitudes que negam a autonomia do indivíduo.
+                    </p>
+                    <p class="text-secondary text-break lh-lg">
+                        Entender o capacitismo é o primeiro passo para garantir que a acessibilidade seja tratada não como um favor, mas como um <strong>direito humano inegociável</strong>.
+                    </p>
+                </div>
+                <div class="col-lg-5">
+                    <img src="{% static 'img/mulher-cadeira-de-rodas.png' %}" alt="Mulher cadeirante em ambiente profissional." class="img-fluid rounded-5 shadow-sm">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white border-bottom">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <h2 class="h1 fw-bold text-dark mb-4">A Essência do <span class="text-primary">Projeto</span></h2>
+                    <p class="text-secondary text-break lh-lg">
+                        Este site é o resultado de um minucioso Trabalho de Conclusão de Curso que visa unir tecnologia e justiça social. Através da análise crítica no <a href="{% url 'lista_library' %}" class="text-primary fw-bold text-decoration-none">Acervo</a> e da troca horizontal no <a href="{% url 'lista_forum' %}" class="text-primary fw-bold text-decoration-none">Fórum</a>, construímos um repositório vivo de conhecimento, amparado por <a href="#" class="text-primary fw-bold text-decoration-none">Diretrizes Oficiais</a> e vivências reais.
+                    </p>
+                </div>
+                <div class="col-lg-5">
+                    <img src="{% static 'img/crianca-pcd.png' %}" alt="Criança simbolizando neurodiversidade." class="img-fluid rounded-5 shadow-sm">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container py-4 text-center">
+            <h2 class="fw-bold h2 mb-5">Explore a Plataforma</h2>
+            <div class="row justify-content-center g-4">
+                <div class="col-md-4">
+                    <a href="{% url 'lista_forum' %}" class="card h-100 border-0 shadow-sm text-decoration-none hover-lift p-4 bg-white rounded-4 focus-ring-custom">
+                        <span class="display-3 mb-3" aria-hidden="true">💬</span>
+                        <h3 class="h5 fw-bold text-dark">Fórum de Vivência</h3>
+                        <p class="text-muted small mb-0">Espaço seguro para diálogos, compartilhamento de relatos e conexões entre PcDs, profissionais e aliados.</p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'lista_library' %}" class="card h-100 border-0 shadow-sm text-decoration-none hover-lift p-4 bg-white rounded-4 focus-ring-custom">
+                        <span class="display-3 mb-3" aria-hidden="true">🎬</span>
+                        <h3 class="h5 fw-bold text-dark">Acervo Crítico</h3>
+                        <p class="text-muted small mb-0">Catálogo colaborativo para avaliar a representatividade e os estereótipos presentes na mídia e no entretenimento.</p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#" class="card h-100 border-0 shadow-sm text-decoration-none hover-lift p-4 bg-white rounded-4 focus-ring-custom">
+                        <span class="display-3 mb-3" aria-hidden="true">📚</span>
+                        <h3 class="h5 fw-bold text-dark">Recursos Educativos</h3>
+                        <p class="text-muted small mb-0">Acesso centralizado a cartilhas oficiais, legislações e diretrizes fundamentais para o combate ao capacitismo.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 </main>
 
+<footer class="py-4 mt-auto border-top" style="background-color: #f1f3f5;">
+    <div class="container">
+        <div class="row align-items-center g-3">
+            <div class="col-md-4 text-center text-md-start">
+                <a href="https://www.ifbaiano.edu.br/unidades/guanambi/" target="_blank" class="text-decoration-none">
+                    <img src="{% static 'img/if-logo.png' %}" alt="Logo IF Baiano Guanambi" style="max-height: 40px;" class="mb-2">
+                </a>
+                <p class="m-0 text-muted" style="font-size: 0.7rem;">
+                    <strong>IF Baiano Campus Guanambi</strong><br>
+                    Sistemas de Análise e Desenvolvimento
+                </p>
+            </div>
+
+            <div class="col-md-4 text-center">
+                <p class="m-0 text-muted" style="font-size: 0.75rem;">
+                    <strong>Rômulo Martins Cardoso</strong><br>
+                    Trabalho de Conclusão de Curso &copy; 2026
+                </p>
+                <a href="https://github.com/romulo-mc" target="_blank" class="text-dark opacity-50 hover-opacity-100 mt-2 d-inline-block">
+                    <i class="bi bi-github fs-5"></i>
+                </a>
+            </div>
+
+            <div class="col-md-4 text-center text-md-end">
+                <a href="http://www.djangoproject.com/" target="_blank">
+                    <img src="https://www.djangoproject.com/m/img/badges/djangomade124x25.gif" alt="Made with Django." title="Made with Django." style="max-height: 20px;">
+                </a>
+                <p class="m-0 text-muted mt-2" style="font-size: 0.65rem;">Tecnologia em prol da Inclusão</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
 <style>
-    .hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
-    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+    .rounded-5 { border-radius: 1.5rem !important; }
+    .drop-shadow { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.06)); }
+    .hover-lift { transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .hover-lift:hover { transform: translateY(-5px); }
+    .hover-opacity-100:hover { opacity: 1 !important; transition: 0.2s; }
+    .lh-lg { line-height: 1.75 !important; }
+    #main-content { font-size: 0.95rem; }
+    h1 { font-size: 2.5rem !important; }
 </style>
 {% endblock %}
