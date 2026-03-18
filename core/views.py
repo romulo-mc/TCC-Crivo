@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
 from forum.models import Topico
+from .models import Notificacao
 from library.models import LibraryItem
 
 def home(request):
@@ -55,3 +57,28 @@ def pesquisa_geral(request):
     }
     
     return render(request, 'core/pesquisa.html', contexto)
+
+
+@login_required
+def lista_notificacoes(request):
+    notificacoes = Notificacao.objects.filter(destinatario=request.user)
+    return render(request, 'core/notificacoes.html', {'notificacoes': notificacoes})
+
+@login_required
+def marcar_todas_lidas(request):
+    Notificacao.objects.filter(destinatario=request.user, lida=False).update(lida=True)
+    return redirect('lista_notificacoes')
+
+@login_required
+def marcar_lida_e_ir(request, pk):
+    notificacao = get_object_or_404(Notificacao, pk=pk, destinatario=request.user)   
+    notificacao.lida = True
+    notificacao.save()   
+    if notificacao.link and notificacao.link != "#":
+        return redirect(notificacao.link)
+    return redirect('lista_notificacoes')
+
+@login_required
+def limpar_notificacoes(request):
+    Notificacao.objects.filter(destinatario=request.user).delete()
+    return redirect('lista_notificacoes')

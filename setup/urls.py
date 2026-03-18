@@ -27,6 +27,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('library/', include('library.urls')),
     path('forum/', include('forum.urls')),
-    path('pesquisa/', core_views.pesquisa_geral, name='pesquisa_geral'),
-    path('', home, name='home'),
+    path('', include('core.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

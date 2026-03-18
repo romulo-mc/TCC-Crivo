@@ -9,17 +9,7 @@
             {% endif %}
 
             <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" 
-            href="{% if '/forum/' in request.path %}
-                        {% url 'lista_forum' %}
-                    {% elif '/library/' in request.path %}
-                        {% url 'lista_library' %}
-                    {% elif request.session.ultimo_contexto == 'forum' %}
-                        {% url 'lista_forum' %}
-                    {% elif request.session.ultimo_contexto == 'library' %}
-                        {% url 'lista_library' %}
-                    {% else %}
-                        {% url 'home' %}
-                    {% endif %}"
+            href="{% if '/forum/' in request.path %}{% url 'lista_forum' %}{% elif '/library/' in request.path %}{% url 'lista_library' %}{% elif request.session.ultimo_contexto == 'forum' %}{% url 'lista_forum' %}{% elif request.session.ultimo_contexto == 'library' %}{% url 'lista_library' %}{% else %}{% url 'home' %}{% endif %}"
             aria-label="Página Inicial">
                 <i class="bi bi-puzzle-fill" aria-hidden="true"></i> 
                 <span>Crivo</span>
@@ -27,117 +17,98 @@
         </div>
 
         {% if user.is_authenticated %}
-        <form action="{% url 'pesquisa_geral' %}" method="GET" class="d-none d-md-flex mx-auto" style="width: 50%;" role="search">
+        <form action="{% url 'pesquisa_geral' %}" method="GET" class="d-none d-md-flex mx-auto" style="width: 40%;" role="search">
             <input type="hidden" name="origem" value="{{ request.path }}">
             <div class="input-group shadow-sm rounded-pill overflow-hidden">
-                
-                <label for="navbar-search-scope" class="visually-hidden">Onde pesquisar?</label>
-                <select name="escopo" id="navbar-search-scope" class="form-select border-0 text-secondary fw-bold" style="max-width: 130px; background-color: #f8f9fa;">
+                <select name="escopo" id="navbar-search-scope" class="form-select border-0 text-secondary fw-bold" style="max-width: 130px; background-color: #f8f9fa; font-size: 0.85rem;">
                     <option value="geral">Todo o site</option>
                     <option value="forum">Fórum</option>
                     <option value="library">Acervo</option>
                     <option value="usuarios">Pessoas</option>
-                    <option value="recursos">Recursos (Em breve)</option>
                 </select>
-                
-                <label for="navbar-search" class="visually-hidden">Termo de pesquisa</label>
                 <input id="navbar-search" name="q" class="form-control border-0" type="search" placeholder="Pesquisar..." aria-label="Pesquisar no site" required>
-                
-                <button class="btn btn-light border-0 text-primary" type="submit" aria-label="Buscar">
-                    <i class="bi bi-search" aria-hidden="true"></i>
+                <button class="btn btn-light border-0 text-primary" type="submit">
+                    <i class="bi bi-search"></i>
                 </button>
             </div>
         </form>
         {% endif %}
 
         <div class="d-flex align-items-center gap-3 ms-auto">
+            
             <a href="#" class="text-white fs-5" title="Opções de Acessibilidade" aria-label="Abrir painel de acessibilidade">
                 <i class="bi bi-universal-access-circle" aria-hidden="true"></i>
             </a>
-            
+
+            {% if user.is_authenticated %}
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle gap-2" 
-                   id="userDropdown" 
-                   data-bs-toggle="dropdown" 
-                   aria-expanded="false" 
-                   aria-haspopup="true"
-                   aria-label="Menu do usuário">
-                    
-                    {% if user.is_authenticated %}
-                        {% if user.profile.foto %}
-                            <img src="{{ user.profile.foto.url }}" alt="" class="rounded-circle border border-2 border-white" style="width: 32px; height: 32px; object-fit: cover;">
-                        {% else %}
-                            <div class="rounded-circle bg-light d-flex justify-content-center align-items-center text-primary fw-bold" style="width: 32px; height: 32px;" aria-hidden="true">
-                                {{ user.username|first|upper }}
-                            </div>
-                        {% endif %}
-                        <span class="d-none d-lg-inline small fw-bold">{{ user.username }}</span>
-                    {% else %}
-                        <i class="bi bi-person-circle fs-4" aria-hidden="true"></i>
-                        <span class="d-none d-lg-inline small ms-1">Visitante</span>
+                <a href="#" class="text-white fs-5 position-relative" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ notificacoes_nao_lidas_count }} notificações não lidas">
+                        <i class="bi bi-bell"></i>
+                    {% if notificacoes_nao_lidas_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.45em;">
+                            {{ notificacoes_nao_lidas_count }}
+                        </span>
                     {% endif %}
                 </a>
-
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" aria-labelledby="userDropdown">
-                    {% if user.is_authenticated %}
-                        <li><h6 class="dropdown-header fs-6">Olá, {{ user.first_name|default:user.username }}</h6></li>
-                        
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2 p-0" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                    <li class="p-3 border-bottom bg-light rounded-top-3"><h6 class="m-0 fw-bold small">Notificações</h6></li>
+                    {% for n in notificacoes_usuario %}
                         <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'perfil_usuario' user.profile.slug %}">
-                                <i class="bi bi-person-circle text-primary fs-5" aria-hidden="true"></i> Meu Perfil
+                            <a class="dropdown-item p-3 border-bottom d-flex flex-column gap-1 {% if not n.lida %}bg-info bg-opacity-10{% endif %}" href="{% url 'marcar_lida_e_ir' n.pk %}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge {% if n.tipo == 'RESPOSTA' %}bg-primary{% elif n.tipo == 'MODERACAO' %}bg-warning text-dark{% else %}bg-success{% endif %}" style="font-size: 0.65em;">{{ n.get_tipo_display }}</span>
+                                    <small class="text-muted" style="font-size: 0.7rem;">{{ n.criada_em|timesince }}</small>
+                                </div>
+                                <div class="small text-dark text-wrap text-break" style="font-size: 0.85rem;">{{ n.mensagem }}</div>
                             </a>
                         </li>
-                        
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'complete_profile' %}">
-                                <i class="bi bi-gear text-secondary fs-5" aria-hidden="true"></i> Configurações
-                            </a>
-                        </li>
-                        
-                        <li><hr class="dropdown-divider my-1"></li>
-                        
-                        <li>
-                            <form action="{% url 'logout' %}" method="post" class="m-0">
-                                {% csrf_token %}
-                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2">
-                                    <i class="bi bi-box-arrow-right fs-5" aria-hidden="true"></i> Sair
-                                </button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'login' %}">
-                                <i class="bi bi-box-arrow-in-right text-primary fs-5"></i> Entrar
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'signup' %}">
-                                <i class="bi bi-person-plus text-success fs-5"></i> Cadastrar
-                            </a>
-                        </li>
-                    {% endif %}
+                    {% empty %}
+                        <li class="p-4 text-center text-muted small">Nenhuma notificação por aqui.</li>
+                    {% endfor %}
+                    <li class="p-2 d-flex justify-content-between px-3 border-top bg-light rounded-bottom-3">
+                        <a href="{% url 'lista_notificacoes' %}" class="small text-primary fw-bold text-decoration-none">Ver todas</a>
+                        {% if notificacoes_usuario.exists %}
+                        <a href="{% url 'limpar_notificacoes' %}" class="small text-danger fw-bold text-decoration-none" 
+                        onclick="return confirm('Apagar tudo?')">Limpar</a>
+                        {% endif %}
+                    </li>
                 </ul>
             </div>
+
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle gap-2" 
+                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if user.profile.foto %}
+                        <img src="{{ user.profile.foto.url }}" alt="" class="rounded-circle border border-2 border-white" style="width: 32px; height: 32px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center text-primary fw-bold" style="width: 32px; height: 32px;">
+                            {{ user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    <span class="d-none d-lg-inline small fw-bold">{{ user.username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" aria-labelledby="userDropdown">
+                    <li><h6 class="dropdown-header fs-6">Olá, {{ user.first_name|default:user.username }}</h6></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'perfil_usuario' user.profile.slug %}"><i class="bi bi-person-circle text-primary fs-5"></i> Meu Perfil</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'complete_profile' %}"><i class="bi bi-gear text-secondary fs-5"></i> Configurações</a></li>
+                    {% if user.is_staff %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 text-dark fw-bold" href="#"><i class="bi bi-shield-check text-success fs-5"></i> Painel Moderador</a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-danger d-flex align-items-center gap-2 py-2">
+                                <i class="bi bi-box-arrow-right fs-5"></i> Sair
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm rounded-pill px-3 fw-bold">Entrar</a>
+            {% endif %}
         </div>
     </div>
 </nav>
-
-<style>
-    .navbar a:focus, .navbar button:focus {
-        outline: 2px solid white !important;
-        outline-offset: 4px;
-        box-shadow: none !important;
-    }
-    
-    .visually-hidden {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        padding: 0 !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        clip: rect(0,0,0,0) !important;
-        white-space: nowrap !important;
-        border: 0 !important;
-    }
-</style>
