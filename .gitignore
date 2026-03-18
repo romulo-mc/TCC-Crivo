@@ -12,3 +12,4 @@ media/
 *.gif
 *.webp
 limpa_migrations.py
+!core/static/img/
