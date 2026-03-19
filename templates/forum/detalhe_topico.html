@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <main class="container py-4" id="main-content">
     <nav class="mb-4" aria-label="Navegação de retorno">
         <a href="{% url 'lista_forum' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
@@ -21,7 +23,7 @@
                     {% endif %}
                 </div>
 
-                <h1 class="fw-bold h2 text-dark">{{ topico.titulo }}</h1>
+                <h1 class="fw-bold h2 text-dark" id="titulo-topico" tabindex="0">{{ topico.titulo }}</h1>
                 
                 <div class="text-muted small d-flex flex-wrap align-items-center gap-2 mt-3 pb-3 border-bottom">
                     {% if topico.autor %}
@@ -66,8 +68,8 @@
                 </div>
             {% endif %}
 
-            <div class="content fs-5 mb-5 text-dark" style="line-height: 1.7;" tabindex="0">
-                {{ topico.conteudo|linebreaks }}
+            <div class="content fs-5 mb-5 text-dark markdown-render" style="line-height: 1.7;" tabindex="0" aria-label="Conteúdo da discussão">
+                {{ topico.conteudo }}
             </div>
 
             <div class="d-flex gap-3 border-top pt-3">
@@ -115,11 +117,33 @@
             <form method="post" id="form-comentario">
                 {% csrf_token %}
                 <input type="hidden" name="pai_id" id="pai_id_input" value="">
-                <textarea name="conteudo" class="form-control mb-3" rows="4" placeholder="Escreva seu comentário..." required></textarea>
+                <textarea name="conteudo" id="id_conteudo_resposta" class="form-control mb-3" rows="4" placeholder="Escreva seu comentário..." required></textarea>
                 <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow">Publicar</button>
             </form>
         </div>
     </section>
+    
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.markdown-render').forEach(function(el) {
+                el.innerHTML = marked.parse(el.textContent || el.innerText);
+            });
+
+            new EasyMDE({
+                element: document.getElementById('id_conteudo_resposta'),
+                spellChecker: false,
+                status: false,
+                toolbar: ["bold", "italic", "strikethrough", "|", "heading", "quote", "|", "unordered-list", "ordered-list"],
+                placeholder: "Escreva sua resposta de forma respeitosa..."
+            });
+        });
+    </script>
+    <style>
+        .editor-toolbar { border-radius: 12px 12px 0 0; border-color: #dee2e6; opacity: 0.8; }
+        .CodeMirror { border-radius: 0 0 12px 12px; border-color: #dee2e6; min-height: 120px; }
+    </style>
     {% endif %}
 </main>
 

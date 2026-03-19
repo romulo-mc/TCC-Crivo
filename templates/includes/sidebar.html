@@ -43,20 +43,40 @@
 
             {% if '/forum/' in request.path %}
                 <li class="nav-item px-3 mt-3 mb-1">
-                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text" style="letter-spacing: 1px;">Explorar Fórum</span>
+                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text" style="letter-spacing: 1px;">Explorar</span>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center">
-                        <i class="bi bi-stars fs-5" aria-hidden="true"></i> 
-                        <span class="link-text fw-semibold">Novidades</span>
+                    <a href="{% url 'lista_forum' %}?ordem=novos" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.ordem == 'novos' %}bg-light fw-bold{% endif %}">
+                        <i class="bi bi-stars fs-5 text-primary"></i> 
+                        <span class="link-text">Novidades</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center">
-                        <i class="bi bi-fire fs-5" aria-hidden="true"></i> 
-                        <span class="link-text fw-semibold">Em alta</span>
+                    <a href="{% url 'lista_forum' %}?ordem=populares" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.ordem == 'populares' %}bg-light fw-bold{% endif %}">
+                        <i class="bi bi-fire fs-5 text-danger"></i> 
+                        <span class="link-text">Em alta</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'lista_forum' %}?ordem=votos" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.ordem == 'votos' %}bg-light fw-bold{% endif %}">
+                        <i class="bi bi-graph-up-arrow fs-5 text-success"></i> 
+                        <span class="link-text">Melhor Avaliados</span>
+                    </a>
+                </li>
+
+                <hr class="my-2 mx-3 opacity-25">
+
+                <li class="nav-item px-3 mb-1">
+                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text">Categorias</span>
+                </li>
+                {% for cat in categorias %}
+                <li class="nav-item">
+                    <a href="{% url 'lista_forum' %}?categoria={{ cat.slug }}" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.categoria == cat.slug %}bg-primary bg-opacity-10 text-primary fw-bold{% endif %}">
+                        <i class="bi bi-tag small"></i> 
+                        <span class="link-text">{{ cat.nome }}</span>
+                    </a>
+                </li>
+                {% endfor %}
             
             {% elif '/library/' in request.path %}
                 <li class="nav-item px-3 mt-3 mb-1">

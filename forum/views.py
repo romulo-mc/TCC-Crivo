@@ -7,12 +7,42 @@ from .models import Topico, Resposta, Categoria
 from .forms import TopicoForm
 import uuid
 from django.http import JsonResponse
+from django.db.models import Count, Sum
 
 def lista_forum(request):
-    request.session['ultimo_contexto'] = 'forum'
-    topicos = Topico.objects.filter(ativa=True, status='APROVADO').order_by('-data_criacao')
+    request.session['ultimo_contexto'] = 'forum' 
+    topicos = Topico.objects.filter(ativa=True, status='APROVADO')
+    filtro = request.GET.get('ordem')
+    categoria_slug = request.GET.get('categoria')
+    if categoria_slug:
+        topicos = topicos.filter(categoria__slug=categoria_slug)
+    
+    if filtro == 'novos':
+        topicos = topicos.order_by('-data_criacao')
+    elif filtro == 'antigos':
+        topicos = topicos.order_by('data_criacao')
+    elif filtro == 'populares':
+        topicos = topicos.annotate(num_respostas=Count('respostas')).order_by('-num_respostas')
+    elif filtro == 'votos':
+        topicos = topicos.annotate(
+            score=Count('likes') - Count('deslikes')
+        ).order_by('-score')
+    else:
+        topicos = topicos.order_by('-data_criacao')
+
     categorias = Categoria.objects.all()
-    return render(request, 'forum/lista.html', {'topicos': topicos, 'categorias': categorias})
+    
+    categoria_atual_nome = None
+    if categoria_slug:
+        cat_obj = Categoria.objects.filter(slug=categoria_slug).first()
+        if cat_obj:
+            categoria_atual_nome = cat_obj.nome
+
+    return render(request, 'forum/lista.html', {
+        'topicos': topicos, 
+        'categorias': categorias,
+        'categoria_atual_nome': categoria_atual_nome, # Passa o nome pro template
+    })
 
 @login_required
 def detalhe_topico(request, slug):

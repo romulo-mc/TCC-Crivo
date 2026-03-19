@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+
 <main class="container py-4" id="main-content">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-7">
@@ -30,8 +33,20 @@
         </div>
     </div>
 </main>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const textareaConteudo = document.getElementById('id_conteudo');
+        if (textareaConteudo) {
+            new EasyMDE({
+                element: textareaConteudo,
+                spellChecker: false,
+                status: false,
+                placeholder: "Descreva sua vivência detalhadamente aqui...",
+                toolbar: ["bold", "italic", "strikethrough", "|", "heading", "quote", "|", "unordered-list", "ordered-list"]
+            });
+        }
+
         const selectCategoria = document.getElementById('id_categoria');
         const inputOutra = document.getElementById('id_outra_categoria');
         const divOutra = document.getElementById('div_id_outra_categoria');
@@ -59,4 +74,9 @@
         verificarCategoria();
     });
 </script>
+
+<style>
+    .editor-toolbar { border-radius: 12px 12px 0 0; border-color: #dee2e6; opacity: 0.9; }
+    .CodeMirror { border-radius: 0 0 12px 12px; border-color: #dee2e6; min-height: 250px; font-size: 1.1rem;}
+</style>
 {% endblock %}
