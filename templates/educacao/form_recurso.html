@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="fw-bold mb-4 text-primary">
+                {% if editando %}Editar Recurso Educativo{% else %}Novo Recurso Educativo{% endif %}
+            </h1>
+            
+            <form method="post" enctype="multipart/form-data" class="card shadow-sm p-4 border-0 rounded-4 bg-white">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="fw-bold mb-2">{{ form.titulo.label }}</label>
+                    {{ form.titulo }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold mb-2">{{ form.tipo.label }}</label>
+                    {{ form.tipo }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold mb-2">{{ form.descricao.label }}</label>
+                    {{ form.descricao }}
+                </div>
+
+                <div class="mb-3 p-3 bg-light rounded-3 border d-none" id="div_arquivo">
+                    <label class="fw-bold mb-2 text-primary"><i class="bi bi-upload me-2"></i>Upload de Arquivo (Imagem/Vídeo/Áudio/PDF)</label>
+                    {{ form.arquivo }}
+                </div>
+
+                <div class="mb-3 p-3 bg-light rounded-3 border d-none" id="div_capa">
+                    <label class="fw-bold mb-2 text-success"><i class="bi bi-image me-2"></i>Upload de Capa Ilustrativa</label>
+                    {{ form.capa }}
+                </div>
+
+                <div class="mb-3 p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 d-none" id="div_incorporacao">
+                    <label class="fw-bold mb-2 text-danger"><i class="bi bi-youtube me-2"></i>Código do YouTube / Spotify</label>
+                    {{ form.codigo_incorporacao }}
+                    <small class="text-muted d-block mt-1">Cole o código do iframe fornecido pela plataforma.</small>
+                </div>
+
+                <div class="mb-3 p-3 bg-info bg-opacity-10 border border-info border-opacity-25 rounded-3 d-none" id="div_link">
+                    <label class="fw-bold mb-2 text-info-emphasis"><i class="bi bi-link-45deg me-2"></i>URL Externa</label>
+                    {{ form.url_externa }}
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                        {% if editando %}Salvar Alterações{% else %}Publicar Recurso{% endif %}
+                    </button>
+                    <a href="{% url 'lista_recursos' %}" class="btn btn-light rounded-pill px-4 fw-bold">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectTipo = document.getElementById('id_tipo');
+        const divArquivo = document.getElementById('div_arquivo');
+        const divCapa = document.getElementById('div_capa');
+        const divIncorp = document.getElementById('div_incorporacao');
+        const divLink = document.getElementById('div_link');
+
+        function atualizarCampos() {
+            divArquivo.classList.add('d-none');
+            divCapa.classList.add('d-none');
+            divIncorp.classList.add('d-none');
+            divLink.classList.add('d-none');
+
+            const tipo = selectTipo.value;
+
+            if (tipo === 'IMAGEM' || tipo === 'VIDEO' || tipo === 'PDF') {
+                divArquivo.classList.remove('d-none');
+            } else if (tipo === 'AUDIO') {
+                divArquivo.classList.remove('d-none');
+                divCapa.classList.remove('d-none');
+            } else if (tipo === 'EMBED') {
+                divIncorp.classList.remove('d-none');
+            } else if (tipo === 'LINK') {
+                divLink.classList.remove('d-none');
+                divCapa.classList.remove('d-none');
+            }
+        }
+
+        selectTipo.addEventListener('change', atualizarCampos);
+        atualizarCampos();
+    });
+</script>
+{% endblock %}
