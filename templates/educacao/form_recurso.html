@@ -27,19 +27,43 @@
                 </div>
 
                 <div class="mb-3 p-3 bg-light rounded-3 border d-none" id="div_arquivo">
-                    <label class="fw-bold mb-2 text-primary"><i class="bi bi-upload me-2"></i>Upload de Arquivo (Imagem/Vídeo/Áudio/PDF)</label>
-                    {{ form.arquivo }}
+                    <label class="fw-bold mb-2 text-primary"><i class="bi bi-upload me-2"></i>Upload de Arquivo Principal</label>
+                    <div id="dropzone_arquivo" tabindex="0" class="border rounded-3 p-4 text-center bg-white shadow-sm hover-dropzone" style="border: 2px dashed #0d6efd !important; cursor: pointer; outline: none; transition: 0.2s;">
+                        <i class="bi bi-cloud-arrow-up display-4 text-primary mb-2" id="icone_arquivo"></i>
+                        <p class="mb-1 fw-bold text-dark file-name-text" id="texto_arquivo">Clique, arraste o arquivo ou dê Ctrl+V aqui</p>
+                        <p class="small text-muted mb-0">PDF, Imagem, Áudio ou Vídeo</p>
+                    </div>
+                    <div class="d-none">{{ form.arquivo }}</div>
                 </div>
 
                 <div class="mb-3 p-3 bg-light rounded-3 border d-none" id="div_capa">
-                    <label class="fw-bold mb-2 text-success"><i class="bi bi-image me-2"></i>Upload de Capa Ilustrativa</label>
-                    {{ form.capa }}
+                    <label class="fw-bold mb-2 text-success"><i class="bi bi-image me-2"></i>Upload de Capa Ilustrativa (Opcional)</label>
+                    <div id="dropzone_capa" tabindex="0" class="border rounded-3 p-4 text-center bg-white shadow-sm hover-dropzone" style="border: 2px dashed #198754 !important; cursor: pointer; outline: none; transition: 0.2s;">
+                        <i class="bi bi-card-image display-4 text-success mb-2" id="icone_capa"></i>
+                        <p class="mb-1 fw-bold text-dark file-name-text" id="texto_capa">Clique, arraste a imagem ou dê Ctrl+V aqui</p>
+                    </div>
+                    <div class="d-none">{{ form.capa }}</div>
+                </div>
+
+                <div class="mb-3 p-3 rounded-3 border border-dark border-opacity-25 d-none shadow-sm" style="background-color: #f8f9fa;" id="div_alt_text">
+                    <label class="fw-bold mb-2 text-dark"><i class="bi bi-universal-access-circle me-2 text-primary"></i>Texto Alternativo (Acessibilidade)</label>
+                    {{ form.alt_text }}
+                    <small class="text-muted d-block mt-2">
+                        Descreva o que tem na imagem em detalhes para que o leitor de tela (NVDA/TalkBack) possa ler para usuários com deficiência visual.
+                    </small>
+                </div>
+
+                <div class="mb-3 p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-3 d-none" id="div_pdf_check">
+                    <div class="form-check form-switch">
+                        {{ form.baixar_pdf }}
+                        <label class="form-check-label fw-bold ms-2" for="{{ form.baixar_pdf.id_for_label }}">{{ form.baixar_pdf.label }}</label>
+                    </div>
+                    <small class="text-muted d-block mt-1">{{ form.baixar_pdf.help_text }}</small>
                 </div>
 
                 <div class="mb-3 p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 d-none" id="div_incorporacao">
                     <label class="fw-bold mb-2 text-danger"><i class="bi bi-youtube me-2"></i>Código do YouTube / Spotify</label>
                     {{ form.codigo_incorporacao }}
-                    <small class="text-muted d-block mt-1">Cole o código do iframe fornecido pela plataforma.</small>
                 </div>
 
                 <div class="mb-3 p-3 bg-info bg-opacity-10 border border-info border-opacity-25 rounded-3 d-none" id="div_link">
@@ -58,37 +82,100 @@
     </div>
 </main>
 
+<style>
+    .hover-dropzone:focus, .hover-dropzone:hover { background-color: #f8f9fa !important; transform: scale(1.02); }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        
         const selectTipo = document.getElementById('id_tipo');
         const divArquivo = document.getElementById('div_arquivo');
         const divCapa = document.getElementById('div_capa');
+        const divAltText = document.getElementById('div_alt_text');
         const divIncorp = document.getElementById('div_incorporacao');
         const divLink = document.getElementById('div_link');
+        const divPdfCheck = document.getElementById('div_pdf_check');
 
         function atualizarCampos() {
             divArquivo.classList.add('d-none');
             divCapa.classList.add('d-none');
+            divAltText.classList.add('d-none');
             divIncorp.classList.add('d-none');
             divLink.classList.add('d-none');
+            divPdfCheck.classList.add('d-none');
 
             const tipo = selectTipo.value;
 
-            if (tipo === 'IMAGEM' || tipo === 'VIDEO' || tipo === 'PDF') {
+            if (tipo === 'IMAGEM') {
+                divArquivo.classList.remove('d-none');
+                divAltText.classList.remove('d-none');
+            } else if (tipo === 'VIDEO') {
                 divArquivo.classList.remove('d-none');
             } else if (tipo === 'AUDIO') {
                 divArquivo.classList.remove('d-none');
                 divCapa.classList.remove('d-none');
+                divAltText.classList.remove('d-none');
+            } else if (tipo === 'PDF') {
+                divArquivo.classList.remove('d-none');
+                divCapa.classList.remove('d-none');
+                divAltText.classList.remove('d-none');
+                divPdfCheck.classList.remove('d-none');
             } else if (tipo === 'EMBED') {
                 divIncorp.classList.remove('d-none');
             } else if (tipo === 'LINK') {
                 divLink.classList.remove('d-none');
                 divCapa.classList.remove('d-none');
+                divAltText.classList.remove('d-none');
             }
         }
-
         selectTipo.addEventListener('change', atualizarCampos);
-        atualizarCampos();
+        atualizarCampos(); 
+
+        function setupDropzone(dropzoneId, inputId, textId, iconId, successColor) {
+            const dropzone = document.getElementById(dropzoneId);
+            const fileInput = document.getElementById(inputId);
+            const texto = document.getElementById(textId);
+            const icone = document.getElementById(iconId);
+
+            if (!dropzone || !fileInput) return;
+
+            dropzone.addEventListener('click', () => fileInput.click());
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+            });
+            function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => dropzone.style.backgroundColor = '#e9ecef', false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => dropzone.style.backgroundColor = '#fff', false);
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                let files = e.dataTransfer.files;
+                if(files.length) { fileInput.files = files; atualizarVisual(files[0].name); }
+            });
+
+            dropzone.addEventListener('paste', (e) => {
+                let files = e.clipboardData.files;
+                if(files.length) { fileInput.files = files; atualizarVisual(files[0].name); }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if(this.files.length) { atualizarVisual(this.files[0].name); }
+            });
+
+            function atualizarVisual(nomeArquivo) {
+                texto.innerHTML = `<span class="text-${successColor}">Arquivo pronto: <strong>${nomeArquivo}</strong></span>`;
+                icone.className = `bi bi-check-circle-fill display-4 text-${successColor} mb-2`;
+                dropzone.style.borderColor = `var(--bs-${successColor}) !important`;
+            }
+        }
+        setupDropzone('dropzone_arquivo', 'id_arquivo', 'texto_arquivo', 'icone_arquivo', 'primary');
+        setupDropzone('dropzone_capa', 'id_capa', 'texto_capa', 'icone_capa', 'success');
     });
 </script>
 {% endblock %}

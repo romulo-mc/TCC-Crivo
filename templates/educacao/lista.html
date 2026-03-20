@@ -57,50 +57,83 @@
                     {% endif %}
                 </div>
 
-                <div class="bg-light border-top border-bottom position-relative d-flex justify-content-center align-items-center" style="min-height: 200px;">
+                {% if post.arquivo or post.capa or post.codigo_incorporacao %}
+                <div class="bg-light border-top border-bottom position-relative d-flex justify-content-center align-items-center overflow-hidden" style="min-height: 250px; max-height: 500px;">
+                    
                     {% if post.tipo == 'IMAGEM' and post.arquivo %}
-                        <img src="{{ post.arquivo.url }}" class="img-fluid w-100" style="object-fit: contain; max-height: 600px;">
+                        <img src="{{ post.arquivo.url }}" class="img-fluid" style="object-fit: contain; max-height: 500px; width: 100%;" 
+                             alt="{% if post.alt_text %}{{ post.alt_text }}{% else %}Imagem de {{ post.titulo }}{% endif %}">
+                    
                     {% elif post.tipo == 'VIDEO' and post.arquivo %}
-                        <video controls class="w-100" style="max-height: 600px;">
+                        <video controls class="w-100" style="max-height: 500px;" aria-label="Vídeo sobre {{ post.titulo }}">
                             <source src="{{ post.arquivo.url }}" type="video/mp4">
                         </video>
+                    
                     {% elif post.tipo == 'AUDIO' and post.arquivo %}
                         {% if post.capa %}
-                            <img src="{{ post.capa.url }}" class="img-fluid w-100 opacity-50" style="object-fit: cover; height: 300px;">
+                            <img src="{{ post.capa.url }}" class="img-fluid opacity-50" style="object-fit: contain; max-height: 500px; width: 100%;"
+                                 alt="{% if post.alt_text %}{{ post.alt_text }}{% else %}Capa do áudio {{ post.titulo }}{% endif %}">
                         {% endif %}
                         <div class="position-absolute w-100 p-4 bottom-0">
-                            <audio controls class="w-100 shadow-sm"><source src="{{ post.arquivo.url }}"></audio>
+                            <audio controls class="w-100 shadow-sm" aria-label="Áudio sobre {{ post.titulo }}"><source src="{{ post.arquivo.url }}"></audio>
                         </div>
-                    {% elif post.tipo == 'PDF' and post.arquivo %}
-                        <embed src="{{ post.arquivo.url }}" type="application/pdf" width="100%" height="500px" />
+                    
+                    {% elif post.tipo == 'PDF' %}
+                        {% if post.capa %}
+                            <img src="{{ post.capa.url }}" class="img-fluid" style="object-fit: contain; max-height: 500px; width: 100%;" 
+                                 alt="{% if post.alt_text %}{{ post.alt_text }}{% else %}Capa do documento {{ post.titulo }}{% endif %}">
+                        {% else %}
+                            <div class="w-100 d-flex flex-column justify-content-center align-items-center py-5">
+                                <i class="bi bi-file-earmark-pdf-fill text-danger opacity-75" style="font-size: 5rem;" aria-hidden="true"></i>
+                                <span class="text-muted fw-bold mt-2">Documento PDF</span>
+                            </div>
+                        {% endif %}
+                    
                     {% elif post.tipo == 'EMBED' and post.codigo_incorporacao %}
-                        <div class="ratio ratio-16x9 w-100">{{ post.codigo_incorporacao|safe }}</div>
+                        <div class="ratio ratio-16x9 w-100" aria-label="Conteúdo incorporado: {{ post.titulo }}">
+                            {{ post.codigo_incorporacao|safe }}
+                        </div>
+                    
                     {% elif post.tipo == 'LINK' %}
                         {% if post.capa %}
-                            <img src="{{ post.capa.url }}" class="img-fluid w-100" style="object-fit: cover; max-height: 400px;">
+                            <img src="{{ post.capa.url }}" class="img-fluid" style="object-fit: contain; max-height: 400px; width: 100%;"
+                                 alt="{% if post.alt_text %}{{ post.alt_text }}{% else %}Capa ilustrativa do link {{ post.titulo }}{% endif %}">
+                        {% else %}
+                             <div class="p-5 text-center text-primary opacity-50 w-100" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                <i class="bi bi-link-45deg" style="font-size: 5rem;" aria-hidden="true"></i>
+                            </div>
                         {% endif %}
                     {% endif %}
                 </div>
+                {% endif %}
 
                 <div class="card-body p-4">
                     <h3 class="h5 fw-bold mb-3 text-dark">{{ post.titulo }}</h3>
                     <div class="card-text text-dark mb-4" style="font-size: 1rem; line-height: 1.6;">
                         {{ post.descricao|linebreaksbr }}
                     </div>
+
                     {% if post.tipo == 'LINK' and post.url_externa %}
                         <a href="{{ post.url_externa }}" target="_blank" class="btn btn-primary rounded-pill fw-bold px-4 w-100 shadow-sm py-2">
-                            <i class="bi bi-box-arrow-up-right me-2"></i> Acessar Conteúdo
+                            <i class="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i> Acessar Conteúdo
                         </a>
+                    
                     {% elif post.tipo == 'PDF' and post.arquivo %}
-                        <a href="{{ post.arquivo.url }}" download class="btn btn-outline-primary rounded-pill fw-bold px-4 py-2 w-100">
-                            <i class="bi bi-download me-2"></i> Baixar PDF
-                        </a>
+                        {% if post.baixar_pdf %}
+                            <a href="{{ post.arquivo.url }}" download class="btn btn-outline-danger rounded-pill fw-bold px-4 py-2 w-100">
+                                <i class="bi bi-download me-2" aria-hidden="true"></i> Baixar PDF
+                            </a>
+                        {% else %}
+                            <a href="{{ post.arquivo.url }}" target="_blank" class="btn btn-danger rounded-pill fw-bold px-4 py-2 w-100 shadow-sm">
+                                <i class="bi bi-file-earmark-pdf me-2" aria-hidden="true"></i> Acessar PDF
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </article>
             {% empty %}
             <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
-                <i class="bi bi-journal-x display-1 text-muted opacity-25 mb-3"></i>
+                <i class="bi bi-journal-x display-1 text-muted opacity-25 mb-3" aria-hidden="true"></i>
                 <h3 class="h5 fw-bold text-dark">Feed vazio.</h3>
             </div>
             {% endfor %}

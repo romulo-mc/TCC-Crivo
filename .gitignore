@@ -11,5 +11,12 @@ media/
 *.png
 *.gif
 *.webp
+*.pdf
+*.mp4
+*.mp3
+*.avi
+*.mkv
+*.wav
+*.webm
 limpa_migrations.py
 !core/static/img/
