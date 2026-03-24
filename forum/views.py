@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.utils.text import slugify
 from django.core.exceptions import PermissionDenied
 from .models import Topico, Resposta, Categoria
-from .forms import TopicoForm
+from .forms import TopicoForm, RespostaForm
 import uuid
 from django.http import JsonResponse
 from django.db.models import Count, Sum
@@ -41,31 +41,44 @@ def lista_forum(request):
     return render(request, 'forum/lista.html', {
         'topicos': topicos, 
         'categorias': categorias,
-        'categoria_atual_nome': categoria_atual_nome, # Passa o nome pro template
+        'categoria_atual_nome': categoria_atual_nome,
     })
 
 @login_required
 def detalhe_topico(request, slug):
-    topico = get_object_or_404(Topico, slug=slug, status='APROVADO')
-    respostas_raiz = topico.respostas.filter(pai__isnull=True, status='APROVADO').order_by('-data_postagem')
+    request.session['ultimo_contexto'] = 'forum'
+    topico = get_object_or_404(Topico, slug=slug, ativa=True)
+    
+    if topico.status != 'APROVADO' and request.user != topico.autor and not request.user.is_staff:
+        raise PermissionDenied("Este tópico ainda não foi aprovado pela moderação.")
+
+    if request.user.is_staff:
+        respostas = topico.respostas.filter(pai__isnull=True).order_by('data_postagem')
+    else:
+        respostas = topico.respostas.filter(pai__isnull=True, status='APROVADO').order_by('data_postagem')
     
     if request.method == 'POST':
-        conteudo = request.POST.get('conteudo')
-        pai_id = request.POST.get('pai_id')
-        
-        if conteudo:
-            pai_obj = Resposta.objects.get(id=pai_id) if pai_id else None
-            Resposta.objects.create(
-                topico=topico,
-                autor=request.user,
-                conteudo=conteudo,
-                pai=pai_obj
-            )
-            return redirect('detalhe_topico', slug=slug)
+        form = RespostaForm(request.POST)
+        if form.is_valid():
+            resposta = form.save(commit=False)
+            resposta.autor = request.user
+            resposta.topico = topico
+            
+            pai_id = request.POST.get('pai_id')
+            if pai_id:
+                pai = get_object_or_404(Resposta, id=pai_id)
+                resposta.pai = pai
+            
+            resposta.save()
+            messages.success(request, 'Resposta enviada com sucesso!')
+            return redirect('detalhe_topico', slug=topico.slug)
+    else:
+        form = RespostaForm()
 
     return render(request, 'forum/detalhe_topico.html', {
         'topico': topico,
-        'respostas': respostas_raiz
+        'respostas': respostas,
+        'form': form
     })
     
 @login_required

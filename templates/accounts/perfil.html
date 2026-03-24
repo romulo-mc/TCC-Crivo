@@ -36,15 +36,21 @@
                 
                 <div class="mt-3 mt-md-0 pb-2 d-flex flex-wrap gap-2">
                     {% if is_dono %}
-                    <a href="{% url 'complete_profile' %}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">
+                    <a href="{% url 'editar_perfil' %}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">
                         <i class="bi bi-pencil-square me-2"></i>Editar Perfil
                     </a>
                     {% endif %}
 
                     {% if request.user.is_staff and not is_dono %}
-                    <a href="#" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" onclick="return confirm('Tem certeza que deseja BANIR este usuário? Essa ação removerá o acesso dele ao sistema.');">
-                        <i class="bi bi-slash-circle me-2"></i>Banir Usuário
-                    </a>
+                        {% if user_perfil.is_active %}
+                            <button type="button" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#banModal">
+                                <i class="bi bi-slash-circle me-2"></i>Banir Usuário
+                            </button>
+                        {% else %}
+                            <a href="{% url 'toggle_ban_usuario' user_perfil.id %}" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" onclick="return confirm('Desbanir este usuário?');">
+                                <i class="bi bi-check-circle me-2"></i>Desbanir Usuário
+                            </a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -186,11 +192,14 @@
                                                 {% if is_dono %}
                                                     {% if item.status == 'PENDENTE' %}<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Em Moderação</span>
                                                     {% elif item.status == 'REJEITADO' %}<span class="badge bg-danger text-white"><i class="bi bi-x-circle me-1"></i>Negado</span>
+                                                    {% elif item.status == 'OCULTO' %}<span class="badge bg-dark text-white"><i class="bi bi-eye-slash-fill me-1"></i>Ocultado (Moderado)</span>
                                                     {% else %}<span class="badge bg-success text-white"><i class="bi bi-check-circle me-1"></i>Aprovado</span>{% endif %}
                                                 {% endif %}
                                             </div>
-                                            {% if is_dono and item.status == 'REJEITADO' and item.motivo_rejeicao %}
-                                                <div class="mt-2 p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</div>
+                                            {% if is_dono and item.motivo_rejeicao %}
+                                                {% if item.status == 'REJEITADO' or item.status == 'OCULTO' %}
+                                                    <div class="mt-2 p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</div>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
                                     </div>
@@ -208,7 +217,8 @@
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="badge bg-info text-dark small">{{ topico.categoria.nome }}</span>
                                         {% if is_dono %}
-                                            {% if topico.status == 'REJEITADO' %}<span class="badge bg-danger text-white"><i class="bi bi-x-circle me-1"></i>Ocultado pela Moderação</span>
+                                            {% if topico.status == 'REJEITADO' %}<span class="badge bg-danger text-white"><i class="bi bi-x-circle me-1"></i>Rejeitado</span>
+                                            {% elif topico.status == 'OCULTO' %}<span class="badge bg-dark text-white"><i class="bi bi-eye-slash-fill me-1"></i>Removido (Moderação)</span>
                                             {% elif topico.status == 'PENDENTE' %}<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Em Análise</span>{% endif %}
                                         {% endif %}
                                     </div>
@@ -216,8 +226,11 @@
                                         {% if topico.status == 'APROVADO' %}<a href="{% url 'detalhe_topico' topico.slug %}" class="text-dark text-decoration-none">{{ topico.titulo }}</a>{% else %}<span class="text-dark">{{ topico.titulo }}</span>{% endif %}
                                     </h3>
                                     <p class="mb-2 text-muted small text-truncate">{{ topico.conteudo }}</p>
-                                    {% if is_dono and topico.status == 'REJEITADO' and topico.motivo_rejeicao %}
-                                        <div class="p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ topico.motivo_rejeicao }}</div>
+                                    
+                                    {% if is_dono and topico.motivo_rejeicao %}
+                                        {% if topico.status == 'REJEITADO' or topico.status == 'OCULTO' %}
+                                            <div class="p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ topico.motivo_rejeicao }}</div>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                                 {% empty %}
@@ -236,15 +249,18 @@
                                                 Respondeu em: <a href="{% url 'detalhe_topico' resposta.topico.slug %}" class="fw-bold text-decoration-none">{{ resposta.topico.titulo }}</a>
                                             </div>
                                             {% if is_dono %}
-                                                {% if resposta.status == 'REJEITADO' %}<span class="badge bg-danger text-white small">Ocultado</span>
+                                                {% if resposta.status == 'REJEITADO' %}<span class="badge bg-danger text-white small">Negado</span>
+                                                {% elif resposta.status == 'OCULTO' %}<span class="badge bg-dark text-white small">Removido (Moderação)</span>
                                                 {% elif resposta.status == 'PENDENTE' %}<span class="badge bg-warning text-dark small">Em Análise</span>{% endif %}
                                             {% endif %}
                                         </div>
                                         <p class="mb-1 text-dark">"{{ resposta.conteudo|truncatechars:200 }}"</p>
                                         <small class="text-muted"><i class="bi bi-calendar-event me-1"></i>{{ resposta.data_postagem|date:"d/m/Y H:i" }}</small>
                                         
-                                        {% if is_dono and resposta.status == 'REJEITADO' and resposta.motivo_rejeicao %}
-                                            <div class="mt-2 p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ resposta.motivo_rejeicao }}</div>
+                                        {% if is_dono and resposta.motivo_rejeicao %}
+                                            {% if resposta.status == 'REJEITADO' or resposta.status == 'OCULTO' %}
+                                                <div class="mt-2 p-2 bg-danger-subtle text-danger rounded-2 small border border-danger-subtle"><strong>Motivo:</strong> {{ resposta.motivo_rejeicao }}</div>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -260,4 +276,26 @@
         </div>
     </div>
 </main>
+
+{% if request.user.is_staff %}
+<div class="modal fade" id="banModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'toggle_ban_usuario' user_perfil.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
+            {% csrf_token %}
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-slash-circle me-2"></i>Banir Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-muted mb-3">O usuário perderá o acesso à plataforma imediatamente. Informe o motivo (este motivo aparecerá para ele caso tente fazer login):</p>
+                <textarea name="motivo_banimento" class="form-control bg-body-tertiary border-secondary border-opacity-25 rounded-3" rows="4" required placeholder="Ex: Linguagem ofensiva reiterada, spam..."></textarea>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger btn-3d px-4">Confirmar Banimento</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

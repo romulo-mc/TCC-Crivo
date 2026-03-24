@@ -8,11 +8,19 @@
             <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Voltar ao Acervo
         </a>
         
-        {% if request.user == item.usuario_criador or request.user.is_superuser %}
-            <a href="{% url 'editar_item' item.id %}" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
-                <i class="bi bi-pencil-square me-1"></i>Editar Ficha Técnica
-            </a>
-        {% endif %}
+        <div class="d-flex gap-2">
+            {% if request.user == item.usuario_criador or request.user.is_superuser %}
+                <a href="{% url 'editar_item' item.id %}" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
+                    <i class="bi bi-pencil-square me-1"></i>Editar Ficha Técnica
+                </a>
+            {% endif %}
+            
+            {% if request.user.is_staff %}
+                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#rejectModal-acervo-inline">
+                    <i class="bi bi-shield-exclamation me-1"></i>Moderar Obra
+                </button>
+            {% endif %}
+        </div>
     </nav>
 
     <header class="mb-5 border-bottom pb-4">
@@ -184,9 +192,9 @@
                                         {% endif %}
                                         
                                         {% if request.user.is_staff %}
-                                            <a href="#" class="btn btn-sm btn-link text-danger p-0 text-decoration-none ms-3" title="Moderar Avaliação">
+                                            <button type="button" class="btn btn-sm btn-link text-danger p-0 text-decoration-none ms-3" data-bs-toggle="modal" data-bs-target="#rejectModal-review-inline-{{ review.id }}" title="Moderar Avaliação">
                                                 <i class="bi bi-shield-lock-fill fs-5"></i>
-                                            </a>
+                                            </button>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -252,6 +260,51 @@
         </div>
     </div>
 </main>
+
+{% if request.user.is_staff %}
+<div class="modal fade" id="rejectModal-acervo-inline" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'rejeitar_item' 'acervo' item.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
+            {% csrf_token %}
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Ocultar Obra do Acervo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-muted mb-3">Ao confirmar, a obra e todas as suas reviews serão ocultadas da comunidade. Dê o motivo:</p>
+                <textarea name="motivo_rejeicao" class="form-control bg-body-tertiary border-secondary border-opacity-25 rounded-3" rows="4" required placeholder="Ex: Dados inconsistentes, duplicado..."></textarea>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">Confirmar Ocultação</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% for review in reviews %}
+<div class="modal fade" id="rejectModal-review-inline-{{ review.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'rejeitar_item' 'review' review.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
+            {% csrf_token %}
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Ocultar Avaliação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-muted mb-3">Ao ocultar esta avaliação, ela não fará mais parte da média da obra. Informe o motivo para o autor:</p>
+                <textarea name="motivo_rejeicao" class="form-control bg-body-tertiary border-secondary border-opacity-25 rounded-3" rows="4" required placeholder="Ex: Linguagem ofensiva, spoiler sem aviso..."></textarea>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">Confirmar Ocultação</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{% endif %}
 
 <style>
     .focus-ring-custom:focus-within { outline: 3px solid #4A90E2; outline-offset: 4px; }

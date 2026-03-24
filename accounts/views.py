@@ -10,6 +10,9 @@ from .forms import CadastroBasicoForm, UserProfileForm, AcessibilidadeForm, Conf
 from .models import UserProfile
 from library.models import LibraryItem
 from forum.models import Topico, Resposta
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
 
 class SignupView(CreateView):
     form_class = CadastroBasicoForm
@@ -26,33 +29,56 @@ class CompleteProfileView(UpdateView):
     template_name = 'registration/complete_profile.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated and not request.session.get('registro_usuario_id'):
+        if request.user.is_authenticated:
+            return redirect('home')
+        if not request.session.get('registro_usuario_id'):
             return redirect('signup')
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self):
-        if self.request.user.is_authenticated:
-            return self.request.user.profile
-        
         user_id = self.request.session.get('registro_usuario_id')
         return get_object_or_404(UserProfile, user__id=user_id)
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['base_template'] = 'base_auth.html'
+        user_id = self.request.session.get('registro_usuario_id')
+        ctx['usuario_registro'] = get_object_or_404(User, id=user_id)
+        return ctx
+
     def form_valid(self, form):
         response = super().form_valid(form)
+        user_id = self.request.session.get('registro_usuario_id')
+        user = get_object_or_404(User, id=user_id)
         
-        if not self.request.user.is_authenticated:
-            user_id = self.request.session.get('registro_usuario_id')
-            user = get_object_or_404(User, id=user_id)
-            login(self.request, user)
+        login(self.request, user)
+        
+        if 'registro_usuario_id' in self.request.session:
+            del self.request.session['registro_usuario_id']
             
-            if 'registro_usuario_id' in self.request.session:
-                del self.request.session['registro_usuario_id']
-                
-            messages.success(self.request, 'Conta criada com sucesso! Bem-vindo(a) ao Crivo!')
-        else:
-            messages.success(self.request, 'Perfil atualizado com sucesso!')
-            
+        messages.success(self.request, 'Conta criada com sucesso! Bem-vindo(a) ao Crivo!')
         return response
+
+    def get_success_url(self):
+        return reverse_lazy('perfil_usuario', kwargs={'slug': self.object.slug})
+
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = 'registration/complete_profile.html'
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['base_template'] = 'base.html'
+        ctx['usuario_registro'] = self.request.user
+        return ctx
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Perfil atualizado com sucesso!')
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('perfil_usuario', kwargs={'slug': self.object.slug})
@@ -132,3 +158,28 @@ class ConfiguracoesView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         messages.success(self.request, 'Configurações salvas com sucesso!')
         return reverse_lazy('configuracoes')
+    
+class CustomAuthForm(AuthenticationForm):
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username is not None and password:
+            try:
+                user = User.objects.get(username=username)             
+                if user.check_password(password) and not user.is_active:
+                    motivo = getattr(user.profile, 'motivo_banimento', 'Violação das regras da comunidade.')
+                    data_ban = getattr(user.profile, 'data_banimento', None)
+                    
+                    data_str = data_ban.strftime('%d/%m/%Y às %H:%M') if data_ban else "Data não registrada"                 
+                    raise ValidationError(
+                        f"Sua conta foi BANIDA em {data_str}. Motivo: {motivo}",
+                        code='inactive',
+                    )
+            except User.DoesNotExist:
+                pass           
+        return super().clean()
+
+class CustomLoginView(LoginView):
+    form_class = CustomAuthForm
+    template_name = 'registration/login.html'

@@ -46,7 +46,8 @@ class UserProfile(models.Model):
     pronomes_outro = models.CharField(max_length=50, blank=True)
 
     tema_prefiro_nao = models.BooleanField(default=False, verbose_name="Prefiro não informar relação com o tema")
-    
+    motivo_banimento = models.TextField(blank=True, null=True, verbose_name="Motivo do Banimento")
+    data_banimento = models.DateTimeField(blank=True, null=True, verbose_name="Data do Banimento")
     is_pcd = models.BooleanField(default=False, verbose_name="Sou Pessoa com Deficiência")
     cid = models.CharField(max_length=50, blank=True, null=True, verbose_name="CID")
 

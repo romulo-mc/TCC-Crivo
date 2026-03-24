@@ -106,7 +106,12 @@ def adicionar_item(request):
 def detalhe_item(request, id):
     request.session['ultimo_contexto'] = 'library'
     item = get_object_or_404(LibraryItem, id=id, status='ATIVO')
-    reviews = item.reviews.all().order_by('-criado_em')
+    
+    if request.user.is_staff:
+        reviews = item.reviews.all().order_by('-criado_em')
+    else:
+        reviews = item.reviews.filter(status='APROVADO').order_by('-criado_em')
+        
     review_usuario = reviews.filter(user=request.user).first() if request.user.is_authenticated else None
     ja_avaliou = review_usuario is not None
     

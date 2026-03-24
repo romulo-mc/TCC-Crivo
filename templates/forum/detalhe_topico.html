@@ -24,9 +24,9 @@
                         {% endif %}
                         
                         {% if request.user.is_staff %}
-                            <a href="#" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm">
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#rejectModal-topico-inline">
                                 <i class="bi bi-shield-exclamation me-1"></i>Moderar Tópico
-                            </a>
+                            </button>
                         {% endif %}
                     </div>
                 </div>
@@ -115,7 +115,7 @@
             {% for resposta in respostas %}
                 {% include 'forum/includes/comentario_card.html' with node=resposta %}
             {% empty %}
-                <p class="text-muted italic">Ainda não há respostas.</p>
+                <p class="text-muted fst-italic">Ainda não há respostas.</p>
             {% endfor %}
         </div>
     </section>
@@ -160,6 +160,50 @@
     </style>
     {% endif %}
 </main>
+
+{% if request.user.is_staff %}
+<div class="modal fade" id="rejectModal-topico-inline" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'rejeitar_item' 'topico' topico.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
+            {% csrf_token %}
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Ocultar Tópico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-muted mb-3">Ao confirmar, este tópico será ocultado para o público, mas você poderá revê-lo no Painel de Moderação. Informe o motivo:</p>
+                <textarea name="motivo_rejeicao" class="form-control bg-body-tertiary border-secondary border-opacity-25 rounded-3" rows="4" required placeholder="Ex: Quebra das regras de convivência..."></textarea>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">Confirmar Ocultação</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% for resp in topico.respostas.all %}
+<div class="modal fade" id="rejectModal-resposta-inline-{{ resp.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'rejeitar_item' 'resposta' resp.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
+            {% csrf_token %}
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Ocultar Comentário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-muted mb-3">Esta ação removerá o comentário do fórum e notificará o autor. Digite o motivo:</p>
+                <textarea name="motivo_rejeicao" class="form-control bg-body-tertiary border-secondary border-opacity-25 rounded-3" rows="4" required placeholder="Ex: Linguagem ofensiva, violação das diretrizes..."></textarea>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">Confirmar Ocultação</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
 
 <script>
     function responderA(id, nomeAutor) {

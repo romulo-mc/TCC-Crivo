@@ -18,8 +18,13 @@
                     <form method="post">
                         {% csrf_token %}
                         
-                        {% if form.errors %}
-                            <div class="alert alert-danger" style="border-radius: 15px;" role="alert">
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger shadow-sm" style="border-radius: 15px;" role="alert">
+                                <h5 class="alert-heading fw-bold mb-1"><i class="bi bi-slash-circle me-2"></i>Acesso Negado</h5>
+                                <p class="mb-0 small">{{ form.non_field_errors.0 }}</p>
+                            </div>
+                        {% elif form.errors %}
+                            <div class="alert alert-danger shadow-sm" style="border-radius: 15px;" role="alert">
                                 <i class="bi bi-exclamation-circle-fill me-2"></i> Usuário ou senha incorretos.
                             </div>
                         {% endif %}
@@ -35,7 +40,7 @@
                         </div>
 
                         <div class="d-grid gap-2 mb-4 mt-4">
-                            <button type="submit" class="btn btn-lg fw-bold" style="background-color: #FFB684; border-radius: 20px; color: #333;">
+                            <button type="submit" class="btn btn-lg fw-bold shadow-sm hover-lift" style="background-color: #FFB684; border-radius: 20px; color: #333;">
                                 Entrar
                             </button>
                         </div>
@@ -64,5 +69,8 @@
         outline: 3px solid #C490FF;
         outline-offset: 2px;
     }
+    
+    .hover-lift { transition: transform 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); }
 </style>
 {% endblock %}

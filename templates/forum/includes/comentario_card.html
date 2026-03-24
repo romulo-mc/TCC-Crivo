@@ -1,5 +1,5 @@
-<div class="mb-3 {% if node.pai %}ms-4 border-start ps-3{% endif %}" style="border-left: 2px solid #dee2e6 !important;"> 
-    <div class="card border shadow-sm p-3 rounded-4" role="article" aria-label="Comentário de {{ node.autor.username|default:'Conta Deletada' }}">
+<div class="mb-3 {% if node.pai %}ms-4 border-start ps-3{% endif %}" style="border-left: 2px solid #dee2e6 !important; {% if node.status == 'REJEITADO' %}opacity: 0.6;{% endif %}"> 
+    <div class="card border shadow-sm p-3 rounded-4 {% if node.status == 'REJEITADO' %}bg-danger-subtle{% endif %}" role="article">
         
         <div class="d-flex justify-content-between align-items-start mb-2">
             <div class="small d-flex align-items-center flex-wrap gap-1">
@@ -15,7 +15,6 @@
                             {% endif %}
                             @{{ node.autor.profile.slug }}
                         </a>
-                        
                         {% for badge in node.autor.profile.get_badges %}
                             <span class="badge bg-{{ badge.cor }} ms-1" style="font-size: 0.55em;" title="{{ badge.nome }}">
                                 <i class="bi bi-{{ badge.icone }}"></i>
@@ -33,22 +32,18 @@
                         <i class="bi bi-pencil"></i> (Editado)
                     </span>
                 {% endif %}
+
+                {% if node.status == 'REJEITADO' %}
+                    <span class="badge bg-danger text-white ms-2"><i class="bi bi-eye-slash-fill me-1"></i>Ocultado pela Moderação</span>
+                {% endif %}
             </div>
             
-            <div class="d-flex align-items-center gap-2" role="group" aria-label="Votação do comentário">
-                <button onclick="votar('{{ node.id }}', 'like', true)" 
-                        class="btn btn-sm btn-link p-0 shadow-none {% if user in node.likes.all %}text-primary{% else %}text-muted{% endif %}"
-                        aria-label="Curtir" aria-pressed="{% if user in node.likes.all %}true{% else %}false{% endif %}">
+            <div class="d-flex align-items-center gap-2">
+                <button onclick="votar('{{ node.id }}', 'like', true)" class="btn btn-sm btn-link p-0 shadow-none {% if user in node.likes.all %}text-primary{% else %}text-muted{% endif %}">
                     <i class="bi bi-caret-up-fill fs-5"></i>
                 </button>
-                
-                <span id="votos-resp-{{ node.id }}" class="fw-bold small" aria-live="polite">
-                    {{ node.total_votos }}
-                </span>
-                
-                <button onclick="votar('{{ node.id }}', 'deslike', true)" 
-                        class="btn btn-sm btn-link p-0 shadow-none {% if user in node.deslikes.all %}text-danger{% else %}text-muted{% endif %}"
-                        aria-label="Descurtir" aria-pressed="{% if user in node.deslikes.all %}true{% else %}false{% endif %}">
+                <span id="votos-resp-{{ node.id }}" class="fw-bold small">{{ node.total_votos }}</span>
+                <button onclick="votar('{{ node.id }}', 'deslike', true)" class="btn btn-sm btn-link p-0 shadow-none {% if user in node.deslikes.all %}text-danger{% else %}text-muted{% endif %}">
                     <i class="bi bi-caret-down-fill fs-5"></i>
                 </button>
             </div>
@@ -66,27 +61,27 @@
         </div>
         
         <div class="d-flex align-items-center gap-3 mt-1 border-top pt-2">
-            <button class="btn btn-sm btn-link p-0 text-decoration-none text-muted fw-bold" 
-                    onclick="responderA({{ node.id }}, '{% if node.autor %}{{ node.autor.username }}{% else %}Usuário{% endif %}')"
-                    aria-label="Responder ao comentário">
+            <button class="btn btn-sm btn-link p-0 text-decoration-none text-muted fw-bold" onclick="responderA({{ node.id }}, '{% if node.autor %}{{ node.autor.username }}{% else %}Usuário{% endif %}')">
                 <i class="bi bi-reply me-1"></i>Responder
             </button>
             
             {% if request.user == node.autor %}
-                <a href="{% url 'editar_resposta' node.id %}" class="btn btn-sm btn-link p-0 text-decoration-none text-secondary fw-bold" aria-label="Editar comentário">
+                <a href="{% url 'editar_resposta' node.id %}" class="btn btn-sm btn-link p-0 text-decoration-none text-secondary fw-bold">
                     <i class="bi bi-pencil-square me-1"></i>Editar
                 </a>
             {% endif %}
 
-            {% if request.user.is_staff %}
-                <a href="#" class="btn btn-sm btn-link p-0 text-decoration-none text-danger fw-bold ms-auto" title="Ocultar ou gerenciar comentário">
+            {% if request.user.is_staff and node.status != 'REJEITADO' %}
+                <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none text-danger fw-bold ms-auto" data-bs-toggle="modal" data-bs-target="#rejectModal-resposta-inline-{{ node.id }}">
                     <i class="bi bi-shield-lock-fill me-1"></i>Moderar
-                </a>
+                </button>
             {% endif %}
         </div>
     </div>
 
     {% for filha in node.filhas.all %}
-        {% include 'forum/includes/comentario_card.html' with node=filha %}
+        {% if filha.status == 'APROVADO' or request.user.is_staff %}
+            {% include 'forum/includes/comentario_card.html' with node=filha %}
+        {% endif %}
     {% endfor %}
 </div>

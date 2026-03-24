@@ -67,7 +67,11 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        exclude = ('user',)
+        exclude = (
+            'user', 'slug', 'modo_escuro', 'alto_contraste', 
+            'fonte_tdah', 'fonte_dislexia', 'reduzir_animacoes', 
+            'tamanho_fonte', 'receber_notificacoes', 'ocultar_avaliacoes'
+        )
         
         widgets = {
             'foto': forms.FileInput(attrs={'class': 'd-none', 'id': 'id_foto'}),

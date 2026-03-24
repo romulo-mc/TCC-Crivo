@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
-from forum.models import Topico
-from .models import Notificacao
-from library.models import LibraryItem
+from forum.models import Topico, Resposta, Categoria
+from library.models import LibraryItem, Review, Condicao, Gatilho
 from educacao.models import RecursoEducativo
+from .models import Notificacao
 from django.core.exceptions import PermissionDenied
-from forum.models import Resposta
+from django.contrib import messages
+from django.utils.text import slugify
+from django.utils import timezone
 
 def home(request):
     return render(request, 'core/index.html')
@@ -16,10 +18,7 @@ def pesquisa_geral(request):
     query = request.GET.get('q', '')
     escopo = request.GET.get('escopo', 'geral')
     
-    resultados_forum = []
-    resultados_library = []
-    resultados_usuarios = []
-    resultados_recursos = []
+    resultados_forum, resultados_library, resultados_usuarios, resultados_recursos = [], [], [], []
 
     if query:
         if escopo in ['geral', 'forum']:
@@ -30,44 +29,32 @@ def pesquisa_geral(request):
             
         if escopo in ['geral', 'library']:
             resultados_library = LibraryItem.objects.filter(
-                Q(titulo__icontains=query) | 
-                Q(sinopse__icontains=query) |
-                Q(diretor_autor_host__icontains=query),
+                Q(titulo__icontains=query) | Q(sinopse__icontains=query) | Q(diretor_autor_host__icontains=query),
                 status='ATIVO'
             ).select_related('usuario_criador').order_by('-id')
 
         if escopo in ['geral', 'usuarios']:
             resultados_usuarios = User.objects.filter(
-                Q(username__icontains=query) |
-                Q(first_name__icontains=query) |
-                Q(profile__slug__icontains=query),
+                Q(username__icontains=query) | Q(first_name__icontains=query) | Q(profile__slug__icontains=query),
                 is_active=True
             ).select_related('profile').order_by('username')
             
         if escopo in ['geral', 'recursos']:
             resultados_recursos = RecursoEducativo.objects.filter(
-                Q(titulo__icontains=query) |
-                Q(descricao__icontains=query)
+                Q(titulo__icontains=query) | Q(descricao__icontains=query)
             ).select_related('autor').order_by('-data_publicacao')
 
     total = len(resultados_forum) + len(resultados_library) + len(resultados_usuarios) + len(resultados_recursos)
 
-    contexto = {
-        'query': query,
-        'escopo': escopo,
-        'resultados_forum': resultados_forum,
-        'resultados_library': resultados_library,
-        'resultados_usuarios': resultados_usuarios,
-        'resultados_recursos': resultados_recursos,
-        'total': total
-    }
-    
-    return render(request, 'core/pesquisa.html', contexto)
+    return render(request, 'core/pesquisa.html', {
+        'query': query, 'escopo': escopo, 'resultados_forum': resultados_forum,
+        'resultados_library': resultados_library, 'resultados_usuarios': resultados_usuarios,
+        'resultados_recursos': resultados_recursos, 'total': total
+    })
 
 @login_required
 def lista_notificacoes(request):
-    notificacoes = Notificacao.objects.filter(destinatario=request.user)
-    return render(request, 'core/notificacoes.html', {'notificacoes': notificacoes})
+    return render(request, 'core/notificacoes.html', {'notificacoes': Notificacao.objects.filter(destinatario=request.user)})
 
 @login_required
 def marcar_todas_lidas(request):
@@ -79,8 +66,7 @@ def marcar_lida_e_ir(request, pk):
     notificacao = get_object_or_404(Notificacao, pk=pk, destinatario=request.user)   
     notificacao.lida = True
     notificacao.save()   
-    if notificacao.link and notificacao.link != "#":
-        return redirect(notificacao.link)
+    if notificacao.link and notificacao.link != "#": return redirect(notificacao.link)
     return redirect('lista_notificacoes')
 
 @login_required
@@ -88,20 +74,132 @@ def limpar_notificacoes(request):
     Notificacao.objects.filter(destinatario=request.user).delete()
     return redirect('lista_notificacoes')
 
+
 @login_required
 def painel_moderacao(request):
-    if not request.user.is_staff:
-        raise PermissionDenied("Apenas a equipe de moderação pode acessar esta página.")
+    if not request.user.is_staff: raise PermissionDenied("Acesso restrito.")
     
-    topicos_pendentes = Topico.objects.filter(status='PENDENTE').order_by('-data_criacao')
-    respostas_pendentes = Resposta.objects.filter(status='PENDENTE').order_by('-data_postagem')
-    acervo_pendente = LibraryItem.objects.filter(status='PENDENTE').order_by('-criado_em')
-
     contexto = {
-        'topicos_pendentes': topicos_pendentes,
-        'respostas_pendentes': respostas_pendentes,
-        'acervo_pendente': acervo_pendente,
-        'total_pendentes': topicos_pendentes.count() + respostas_pendentes.count() + acervo_pendente.count()
+        'topicos_pendentes': Topico.objects.filter(status='PENDENTE').order_by('-data_criacao'),
+        'respostas_pendentes': Resposta.objects.filter(status='PENDENTE').order_by('-data_postagem'),
+        'acervo_pendente': LibraryItem.objects.filter(status='PENDENTE').order_by('-criado_em'),
+        
+        'topicos_ocultos': Topico.objects.filter(status__in=['REJEITADO', 'OCULTO']).order_by('-data_atualizacao'),
+        'respostas_ocultas': Resposta.objects.filter(status__in=['REJEITADO', 'OCULTO']).order_by('-data_postagem'),
+        'acervo_oculto': LibraryItem.objects.filter(status__in=['REJEITADO', 'OCULTO']).order_by('-criado_em'),
+        'reviews_ocultas': Review.objects.filter(status='OCULTO').order_by('-criado_em'),
+        
+        'usuarios_banidos': User.objects.filter(is_active=False).exclude(profile__isnull=True),
+        
+        'categorias': Categoria.objects.all().order_by('nome'),
+        'condicoes': Condicao.objects.all().order_by('nome'),
+        'gatilhos': Gatilho.objects.all().order_by('nome'),
     }
-    
+    contexto['total_pendentes'] = contexto['topicos_pendentes'].count() + contexto['respostas_pendentes'].count() + contexto['acervo_pendente'].count()
     return render(request, 'core/painel_moderacao.html', contexto)
+
+@login_required
+def aprovar_item(request, tipo, item_id):
+    if not request.user.is_staff: raise PermissionDenied()
+        
+    if tipo == 'topico': obj = get_object_or_404(Topico, id=item_id); obj.status = 'APROVADO'
+    elif tipo == 'resposta': obj = get_object_or_404(Resposta, id=item_id); obj.status = 'APROVADO'
+    elif tipo == 'acervo': obj = get_object_or_404(LibraryItem, id=item_id); obj.status = 'ATIVO'
+    elif tipo == 'review': obj = get_object_or_404(Review, id=item_id); obj.status = 'APROVADO'
+    else: return redirect('painel_moderacao')
+        
+    obj.save() 
+    messages.success(request, f"{tipo.capitalize()} readmitido/aprovado com sucesso!")
+    return redirect('painel_moderacao')
+
+@login_required
+def rejeitar_item(request, tipo, item_id):
+    if not request.user.is_staff: raise PermissionDenied()
+        
+    if request.method == 'POST':
+        motivo = request.POST.get('motivo_rejeicao', 'Violação das regras.')
+        try:
+            if tipo == 'topico': 
+                obj = get_object_or_404(Topico, id=item_id)
+                obj.status = 'REJEITADO' if obj.status == 'PENDENTE' else 'OCULTO'
+                obj.motivo_rejeicao = motivo
+            elif tipo == 'resposta': 
+                obj = get_object_or_404(Resposta, id=item_id)
+                obj.status = 'REJEITADO' if obj.status == 'PENDENTE' else 'OCULTO'
+                obj.motivo_rejeicao = motivo
+            elif tipo == 'acervo': 
+                obj = get_object_or_404(LibraryItem, id=item_id)
+                obj.status = 'REJEITADO' if obj.status == 'PENDENTE' else 'OCULTO'
+                obj.motivo_rejeicao = motivo
+            elif tipo == 'review': 
+                obj = get_object_or_404(Review, id=item_id)
+                obj.status = 'OCULTO'
+                obj.motivo_moderacao = motivo
+            else: return redirect('painel_moderacao')
+
+            obj.save() 
+            messages.warning(request, f"{tipo.capitalize()} moderado e removido da plataforma com sucesso.")
+        except Exception as e:
+            messages.error(request, f"Erro interno ao moderar: {str(e)}")
+        
+        referer = request.META.get('HTTP_REFERER', '')
+        if 'moderacao' in referer: return redirect('painel_moderacao')
+        elif tipo == 'topico': return redirect('lista_forum')
+        elif tipo == 'acervo': return redirect('lista_library')
+        elif tipo == 'resposta': return redirect('detalhe_topico', slug=obj.topico.slug)
+        elif tipo == 'review': return redirect('detalhe_item', id=obj.item.id)
+            
+    return redirect('painel_moderacao')
+
+@login_required
+def aprovar_massa(request):
+    if not request.user.is_staff or request.method != 'POST': raise PermissionDenied()
+    tipo = request.POST.get('tipo')
+    item_ids = request.POST.getlist('itens_selecionados')
+    if not item_ids: return redirect('painel_moderacao')
+        
+    if tipo == 'topico': Topico.objects.filter(id__in=item_ids).update(status='APROVADO')
+    elif tipo == 'resposta': Resposta.objects.filter(id__in=item_ids).update(status='APROVADO')
+    elif tipo == 'acervo': LibraryItem.objects.filter(id__in=item_ids).update(status='ATIVO')
+            
+    messages.success(request, f"{len(item_ids)} itens aprovados!")
+    return redirect('painel_moderacao')
+
+@login_required
+def toggle_ban_usuario(request, user_id):
+    if not request.user.is_staff: raise PermissionDenied()
+    usuario = get_object_or_404(User, id=user_id)
+    if usuario == request.user or usuario.is_superuser: return redirect(request.META.get('HTTP_REFERER', 'home'))
+        
+    if usuario.is_active:
+        motivo = request.POST.get('motivo_banimento', 'Violação grave.') if request.method == 'POST' else 'Violação.'
+        usuario.is_active = False
+        usuario.profile.motivo_banimento = motivo
+        usuario.profile.data_banimento = timezone.now()
+        usuario.profile.save()
+        usuario.save()
+        messages.warning(request, f"O usuário @{usuario.profile.slug} foi BANIDO.")
+    else:
+        usuario.is_active = True
+        usuario.profile.motivo_banimento = ""
+        usuario.profile.data_banimento = None
+        usuario.profile.save()
+        usuario.save()
+        messages.success(request, f"O usuário @{usuario.profile.slug} foi DESBANIDO.")
+    return redirect(request.META.get('HTTP_REFERER', 'painel_moderacao'))
+
+@login_required
+def adicionar_tag_moderacao(request):
+    if not request.user.is_staff or request.method != 'POST': raise PermissionDenied()
+    tipo = request.POST.get('tipo_tag')
+    nome = request.POST.get('nome')
+    
+    try:
+        if tipo == 'categoria': Categoria.objects.create(nome=nome, slug=slugify(nome))
+        elif tipo == 'condicao': Condicao.objects.create(nome=nome)
+        elif tipo == 'gatilho': Gatilho.objects.create(nome=nome)
+        messages.success(request, f"Nova tag '{nome}' cadastrada!")
+    except Exception as e:
+        messages.error(request, "Erro: Essa tag já existe ou o nome é inválido.")
+        
+    return redirect('painel_moderacao')
