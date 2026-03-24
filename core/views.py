@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from forum.models import Topico
 from .models import Notificacao
 from library.models import LibraryItem
+from educacao.models import RecursoEducativo
+from django.core.exceptions import PermissionDenied
+from forum.models import Resposta
 
 def home(request):
     return render(request, 'core/index.html')
@@ -42,7 +45,10 @@ def pesquisa_geral(request):
             ).select_related('profile').order_by('username')
             
         if escopo in ['geral', 'recursos']:
-            resultados_recursos = []
+            resultados_recursos = RecursoEducativo.objects.filter(
+                Q(titulo__icontains=query) |
+                Q(descricao__icontains=query)
+            ).select_related('autor').order_by('-data_publicacao')
 
     total = len(resultados_forum) + len(resultados_library) + len(resultados_usuarios) + len(resultados_recursos)
 
@@ -57,7 +63,6 @@ def pesquisa_geral(request):
     }
     
     return render(request, 'core/pesquisa.html', contexto)
-
 
 @login_required
 def lista_notificacoes(request):
@@ -82,3 +87,21 @@ def marcar_lida_e_ir(request, pk):
 def limpar_notificacoes(request):
     Notificacao.objects.filter(destinatario=request.user).delete()
     return redirect('lista_notificacoes')
+
+@login_required
+def painel_moderacao(request):
+    if not request.user.is_staff:
+        raise PermissionDenied("Apenas a equipe de moderação pode acessar esta página.")
+    
+    topicos_pendentes = Topico.objects.filter(status='PENDENTE').order_by('-data_criacao')
+    respostas_pendentes = Resposta.objects.filter(status='PENDENTE').order_by('-data_postagem')
+    acervo_pendente = LibraryItem.objects.filter(status='PENDENTE').order_by('-criado_em')
+
+    contexto = {
+        'topicos_pendentes': topicos_pendentes,
+        'respostas_pendentes': respostas_pendentes,
+        'acervo_pendente': acervo_pendente,
+        'total_pendentes': topicos_pendentes.count() + respostas_pendentes.count() + acervo_pendente.count()
+    }
+    
+    return render(request, 'core/painel_moderacao.html', contexto)

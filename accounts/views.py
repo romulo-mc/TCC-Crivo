@@ -4,8 +4,9 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-
-from .forms import CadastroBasicoForm, UserProfileForm
+from django.views import View
+from django.contrib.auth.models import User
+from .forms import CadastroBasicoForm, UserProfileForm, AcessibilidadeForm, ConfiguracoesForm
 from .models import UserProfile
 from library.models import LibraryItem
 from forum.models import Topico, Resposta
@@ -16,22 +17,45 @@ class SignupView(CreateView):
     
     def form_valid(self, form):
         user = form.save()
-        login(self.request, user)
+        self.request.session['registro_usuario_id'] = user.id
         return redirect('complete_profile')
 
-class CompleteProfileView(LoginRequiredMixin, UpdateView):
+class CompleteProfileView(UpdateView):
     model = UserProfile
     form_class = UserProfileForm
     template_name = 'registration/complete_profile.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated and not request.session.get('registro_usuario_id'):
+            return redirect('signup')
+        return super().dispatch(request, *args, **kwargs)
+
     def get_object(self):
-        return self.request.user.profile
+        if self.request.user.is_authenticated:
+            return self.request.user.profile
+        
+        user_id = self.request.session.get('registro_usuario_id')
+        return get_object_or_404(UserProfile, user__id=user_id)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        
+        if not self.request.user.is_authenticated:
+            user_id = self.request.session.get('registro_usuario_id')
+            user = get_object_or_404(User, id=user_id)
+            login(self.request, user)
+            
+            if 'registro_usuario_id' in self.request.session:
+                del self.request.session['registro_usuario_id']
+                
+            messages.success(self.request, 'Conta criada com sucesso! Bem-vindo(a) ao Crivo!')
+        else:
+            messages.success(self.request, 'Perfil atualizado com sucesso!')
+            
+        return response
 
     def get_success_url(self):
-        messages.success(self.request, 'Perfil atualizado com sucesso!')
         return reverse_lazy('perfil_usuario', kwargs={'slug': self.object.slug})
-
-
 
 def perfil_usuario(request, slug):
     request.session['ultimo_contexto'] = 'perfil'
@@ -61,3 +85,50 @@ def perfil_usuario(request, slug):
     }
     
     return render(request, 'accounts/perfil.html', contexto)
+
+
+class AcessibilidadeView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            form = AcessibilidadeForm(instance=request.user.profile)
+        else:
+            initial_data = request.session.get('acessibilidade', {})
+            form = AcessibilidadeForm(initial=initial_data)
+        return render(request, 'accounts/acessibilidade.html', {'form': form})
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            form = AcessibilidadeForm(request.POST, instance=request.user.profile)
+        else:
+            form = AcessibilidadeForm(request.POST)
+
+        if form.is_valid():
+            if request.user.is_authenticated:
+                form.save()
+            else:
+                dados = form.cleaned_data
+                request.session['acessibilidade'] = {
+                    'modo_escuro': dados.get('modo_escuro', False),
+                    'alto_contraste': dados.get('alto_contraste', False),
+                    'fonte_dislexia': dados.get('fonte_dislexia', False),
+                    'fonte_tdah': dados.get('fonte_tdah', False),
+                    'reduzir_animacoes': dados.get('reduzir_animacoes', False),
+                    'tamanho_fonte': dados.get('tamanho_fonte', 'M'),
+                }
+
+            messages.success(request, 'Preferências de acessibilidade atualizadas!')
+            return redirect('acessibilidade')
+        return render(request, 'accounts/acessibilidade.html', {'form': form})
+
+
+class ConfiguracoesView(LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    form_class = ConfiguracoesForm
+    template_name = 'accounts/configuracoes.html'
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def get_success_url(self):
+        messages.success(self.request, 'Configurações salvas com sucesso!')
+        return reverse_lazy('configuracoes')

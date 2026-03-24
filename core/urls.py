@@ -8,4 +8,5 @@ urlpatterns = [
     path('notificacoes/lidas/', views.marcar_todas_lidas, name='marcar_todas_lidas'),
     path('notificacoes/ir/<int:pk>/', views.marcar_lida_e_ir, name='marcar_lida_e_ir'),
     path('notificacoes/limpar/', views.limpar_notificacoes, name='limpar_notificacoes'),
+    path('moderacao/', views.painel_moderacao, name='painel_moderacao'),
 ]

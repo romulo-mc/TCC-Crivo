@@ -6,11 +6,19 @@ from .forms import LibraryItemForm, ReviewForm
 from .models import Condicao, Gatilho, LibraryItem, Review
 from django.db.models import Avg
 
-
 @login_required
 def lista_library(request):
     request.session['ultimo_contexto'] = 'library'
-    itens = LibraryItem.objects.filter(status='ATIVO').prefetch_related('condicoes', 'gatilhos', 'reviews').order_by('-id')
+    
+    itens = LibraryItem.objects.filter(status='ATIVO').prefetch_related('condicoes', 'gatilhos', 'reviews').annotate(
+        media_notas_geral=Avg('reviews__nota_geral')
+    )
+    
+    ordem = request.GET.get('ordem', 'novos')
+    if ordem == 'votos':
+        itens = itens.order_by('-media_notas_geral', '-id')
+    else:
+        itens = itens.order_by('-id') 
     
     tipos_selecionados = request.GET.getlist('tipo')
     if tipos_selecionados:

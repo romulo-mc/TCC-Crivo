@@ -17,6 +17,11 @@ STYLE_CHECKBOX = {
     'style': 'width: 1.3em; height: 1.3em; margin-top: 0.2em;'
 }
 
+STYLE_SWITCH = {
+    'class': 'form-check-input',
+    'role': 'switch'
+}
+
 class CadastroBasicoForm(forms.ModelForm):
     first_name = forms.CharField(label="Nome (Obrigatório)", widget=forms.TextInput(attrs=STYLE_INPUT))
     last_name = forms.CharField(label="Sobrenome (Obrigatório)", widget=forms.TextInput(attrs=STYLE_INPUT))
@@ -91,4 +96,25 @@ class UserProfileForm(forms.ModelForm):
             'aliado_estudante': forms.CheckboxInput(attrs=STYLE_CHECKBOX),
             'aliado_apenas': forms.CheckboxInput(attrs=STYLE_CHECKBOX),
             'tema_prefiro_nao': forms.CheckboxInput(attrs=STYLE_CHECKBOX),
+        }      
+class AcessibilidadeForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['modo_escuro', 'alto_contraste', 'fonte_dislexia', 'fonte_tdah', 'reduzir_animacoes', 'tamanho_fonte']
+        widgets = {
+            'modo_escuro': forms.CheckboxInput(attrs=STYLE_SWITCH),
+            'alto_contraste': forms.CheckboxInput(attrs=STYLE_SWITCH),
+            'fonte_dislexia': forms.CheckboxInput(attrs=STYLE_SWITCH),
+            'fonte_tdah': forms.CheckboxInput(attrs=STYLE_SWITCH),
+            'reduzir_animacoes': forms.CheckboxInput(attrs=STYLE_SWITCH),
+            'tamanho_fonte': forms.Select(attrs=STYLE_SELECT),
+        }
+
+class ConfiguracoesForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['receber_notificacoes', 'ocultar_avaliacoes']
+        widgets = {
+            'receber_notificacoes': forms.CheckboxInput(attrs=STYLE_SWITCH),
+            'ocultar_avaliacoes': forms.CheckboxInput(attrs=STYLE_SWITCH),
         }
