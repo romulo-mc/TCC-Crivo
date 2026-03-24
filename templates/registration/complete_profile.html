@@ -19,7 +19,7 @@
               {% endif %}
             </div>
 
-            <h1 class="h4 fw-bold text-dark">Olá, {{ user.first_name|default:user.username }}!</h1>
+            <h1 class="h4 fw-bold text-dark">Olá!</h1>
             <p class="text-muted small">Gerencie as informações do seu perfil na comunidade.</p>
           </div>
         </div>
@@ -29,16 +29,11 @@
           <div class="d-flex justify-content-between align-items-center mb-4">
               <h2 class="fw-bold text-dark mb-0">Sobre Você</h2>
               
-              {% if user.profile.slug %}
-                  <a href="{% url 'perfil_usuario' user.profile.slug %}" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold shadow-sm">
+              {% if request.user.is_authenticated %}
+                  <a href="{% url 'perfil_usuario' request.user.profile.slug %}" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold shadow-sm">
                       <i class="bi bi-arrow-left me-1"></i> Voltar ao Perfil
                   </a>
-              {% else %}
-                  <button disabled class="btn btn-outline-secondary rounded-pill btn-sm fw-bold shadow-sm opacity-50">
-                      <i class="bi bi-hourglass me-1"></i> Gerando Perfil...
-                  </button>
               {% endif %}
-              
           </div>
 
           <form method="post" enctype="multipart/form-data">

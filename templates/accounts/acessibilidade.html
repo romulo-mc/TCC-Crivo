@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px;">
+                    <i class="bi bi-universal-access-circle fs-2" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h1 class="fw-bold mb-1 text-dark">Acessibilidade</h1>
+                    <p class="text-muted mb-0">Personalize a sua experiência de navegação no Crivo.</p>
+                </div>
+            </div>
+
+            <div class="alert alert-info border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center gap-3">
+                <i class="bi bi-eye-fill fs-4 text-info-emphasis"></i>
+                <div>
+                    <strong class="d-block text-info-emphasis">Visão ao Vivo Ativada</strong>
+                    <small>As mudanças aplicadas aqui refletem na tela instantaneamente, mas você precisa clicar em <strong>Salvar</strong> para mantê-las.</small>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" id="form-acessibilidade">
+                        {% csrf_token %}
+                        
+                        <h2 class="h5 fw-bold text-primary border-bottom pb-3 mb-4">Ajustes Visuais</h2>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.tamanho_fonte.id_for_label }}" class="fw-bold text-dark mb-2 d-block fs-5">
+                                <i class="bi bi-fonts me-2 text-secondary"></i> Tamanho da Fonte
+                            </label>
+                            <div class="w-50">
+                                {{ form.tamanho_fonte }}
+                            </div>
+                            <small class="text-muted d-block mt-2">Escolha o tamanho de texto mais confortável para você.</small>
+                        </div>
+
+                        <div class="mb-5">
+                            <div class="form-check form-switch fs-5 mb-3 custom-switch-wrapper">
+                                {{ form.modo_escuro }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3" for="{{ form.modo_escuro.id_for_label }}">
+                                    <i class="bi bi-moon-stars me-2 text-secondary"></i> Modo Escuro
+                                </label>
+                            </div>
+                            
+                            <div class="form-check form-switch fs-5 mb-3 custom-switch-wrapper">
+                                {{ form.alto_contraste }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3" for="{{ form.alto_contraste.id_for_label }}">
+                                    <i class="bi bi-circle-half me-2 text-secondary"></i> Alto Contraste
+                                </label>
+                            </div>
+                            <small class="text-muted d-block ms-1">O Alto Contraste remove cores suaves e aplica preto e branco puro, ideal para baixa visão.</small>
+                        </div>
+
+                        <h2 class="h5 fw-bold text-primary border-bottom pb-3 mb-4">Ajustes Cognitivos e Motores</h2>
+
+                        <div class="mb-5">
+                            <div class="form-check form-switch fs-5 mb-3 custom-switch-wrapper">
+                                {{ form.fonte_dislexia }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3" for="{{ form.fonte_dislexia.id_for_label }}">
+                                    <i class="bi bi-type me-2 text-secondary"></i> Fonte para Dislexia
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mb-4 ms-1">Altera a tipografia para a OpenDyslexic, facilitando a leitura.</small>
+
+                            <div class="form-check form-switch fs-5 mb-3 custom-switch-wrapper">
+                                {{ form.fonte_tdah }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3 d-flex align-items-center" for="{{ form.fonte_tdah.id_for_label }}">
+                                    <span class="fw-bold me-2 text-secondary" style="font-size: 1.1rem; font-family: serif;">Aa</span> Fonte para TDAH (Leitura Dinâmica)
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mb-4 ms-1">Aplica o estilo Bionic Reading (Fast Font), destacando o início das palavras para manter o foco na leitura.</small>
+
+                            <div class="form-check form-switch fs-5 mb-3 custom-switch-wrapper">
+                                {{ form.reduzir_animacoes }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3" for="{{ form.reduzir_animacoes.id_for_label }}">
+                                    <i class="bi bi-stop-circle me-2 text-secondary"></i> Reduzir Animações (Motion)
+                                </label>
+                            </div>
+                            <small class="text-muted d-block ms-1">Desativa transições e efeitos. Recomendado para TDAH e labirintite.</small>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3 border-top mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm fs-5">Salvar Preferências</button>
+                            
+                            {% if request.user.is_authenticated %}
+                                <a href="{% url 'perfil_usuario' request.user.profile.slug %}" class="btn btn-light rounded-pill px-4 fw-bold fs-5 text-secondary">Cancelar</a>
+                            {% else %}
+                                <a href="{% url 'home' %}" class="btn btn-light rounded-pill px-4 fw-bold fs-5 text-secondary">Cancelar</a>
+                            {% endif %}
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<style>
+    .custom-switch-wrapper {
+        padding-left: 0 !important;
+        display: flex;
+        align-items: center;
+    }
+
+    .custom-switch-wrapper .form-check-input {
+        width: 3.5rem !important;
+        height: 1.75rem !important;
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        cursor: pointer;
+        flex-shrink: 0;
+        float: none !important;
+    }
+    
+    .cursor-pointer { cursor: pointer; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-acessibilidade');
+        let hasUnsavedChanges = false;
+
+        form.addEventListener('change', function(e) {
+            hasUnsavedChanges = true;
+            const target = e.target;
+            const body = document.body;
+
+            if (target.id === 'id_modo_escuro') {
+                if (target.checked) document.documentElement.setAttribute('data-bs-theme', 'dark');
+                else document.documentElement.removeAttribute('data-bs-theme');
+            }
+
+            if (target.id === 'id_alto_contraste') body.classList.toggle('alto-contraste', target.checked);
+            if (target.id === 'id_reduzir_animacoes') body.classList.toggle('reduzir-animacoes', target.checked);
+            if (target.id === 'id_fonte_dislexia') body.classList.toggle('fonte-dislexia', target.checked);
+            
+            if (target.id === 'id_fonte_tdah') {
+                body.classList.toggle('fonte-tdah', target.checked);
+                if (typeof applyBionicReading === 'function') {
+                    if (target.checked) applyBionicReading();
+                    else removeBionicReading();
+                }
+            }
+            
+            if (target.id === 'id_tamanho_fonte') {
+                body.classList.remove('fonte-XP', 'fonte-P', 'fonte-M', 'fonte-G', 'fonte-XG');
+                body.classList.add('fonte-' + target.value);
+            }
+        });
+
+        form.addEventListener('submit', function() {
+            hasUnsavedChanges = false;
+        });
+
+        window.addEventListener('beforeunload', function(e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = 'Você tem alterações não salvas. Tem certeza que deseja sair?';
+            }
+        });
+    });
+</script>
+{% endblock %}

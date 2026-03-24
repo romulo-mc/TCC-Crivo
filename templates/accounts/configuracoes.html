@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px;">
+                    <i class="bi bi-gear-fill fs-2" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h1 class="fw-bold mb-1 text-dark">Configurações Gerais</h1>
+                    <p class="text-muted mb-0">Gerencie suas notificações e a privacidade da sua conta.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden mb-4">
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" id="form-configuracoes">
+                        {% csrf_token %}
+                        
+                        <h2 class="h5 fw-bold text-dark border-bottom pb-3 mb-4">Comunicações</h2>
+                        
+                        <div class="mb-5">
+                            <div class="form-check form-switch fs-5 mb-2 custom-switch-wrapper">
+                                {{ form.receber_notificacoes }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3" for="{{ form.receber_notificacoes.id_for_label }}">
+                                    <i class="bi bi-envelope-at me-2 text-secondary"></i> Receber Alertas por E-mail
+                                </label>
+                            </div>
+                            <small class="text-muted d-block ms-1">Enviaremos um e-mail quando seu tópico for aprovado ou receber resposta.</small>
+                        </div>
+
+                        <h2 class="h5 fw-bold text-dark border-bottom pb-3 mb-4">Privacidade do Acervo</h2>
+
+                        <div class="mb-5">
+                            <div class="form-check form-switch fs-5 mb-2 custom-switch-wrapper">
+                                {{ form.ocultar_avaliacoes }}
+                                <label class="form-check-label fw-bold text-dark cursor-pointer ms-3" for="{{ form.ocultar_avaliacoes.id_for_label }}">
+                                    <i class="bi bi-eye-slash me-2 text-secondary"></i> Ocultar Minhas Avaliações
+                                </label>
+                            </div>
+                            <small class="text-muted d-block ms-1">Ao ativar, suas avaliações de obras não aparecerão no seu Perfil Público.</small>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3 border-top mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm fs-5">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-danger border-opacity-25 shadow-sm rounded-4 bg-danger bg-opacity-10 overflow-hidden">
+                <div class="card-body p-4">
+                    <h2 class="h5 fw-bold text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Zona de Perigo (LGPD)</h2>
+                    <p class="text-dark small mb-4">Você tem o direito de solicitar uma cópia dos seus dados ou apagar permanentemente a sua conta.</p>
+                    
+                    <div class="d-flex flex-wrap gap-3">
+                        <button class="btn btn-outline-danger fw-bold rounded-pill shadow-sm" onclick="alert('Funcionalidade de exportação em desenvolvimento.')">
+                            <i class="bi bi-download me-2"></i> Baixar Meus Dados
+                        </button>
+                        <button class="btn btn-danger fw-bold rounded-pill shadow-sm" onclick="alert('Funcionalidade de exclusão em desenvolvimento.')">
+                            <i class="bi bi-trash me-2"></i> Excluir Conta
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<style>
+    .custom-switch-wrapper {
+        padding-left: 0 !important;
+        display: flex;
+        align-items: center;
+    }
+    .custom-switch-wrapper .form-check-input {
+        width: 3.5rem !important;
+        height: 1.75rem !important;
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .cursor-pointer { cursor: pointer; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-configuracoes');
+        let hasUnsavedChanges = false;
+
+        form.addEventListener('change', () => hasUnsavedChanges = true);
+        form.addEventListener('submit', () => hasUnsavedChanges = false);
+
+        window.addEventListener('beforeunload', function(e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    });
+</script>
+{% endblock %}
