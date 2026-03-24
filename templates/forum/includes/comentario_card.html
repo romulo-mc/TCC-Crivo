@@ -15,6 +15,12 @@
                             {% endif %}
                             @{{ node.autor.profile.slug }}
                         </a>
+                        
+                        {% for badge in node.autor.profile.get_badges %}
+                            <span class="badge bg-{{ badge.cor }} ms-1" style="font-size: 0.55em;" title="{{ badge.nome }}">
+                                <i class="bi bi-{{ badge.icone }}"></i>
+                            </span>
+                        {% endfor %}
                     {% endif %}
                 {% else %}
                     <span class="fst-italic text-secondary"><i class="bi bi-person-x me-1"></i>Conta Deletada</span>
@@ -69,6 +75,12 @@
             {% if request.user == node.autor %}
                 <a href="{% url 'editar_resposta' node.id %}" class="btn btn-sm btn-link p-0 text-decoration-none text-secondary fw-bold" aria-label="Editar comentário">
                     <i class="bi bi-pencil-square me-1"></i>Editar
+                </a>
+            {% endif %}
+
+            {% if request.user.is_staff %}
+                <a href="#" class="btn btn-sm btn-link p-0 text-decoration-none text-danger fw-bold ms-auto" title="Ocultar ou gerenciar comentário">
+                    <i class="bi bi-shield-lock-fill me-1"></i>Moderar
                 </a>
             {% endif %}
         </div>

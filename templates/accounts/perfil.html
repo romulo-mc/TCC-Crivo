@@ -20,19 +20,33 @@
                 </div>
                 
                 <div class="flex-grow-1 mb-2 mb-md-0 mt-3 mt-md-0">
-                    <h1 class="h3 fw-bold mb-0 text-dark">
+                    <h1 class="h3 fw-bold mb-0 text-dark d-flex align-items-center flex-wrap gap-2">
                         {{ user_perfil.first_name|default:user_perfil.username }}
+                        
+                        <span class="d-inline-flex gap-1 ms-2">
+                            {% for badge in perfil.get_badges %}
+                                <span class="badge bg-{{ badge.cor }} shadow-sm" style="font-size: 0.55em; letter-spacing: 0.5px;">
+                                    <i class="bi bi-{{ badge.icone }} me-1"></i>{{ badge.nome|upper }}
+                                </span>
+                            {% endfor %}
+                        </span>
                     </h1>
                     <p class="text-muted mb-0 fs-5">@{{ perfil.slug }}</p>
                 </div>
                 
-                {% if is_dono %}
-                <div class="mt-3 mt-md-0 pb-2">
+                <div class="mt-3 mt-md-0 pb-2 d-flex flex-wrap gap-2">
+                    {% if is_dono %}
                     <a href="{% url 'complete_profile' %}" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">
                         <i class="bi bi-pencil-square me-2"></i>Editar Perfil
                     </a>
+                    {% endif %}
+
+                    {% if request.user.is_staff and not is_dono %}
+                    <a href="#" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" onclick="return confirm('Tem certeza que deseja BANIR este usuário? Essa ação removerá o acesso dele ao sistema.');">
+                        <i class="bi bi-slash-circle me-2"></i>Banir Usuário
+                    </a>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>

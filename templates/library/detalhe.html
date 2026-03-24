@@ -157,10 +157,16 @@
                                                 {% endif %}
                                                 @{{ review.user.profile.slug }}
                                             </a>
+                                            
+                                            {% for badge in review.user.profile.get_badges %}
+                                                <span class="badge bg-{{ badge.cor }} ms-1" style="font-size: 0.55em;" title="{{ badge.nome }}">
+                                                    <i class="bi bi-{{ badge.icone }}"></i>
+                                                </span>
+                                            {% endfor %}
                                         {% endif %}
                                         
                                         {% if review.user == item.usuario_criador %}
-                                            <span class="badge bg-primary small">Autor do Cadastro</span>
+                                            <span class="badge bg-primary small ms-1">Autor do Cadastro</span>
                                         {% endif %}
 
                                         <small class="text-muted ms-1">&bull; {{ review.criado_em|date:"d M, Y" }}</small>
@@ -170,11 +176,19 @@
                                         {% endif %}
                                     </div>
                                     
-                                    {% if request.user == review.user %}
-                                        <a href="{% url 'editar_review' review.id %}" class="btn btn-sm btn-link text-secondary p-0 text-decoration-none" title="Editar Avaliação">
-                                            <i class="bi bi-pencil-square fs-5"></i>
-                                        </a>
-                                    {% endif %}
+                                    <div class="d-flex">
+                                        {% if request.user == review.user %}
+                                            <a href="{% url 'editar_review' review.id %}" class="btn btn-sm btn-link text-secondary p-0 text-decoration-none" title="Editar Avaliação">
+                                                <i class="bi bi-pencil-square fs-5"></i>
+                                            </a>
+                                        {% endif %}
+                                        
+                                        {% if request.user.is_staff %}
+                                            <a href="#" class="btn btn-sm btn-link text-danger p-0 text-decoration-none ms-3" title="Moderar Avaliação">
+                                                <i class="bi bi-shield-lock-fill fs-5"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 
                                 <div class="d-flex gap-2 mb-3 mt-2">

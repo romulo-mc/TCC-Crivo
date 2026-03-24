@@ -16,11 +16,19 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill">{{ topico.categoria.nome }}</span>
                     
-                    {% if request.user == topico.autor %}
-                        <a href="{% url 'editar_topico' topico.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
-                            <i class="bi bi-pencil-square me-1"></i>Editar
-                        </a>
-                    {% endif %}
+                    <div class="d-flex gap-2">
+                        {% if request.user == topico.autor %}
+                            <a href="{% url 'editar_topico' topico.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
+                                <i class="bi bi-pencil-square me-1"></i>Editar
+                            </a>
+                        {% endif %}
+                        
+                        {% if request.user.is_staff %}
+                            <a href="#" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm">
+                                <i class="bi bi-shield-exclamation me-1"></i>Moderar Tópico
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <h1 class="fw-bold h2 text-dark" id="titulo-topico" tabindex="0">{{ topico.titulo }}</h1>
@@ -41,6 +49,12 @@
                                 {% endif %}
                                 @{{ topico.autor.profile.slug }}
                             </a>
+                            
+                            {% for badge in topico.autor.profile.get_badges %}
+                                <span class="badge bg-{{ badge.cor }} border border-{{ badge.cor }}" style="font-size: 0.6em;">
+                                    <i class="bi bi-{{ badge.icone }}"></i> {{ badge.nome }}
+                                </span>
+                            {% endfor %}
                         {% endif %}
                     {% else %}
                         <span class="fst-italic text-secondary badge bg-light border text-dark"><i class="bi bi-person-x me-1"></i>Conta Deletada</span>
@@ -170,21 +184,21 @@
     }
 
     function compartilharTopico() {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
-        const btn = document.getElementById('btn-compartilhar');
-        const texto = document.getElementById('texto-compartilhar');
-        
-        texto.innerText = "Link Copiado!";
-        btn.classList.replace('btn-light', 'btn-success');
-        btn.classList.replace('text-secondary', 'text-white');
-        
-        setTimeout(() => {
-            texto.innerText = "Compartilhar";
-            btn.classList.replace('btn-success', 'btn-light');
-            btn.classList.replace('text-white', 'text-secondary');
-        }, 2000);
-    });
-}
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = document.getElementById('btn-compartilhar');
+            const texto = document.getElementById('texto-compartilhar');
+            
+            texto.innerText = "Link Copiado!";
+            btn.classList.replace('btn-light', 'btn-success');
+            btn.classList.replace('text-secondary', 'text-white');
+            
+            setTimeout(() => {
+                texto.innerText = "Compartilhar";
+                btn.classList.replace('btn-success', 'btn-light');
+                btn.classList.replace('text-white', 'text-secondary');
+            }, 2000);
+        });
+    }
 </script>
 {% endblock %}

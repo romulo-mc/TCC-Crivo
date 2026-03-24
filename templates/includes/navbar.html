@@ -1,14 +1,14 @@
-<nav class="navbar navbar-expand-lg fixed-top px-3 shadow-sm" style="background-color: #4A90E2; height: 60px;" aria-label="Navegação Principal">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-lg fixed-top px-3 shadow-sm" style="background-color: #4A90E2; min-height: 60px;" aria-label="Navegação Principal">
+    <div class="container-fluid d-flex flex-wrap align-items-center justify-content-between p-0 gap-3">
         
         <div class="d-flex align-items-center gap-3">
             {% if user.is_authenticated %}
-            <button class="btn btn-outline-light border-0" id="menu-toggle" aria-label="Abrir menu lateral">
+            <button class="btn btn-outline-light border-0 flex-shrink-0" id="menu-toggle" aria-label="Abrir menu lateral">
                 <i class="bi bi-list fs-4" aria-hidden="true"></i>
             </button>
             {% endif %}
 
-            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" 
+            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2 m-0 flex-shrink-0" 
             href="{% if '/forum/' in request.path %}{% url 'lista_forum' %}{% elif '/library/' in request.path %}{% url 'lista_library' %}{% elif '/educacao/' in request.path %}{% url 'lista_recursos' %}{% elif request.session.ultimo_contexto == 'forum' %}{% url 'lista_forum' %}{% elif request.session.ultimo_contexto == 'library' %}{% url 'lista_library' %}{% elif request.session.ultimo_contexto == 'educacao' %}{% url 'lista_recursos' %}{% else %}{% url 'home' %}{% endif %}"
             aria-label="Página Inicial">
                 <i class="bi bi-puzzle-fill" aria-hidden="true"></i> 
@@ -17,27 +17,26 @@
         </div>
 
         {% if user.is_authenticated %}
-        <form action="{% url 'pesquisa_geral' %}" method="GET" class="d-none d-md-flex mx-auto" style="width: 40%;" role="search">
+        <form action="{% url 'pesquisa_geral' %}" method="GET" class="d-none d-md-flex flex-grow-1 justify-content-center" role="search" style="min-width: 350px; max-width: 500px; margin: 0 auto;">
             <input type="hidden" name="origem" value="{{ request.path }}">
-            <div class="input-group shadow-sm rounded-pill overflow-hidden">
-                <select name="escopo" id="navbar-search-scope" class="form-select border-0 text-secondary fw-bold" style="max-width: 130px; background-color: #f8f9fa; font-size: 0.85rem;">
-                    <option value="geral">Todo o site</option>
+            <div class="input-group shadow-sm rounded-pill overflow-hidden w-100">
+                <select name="escopo" id="navbar-search-scope" class="form-select border-0 text-secondary fw-bold" style="max-width: 140px; background-color: #f8f9fa; font-size: 0.85rem;">
+                    <option value="geral">Site todo</option>
                     <option value="forum">Fórum</option>
                     <option value="library">Acervo</option>
-                    <option value="educacao">Recursos</option>
+                    <option value="recursos">Recursos</option>
                     <option value="usuarios">Pessoas</option>
                 </select>
                 <input id="navbar-search" name="q" class="form-control border-0" type="search" placeholder="Pesquisar..." aria-label="Pesquisar no site" required>
-                <button class="btn btn-light border-0 text-primary" type="submit">
+                <button class="btn btn-light border-0 text-primary px-3" type="submit" aria-label="Botão de busca">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
         </form>
         {% endif %}
 
-        <div class="d-flex align-items-center gap-3 ms-auto">
-            
-            <a href="#" class="text-white fs-5" title="Opções de Acessibilidade" aria-label="Abrir painel de acessibilidade">
+        <div class="d-flex align-items-center gap-3 flex-shrink-0 ms-auto">
+            <a href="{% url 'acessibilidade' %}" class="text-white fs-5" title="Opções de Acessibilidade" aria-label="Abrir painel de acessibilidade">
                 <i class="bi bi-universal-access-circle" aria-hidden="true"></i>
             </a>
 
@@ -82,7 +81,7 @@
                     {% if user.profile.foto %}
                         <img src="{{ user.profile.foto.url }}" alt="" class="rounded-circle border border-2 border-white" style="width: 32px; height: 32px; object-fit: cover;">
                     {% else %}
-                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center text-primary fw-bold" style="width: 32px; height: 32px;">
+                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center text-primary fw-bold flex-shrink-0" style="width: 32px; height: 32px;">
                             {{ user.username|first|upper }}
                         </div>
                     {% endif %}
@@ -91,11 +90,14 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" aria-labelledby="userDropdown">
                     <li><h6 class="dropdown-header fs-6">Olá, {{ user.first_name|default:user.username }}</h6></li>
                     <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'perfil_usuario' user.profile.slug %}"><i class="bi bi-person-circle text-primary fs-5"></i> Meu Perfil</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'complete_profile' %}"><i class="bi bi-gear text-secondary fs-5"></i> Configurações</a></li>
+                    
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'configuracoes' %}"><i class="bi bi-gear text-secondary fs-5"></i> Configurações</a></li>
+                    
                     {% if user.is_staff %}
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 text-dark fw-bold" href="#"><i class="bi bi-shield-check text-success fs-5"></i> Painel Moderador</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 fw-bold" href="{% url 'painel_moderacao' %}"><i class="bi bi-shield-check text-success fs-5"></i> Painel Moderador</a></li>
                     {% endif %}
+                    
                     <li><hr class="dropdown-divider my-1"></li>
                     <li>
                         <form action="{% url 'logout' %}" method="post" class="m-0">

@@ -8,7 +8,7 @@
         
         <div aria-live="polite" class="fs-5 text-secondary">
             <p class="mb-1">
-                Buscando por: <strong class="text-dark">"{{ query }}"</strong> 
+                Buscando por: <strong class="text-body">"{{ query }}"</strong> 
                 em <span class="badge bg-secondary text-white">
                     {% if escopo == 'geral' %}Todo o site
                     {% elif escopo == 'forum' %}Fórum
@@ -18,7 +18,7 @@
                     {% endif %}
                 </span>
             </p>
-            <p class="fw-bold text-dark mb-0">
+            <p class="fw-bold text-body mb-0">
                 Total encontrado: {{ total }} resultado(s).
             </p>
         </div>
@@ -29,14 +29,8 @@
             <div class="display-1 text-muted mb-3" aria-hidden="true">
                 <i class="bi bi-search"></i>
             </div>
-            <h2 class="h3 fw-bold text-dark">Nenhum resultado encontrado</h2>
+            <h2 class="h3 fw-bold text-body">Nenhum resultado encontrado</h2>
             <p class="text-muted fs-5 px-3">Tente usar palavras diferentes, sinônimos ou altere o filtro de pesquisa na barra superior.</p>
-            
-            {% if escopo == 'recursos' %}
-                <div class="alert alert-warning d-inline-block mt-2">
-                    <i class="bi bi-cone-striped me-2"></i>A área de Recursos Educativos ainda está em construção!
-                </div>
-            {% endif %}
             
             <div class="mt-4">
                 <a href="{% url 'lista_forum' %}" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
@@ -72,7 +66,7 @@
                                     {% endif %}
                                 </div>
                                 <h3 class="h6 fw-bold mb-1">
-                                    <a href="{% url 'perfil_usuario' p.profile.slug %}" class="text-dark text-decoration-none stretched-link">
+                                    <a href="{% url 'perfil_usuario' p.profile.slug %}" class="text-body text-decoration-none stretched-link">
                                         {{ p.first_name|default:p.username }}
                                     </a>
                                 </h3>
@@ -109,7 +103,7 @@
                                 <span class="badge bg-dark mb-3">{{ obra.get_tipo_display }}</span>
                                 
                                 <h3 class="h5 fw-bold mb-2">
-                                    <a href="#" class="text-dark text-decoration-none stretched-link">
+                                    <a href="{% url 'detalhe_item' obra.id %}" class="text-body text-decoration-none stretched-link">
                                         {{ obra.titulo }}
                                     </a>
                                 </h3>
@@ -151,7 +145,7 @@
                         <div class="card-body p-4">
                             <div class="d-flex w-100 justify-content-between align-items-start mb-2 gap-3">
                                 <h3 class="h5 fw-bold mb-0">
-                                    <a href="{% url 'detalhe_topico' topico.slug %}" class="text-dark text-decoration-none stretched-link">
+                                    <a href="{% url 'detalhe_topico' topico.slug %}" class="text-body text-decoration-none stretched-link">
                                         {{ topico.titulo }}
                                     </a>
                                 </h3>
@@ -163,7 +157,7 @@
                             </p>
                             
                             <div class="d-flex flex-wrap gap-3 align-items-center mt-auto">
-                                <span class="badge bg-light text-dark border px-2 py-1">
+                                <span class="badge bg-light text-body border px-2 py-1">
                                     <span class="visually-hidden">Categoria: </span>{{ topico.categoria.nome }}
                                 </span>
                                 
@@ -205,7 +199,21 @@
                 
                 <div class="row g-4">
                     {% for recurso in resultados_recursos %}
-                        {% endfor %}
+                    <article class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm hover-lift bg-white rounded-4 overflow-hidden position-relative">
+                            <div class="card-body p-4">
+                                <span class="badge bg-dark mb-3">{{ recurso.get_tipo_display }}</span>
+                                <h3 class="h5 fw-bold mb-2">
+                                    <a href="#" class="text-body text-decoration-none stretched-link"> {{ recurso.titulo }}
+                                    </a>
+                                </h3>
+                                <p class="text-secondary mb-0" style="font-size: 0.95rem;">
+                                    {{ recurso.descricao|truncatechars:120 }}
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
                 </div>
             </section>
             {% endif %}

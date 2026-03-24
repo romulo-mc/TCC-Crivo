@@ -5,7 +5,7 @@
             
             <li class="nav-item">
                 <a href="{% if '/forum/' in request.path %}{% url 'lista_forum' %}{% elif '/library/' in request.path %}{% url 'home' %}{% else %}{% url 'home' %}{% endif %}" 
-                   class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3">
+                   class="nav-link text-body fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2">
                     <i class="bi bi-house-door fs-5" aria-hidden="true"></i> 
                     <span class="link-text">Página Inicial</span>
                 </a>
@@ -13,7 +13,7 @@
 
             <li class="nav-item">
                 <a href="{% url 'lista_forum' %}" 
-                   class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/forum/' in request.path %}bg-white bg-opacity-50{% endif %}">
+                   class="nav-link text-body fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/forum/' in request.path %}bg-primary bg-opacity-10 text-primary{% endif %}">
                     <i class="bi bi-people fs-5" aria-hidden="true"></i> 
                     <span class="link-text">Fórum</span>
                 </a>
@@ -21,14 +21,14 @@
 
             <li class="nav-item">
                 <a href="{% url 'lista_library' %}" 
-                   class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/library/' in request.path %}bg-white bg-opacity-50{% endif %}">
+                   class="nav-link text-body fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/library/' in request.path %}bg-primary bg-opacity-10 text-primary{% endif %}">
                     <i class="bi bi-collection-play fs-5" aria-hidden="true"></i> 
                     <span class="link-text">Acervo</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a href="{% url 'lista_recursos' %}" class="nav-link text-dark fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2">
+                <a href="{% url 'lista_recursos' %}" class="nav-link text-body fw-bold d-flex gap-3 align-items-center py-2 px-3 hover-bg-light rounded mx-2 {% if '/educacao/' in request.path %}bg-primary bg-opacity-10 text-primary{% endif %}">
                     <i class="bi bi-lightbulb fs-5" aria-hidden="true"></i> 
                     <span class="link-text">Recursos Educativos</span>
                 </a>
@@ -43,23 +43,23 @@
 
             {% if '/forum/' in request.path %}
                 <li class="nav-item px-3 mt-3 mb-1">
-                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text" style="letter-spacing: 1px;">Explorar</span>
+                    <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap" style="letter-spacing: 1px;">Explorar Fórum</span>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'lista_forum' %}?ordem=novos" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.ordem == 'novos' %}bg-light fw-bold{% endif %}">
-                        <i class="bi bi-stars fs-5 text-primary"></i> 
+                    <a href="{% url 'lista_forum' %}?ordem=novos" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if request.GET.ordem == 'novos' or not request.GET.ordem %}fw-bold{% endif %}">
+                        <i class="bi bi-stars fs-5"></i> 
                         <span class="link-text">Novidades</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'lista_forum' %}?ordem=populares" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.ordem == 'populares' %}bg-light fw-bold{% endif %}">
-                        <i class="bi bi-fire fs-5 text-danger"></i> 
+                    <a href="{% url 'lista_forum' %}?ordem=populares" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if request.GET.ordem == 'populares' %}fw-bold{% endif %}">
+                        <i class="bi bi-fire fs-5"></i> 
                         <span class="link-text">Em alta</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'lista_forum' %}?ordem=votos" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.ordem == 'votos' %}bg-light fw-bold{% endif %}">
-                        <i class="bi bi-graph-up-arrow fs-5 text-success"></i> 
+                    <a href="{% url 'lista_forum' %}?ordem=votos" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if request.GET.ordem == 'votos' %}fw-bold{% endif %}">
+                        <i class="bi bi-graph-up-arrow fs-5"></i> 
                         <span class="link-text">Melhor Avaliados</span>
                     </a>
                 </li>
@@ -67,11 +67,11 @@
                 <hr class="my-2 mx-3 opacity-25">
 
                 <li class="nav-item px-3 mb-1">
-                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text">Categorias</span>
+                    <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap">Categorias</span>
                 </li>
                 {% for cat in categorias %}
                 <li class="nav-item">
-                    <a href="{% url 'lista_forum' %}?categoria={{ cat.slug }}" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.categoria == cat.slug %}bg-primary bg-opacity-10 text-primary fw-bold{% endif %}">
+                    <a href="{% url 'lista_forum' %}?categoria={{ cat.slug }}" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if request.GET.categoria == cat.slug %}fw-bold{% endif %}">
                         <i class="bi bi-tag small"></i> 
                         <span class="link-text">{{ cat.nome }}</span>
                     </a>
@@ -80,14 +80,31 @@
             
             {% elif '/library/' in request.path %}
                 <li class="nav-item px-3 mt-3 mb-1">
-                    <span class="text-uppercase fw-bold text-dark opacity-75 small link-text" style="letter-spacing: 1px;">Categorias</span>
+                    <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap" style="letter-spacing: 1px;">Explorar Acervo</span>
                 </li>
-                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-film fs-5"></i><span class="link-text fw-semibold">Filmes</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-tv fs-5"></i><span class="link-text fw-semibold">Séries</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-book fs-5"></i><span class="link-text fw-semibold">Livros</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-music-note-beamed fs-5"></i><span class="link-text fw-semibold">Músicas</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-mic fs-5"></i><span class="link-text fw-semibold">Podcasts</span></a></li>
-                <li class="nav-item"><a href="#" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center"><i class="bi bi-file-text fs-5"></i><span class="link-text fw-semibold">Artigos</span></a></li>
+                <li class="nav-item">
+                    <a href="{% url 'lista_library' %}?ordem=novos" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if request.GET.ordem == 'novos' or not request.GET.ordem %}fw-bold{% endif %}">
+                        <i class="bi bi-stars fs-5"></i> 
+                        <span class="link-text">Recentes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'lista_library' %}?ordem=votos" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if request.GET.ordem == 'votos' %}fw-bold{% endif %}">
+                        <i class="bi bi-star-fill fs-5"></i> 
+                        <span class="link-text">Melhor Avaliados</span>
+                    </a>
+                </li>
+
+                <hr class="my-2 mx-3 opacity-25">
+
+                <li class="nav-item px-3 mb-1">
+                    <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap" style="letter-spacing: 1px;">Formatos</span>
+                </li>
+                <li class="nav-item"><a href="{% url 'lista_library' %}?tipo=FILME" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if 'FILME' in request.GET.tipo %}fw-bold{% endif %}"><i class="bi bi-film fs-5"></i><span class="link-text">Filmes</span></a></li>
+                <li class="nav-item"><a href="{% url 'lista_library' %}?tipo=SERIE" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if 'SERIE' in request.GET.tipo %}fw-bold{% endif %}"><i class="bi bi-tv fs-5"></i><span class="link-text">Séries</span></a></li>
+                <li class="nav-item"><a href="{% url 'lista_library' %}?tipo=LIVRO" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if 'LIVRO' in request.GET.tipo %}fw-bold{% endif %}"><i class="bi bi-book fs-5"></i><span class="link-text">Livros</span></a></li>
+                <li class="nav-item"><a href="{% url 'lista_library' %}?tipo=MUSICA" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if 'MUSICA' in request.GET.tipo %}fw-bold{% endif %}"><i class="bi bi-music-note-beamed fs-5"></i><span class="link-text">Músicas</span></a></li>
+                <li class="nav-item"><a href="{% url 'lista_library' %}?tipo=PODCAST" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if 'PODCAST' in request.GET.tipo %}fw-bold{% endif %}"><i class="bi bi-mic fs-5"></i><span class="link-text">Podcasts</span></a></li>
             {% endif %}
 
         </ul>
@@ -96,13 +113,13 @@
     <nav class="p-3 border-top border-dark border-opacity-25" aria-label="Links adicionais">
         <ul class="nav flex-column gap-1">
             <li class="nav-item">
-                <a href="{% url 'home' %}" class="nav-link text-dark py-2 px-2 d-flex gap-3 align-items-center">
+                <a href="{% url 'home' %}" class="nav-link text-body py-2 px-2 d-flex gap-3 align-items-center hover-bg-light rounded mx-2">
                     <i class="bi bi-info-circle fs-5" aria-hidden="true"></i>
                     <span class="link-text fw-semibold">Sobre o projeto</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link text-dark py-2 px-2 d-flex gap-3 align-items-center">
+                <a href="{% url 'configuracoes' %}" class="nav-link text-body py-2 px-2 d-flex gap-3 align-items-center hover-bg-light rounded mx-2">
                     <i class="bi bi-gear fs-5" aria-hidden="true"></i>
                     <span class="link-text fw-semibold">Configurações</span>
                 </a>
@@ -110,3 +127,8 @@
         </ul>
     </nav>
 </aside>
+
+<style>
+    .hover-bg-light { transition: background-color 0.2s ease; }
+    .hover-bg-light:hover { background-color: var(--bs-secondary-bg) !important; }
+</style>

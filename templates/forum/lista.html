@@ -4,7 +4,7 @@
 
 {% block sidebar_items %}
     <li class="nav-item">
-        <a href="{% url 'lista_forum' %}" class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if not request.GET.categoria %}bg-light fw-bold text-primary{% endif %}">
+        <a href="{% url 'lista_forum' %}" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center {% if not request.GET.categoria %}bg-light fw-bold text-primary{% endif %}">
             <i class="bi bi-grid-fill"></i>
             <span class="link-text">Tudo</span>
         </a>
@@ -13,7 +13,7 @@
     {% for categoria in categorias %}
         <li class="nav-item">
             <a href="{% url 'lista_forum' %}?categoria={{ categoria.slug }}{% if request.GET.ordem %}&ordem={{ request.GET.ordem }}{% endif %}" 
-               class="nav-link text-dark py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.categoria == categoria.slug %}bg-light fw-bold text-primary{% endif %}">
+               class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center {% if request.GET.categoria == categoria.slug %}bg-light fw-bold text-primary{% endif %}">
                 <i class="bi bi-tag" aria-hidden="true"></i> 
                 <span class="link-text">{{ categoria.nome }}</span>
             </a>
@@ -27,7 +27,7 @@
 <main class="container py-4" id="main-content">
     <header class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="fw-bold mb-1">Fórum de Vivência</h1>
+            <h1 class="fw-bold mb-1 text-body">Fórum de Vivência</h1>
             <p class="text-muted small mb-0">Compartilhe histórias, tire dúvidas e encontre apoio.</p>
         </div>
         <a href="{% url 'criar_topico' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
@@ -38,12 +38,16 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 bg-white p-2 rounded-4 shadow-sm border">
         <div class="nav nav-pills gap-2 px-2">
             <a href="?ordem=novos{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-               class="nav-link rounded-pill py-1 px-3 border {% if not request.GET.ordem or request.GET.ordem == 'novos' %}active bg-primary{% else %}text-dark bg-light{% endif %}">
+               class="nav-link rounded-pill py-1 px-3 border {% if not request.GET.ordem or request.GET.ordem == 'novos' %}active bg-primary{% else %}text-body hover-bg-light{% endif %}">
                <i class="bi bi-stars me-1"></i> Novidades
             </a>
             <a href="?ordem=populares{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'populares' %}active bg-danger border-danger{% else %}text-dark bg-light{% endif %}">
+               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'populares' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}">
                <i class="bi bi-fire me-1"></i> Em alta
+            </a>
+            <a href="?ordem=votos{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
+               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'votos' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}">
+               <i class="bi bi-star-fill me-1"></i> Melhor Avaliados
             </a>
             <button type="button" class="btn btn-outline-primary rounded-pill py-1 px-3 border shadow-sm" data-bs-toggle="modal" data-bs-target="#modalFiltrosForum">
                 <i class="bi bi-sliders me-1"></i> Filtros Avançados
@@ -66,15 +70,15 @@
     <div class="row g-4">
         {% for topico in topicos %}
         <article class="col-12">
-            <div class="card shadow-sm border-0 hover-lift h-100 rounded-4 overflow-hidden" 
+            <div class="card shadow-sm border-0 hover-lift h-100 rounded-4 overflow-hidden bg-white" 
                  tabindex="0" 
                  aria-labelledby="titulo-{{ topico.slug }}" 
                  aria-describedby="resumo-{{ topico.slug }}">
                 
                 <div class="card-body d-flex align-items-start gap-3 p-4">
                     
-                    <div class="d-flex flex-column align-items-center rounded-3 py-2 px-1" 
-                         style="z-index: 2; min-width: 55px; background-color: #f0f2f5; border: 1px solid rgba(0,0,0,0.12);">
+                    <div class="d-flex flex-column align-items-center rounded-3 py-2 px-1 bg-light border" 
+                         style="z-index: 2; min-width: 55px;">
                         
                         <button onclick="votar('{{ topico.slug }}', 'like')" 
                                 id="btn-like-topico-{{ topico.slug }}"
@@ -83,7 +87,7 @@
                             <i class="bi {% if user in topico.likes.all %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} fs-5"></i> 
                         </button>
                         
-                        <span id="votos-{{ topico.slug }}" class="fw-bold my-1 text-dark" style="font-size: 1rem;" aria-label="{{ topico.total_votos }} votos total">{{ topico.total_votos }}</span>
+                        <span id="votos-{{ topico.slug }}" class="fw-bold my-1 text-body" style="font-size: 1rem;" aria-label="{{ topico.total_votos }} votos total">{{ topico.total_votos }}</span>
                         
                         <button onclick="votar('{{ topico.slug }}', 'deslike')" 
                                 id="btn-deslike-topico-{{ topico.slug }}"
@@ -105,7 +109,7 @@
                             <small class="text-muted ms-2">
                                 Por 
                                 {% if topico.autor %}
-                                    <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none fw-semibold text-dark position-relative" style="z-index: 2;">
+                                    <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none fw-semibold text-body position-relative" style="z-index: 2;">
                                         @{{ topico.autor.profile.slug }}
                                     </a>
                                 {% else %}
@@ -115,7 +119,7 @@
                             </small>
                         </div>
                         <h2 class="h5 fw-bold mb-2" id="titulo-{{ topico.slug }}">
-                            <a href="{% url 'detalhe_topico' topico.slug %}" class="text-dark text-decoration-none stretched-link">
+                            <a href="{% url 'detalhe_topico' topico.slug %}" class="text-body text-decoration-none stretched-link">
                                 {{ topico.titulo }}
                             </a>
                         </h2>
@@ -125,7 +129,7 @@
                     </div>
 
                     <div class="text-end d-none d-md-block position-relative" style="z-index: 2;">
-                        <div class="d-flex align-items-center gap-1 text-muted small bg-light p-2 rounded-3 border" aria-label="{{ topico.respostas.count }} respostas">
+                        <div class="d-flex align-items-center gap-1 text-body small bg-light p-2 rounded-3 border" aria-label="{{ topico.respostas.count }} respostas">
                             <i class="bi bi-chat-left-text-fill text-primary"></i>
                             <span class="fw-bold">{{ topico.respostas.count }}</span>
                         </div>
@@ -147,9 +151,9 @@
 
 <div class="modal fade" id="modalFiltrosForum" tabindex="-1" aria-labelledby="modalFiltrosLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-content border-0 rounded-4 shadow bg-white">
             <div class="modal-header border-bottom-0 px-4 pt-4">
-                <h5 class="modal-title fw-bold" id="modalFiltrosLabel">Filtros Avançados</h5>
+                <h5 class="modal-title fw-bold text-body" id="modalFiltrosLabel">Filtros Avançados</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             
@@ -162,7 +166,7 @@
                         <div class="col-6">
                             <input type="radio" class="btn-check" name="categoria" id="cat_{{ cat.id }}" value="{{ cat.slug }}" 
                                    {% if request.GET.categoria == cat.slug %}checked{% endif %}>
-                            <label class="btn btn-outline-light text-dark border w-100 text-start py-2 px-3 rounded-3 small shadow-sm" for="cat_{{ cat.id }}">
+                            <label class="btn btn-outline-light text-body border w-100 text-start py-2 px-3 rounded-3 small shadow-sm" for="cat_{{ cat.id }}">
                                 <i class="bi bi-tag me-2 opacity-50"></i> {{ cat.nome }}
                             </label>
                         </div>
@@ -173,25 +177,25 @@
 
                     <label class="fw-bold text-primary small text-uppercase mb-3 d-block" style="letter-spacing: 1px;">Ordenar por</label>
                     <div class="list-group list-group-flush rounded-3 border overflow-hidden">
-                        <label class="list-group-item d-flex gap-2 py-3">
+                        <label class="list-group-item bg-white d-flex gap-2 py-3">
                             <input class="form-check-input flex-shrink-0" type="radio" name="ordem" value="novos" {% if not request.GET.ordem or request.GET.ordem == 'novos' %}checked{% endif %}>
                             <span>
-                                <strong class="d-block text-dark">Mais recentes</strong>
+                                <strong class="d-block text-body">Mais recentes</strong>
                                 <small class="d-block text-muted">Novidades primeiro.</small>
                             </span>
                         </label>
-                        <label class="list-group-item d-flex gap-2 py-3">
+                        <label class="list-group-item bg-white d-flex gap-2 py-3">
                             <input class="form-check-input flex-shrink-0" type="radio" name="ordem" value="votos" {% if request.GET.ordem == 'votos' %}checked{% endif %}>
                             <span>
-                                <strong class="d-block text-dark">Melhores avaliados</strong>
+                                <strong class="d-block text-body">Melhores avaliados</strong>
                                 <small class="d-block text-muted">Baseado nos votos da comunidade.</small>
                             </span>
                         </label>
-                        <label class="list-group-item d-flex gap-2 py-3">
+                        <label class="list-group-item bg-white d-flex gap-2 py-3">
                             <input class="form-check-input flex-shrink-0" type="radio" name="ordem" value="populares" {% if request.GET.ordem == 'populares' %}checked{% endif %}>
                             <span>
-                                <strong class="d-block text-dark">Em alta</strong>
-                                <small class="d-block text-muted">Tópicos com mais comentários.</small>
+                                <strong class="d-block text-body">Em alta</strong>
+                                <small class="d-block text-muted">Tópicos com mais respostas.</small>
                             </span>
                         </label>
                     </div>
@@ -212,7 +216,7 @@
         color: white !important;
         border-color: #0d6efd !important;
     }
-    .modal-body .btn-outline-light:hover { background-color: #f8f9fa; }
+    .modal-body .btn-outline-light:hover { background-color: var(--bs-light); }
     .hover-lift { transition: transform 0.2s; cursor: pointer; outline: none; }
     .hover-lift:hover, .hover-lift:focus { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
 
@@ -226,5 +230,6 @@
     .btn-like.active { color: #0d6efd; }
     .btn-deslike:hover, .btn-deslike:focus { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; outline: none; }
     .btn-deslike.active { color: #dc3545; }
+    .hover-bg-light:hover { background-color: var(--bs-secondary-bg) !important; }
 </style>
 {% endblock %}
