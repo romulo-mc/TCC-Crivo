@@ -41,7 +41,7 @@ class Gatilho(models.Model):
 
 
 class LibraryItem(TimeStampedModel):
-    STATUS_CHOICES = [('PENDENTE', 'Pendente'), ('ATIVO', 'Aprovado'), ('REJEITADO', 'Rejeitado')]
+    STATUS_CHOICES = [('PENDENTE', 'Pendente'), ('ATIVO', 'Aprovado'), ('REJEITADO', 'Rejeitado'), ('OCULTO', 'Ocultado (Moderação)')]
     TIPO_CHOICES = [('FILME', 'Filme'), ('SERIE', 'Série'), ('LIVRO', 'Livro'), ('MUSICA', 'Música'), ('PODCAST', 'Podcast'), ('ARTIGO', 'Artigo')]
     TIPO_REP_CHOICES = [
         ('PROTAGONISMO', 'Protagonismo'), ('COADJUVANTE', 'Coadjuvante com Arco Próprio'),
@@ -55,7 +55,7 @@ class LibraryItem(TimeStampedModel):
     ]
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDENTE')
-    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição/Ocultação (Admin)")
     usuario_criador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='itens_cadastrados')
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
     titulo = models.CharField(max_length=200, verbose_name="Título")
@@ -63,7 +63,10 @@ class LibraryItem(TimeStampedModel):
     pais_origem = models.CharField(max_length=100, blank=True)
     idioma = models.CharField(max_length=50, blank=True)
     classificacao_indicativa = models.CharField(max_length=20, blank=True)
+    
     capa = models.ImageField(upload_to='library/covers/', blank=True, null=True)
+    alt_text = models.CharField(max_length=255, blank=True, null=True, verbose_name="Texto Alternativo da Capa")
+    
     link_acesso = models.URLField(blank=True, null=True)
     titulo_original = models.CharField(max_length=200, blank=True)
     sinopse = models.TextField(blank=True)
@@ -96,6 +99,7 @@ class LibraryItem(TimeStampedModel):
     pontos_problematicos = models.TextField(blank=True)
 
     def __str__(self): return self.titulo
+    
     @property
     def elenco_lista(self):
         if self.elenco_principal:
@@ -109,6 +113,9 @@ class LibraryItem(TimeStampedModel):
         return round(media, 1) if media else 0
     
 class Review(TimeStampedModel):
+    STATUS_CHOICES = [('APROVADO', 'Aprovado'), ('OCULTO', 'Ocultado (Moderação)')]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='APROVADO')
+    motivo_moderacao = models.TextField(blank=True, verbose_name="Motivo Ocultação (Admin)")
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(LibraryItem, on_delete=models.CASCADE, related_name='reviews')

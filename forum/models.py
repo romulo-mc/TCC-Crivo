@@ -13,10 +13,12 @@ class Topico(models.Model):
     STATUS_CHOICES = [
         ('PENDENTE', 'Pendente'),
         ('APROVADO', 'Aprovado'),
-        ('REJEITADO', 'Rejeitado')
+        ('REJEITADO', 'Rejeitado'),
+        ('OCULTO', 'Ocultado pela Moderação') 
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='APROVADO')
-    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
+    
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição/Ocultação (Admin)")
     titulo = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='topicos')
@@ -42,10 +44,12 @@ class Resposta(models.Model):
     STATUS_CHOICES = [
         ('PENDENTE', 'Pendente'),
         ('APROVADO', 'Aprovado'),
-        ('REJEITADO', 'Rejeitado')
+        ('REJEITADO', 'Rejeitado'),
+        ('OCULTO', 'Ocultado pela Moderação')
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='APROVADO')
-    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição (Admin)")
+    motivo_rejeicao = models.TextField(blank=True, verbose_name="Motivo da Rejeição/Ocultação (Admin)")
+    
     topico = models.ForeignKey(Topico, on_delete=models.CASCADE, related_name='respostas')
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     conteudo = models.TextField()
