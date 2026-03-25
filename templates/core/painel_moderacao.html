@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <main class="container py-5" id="main-content" tabindex="-1">
     <header class="d-flex flex-wrap justify-content-between align-items-center mb-5 gap-3 border-bottom pb-4">
         <div>
@@ -13,11 +15,13 @@
 
     <div class="card border-0 shadow-sm rounded-4 bg-body overflow-hidden">
         <div class="card-header bg-body-tertiary border-bottom-0 pt-3 px-4">
-            <ul class="nav nav-tabs card-header-tabs gap-2" role="tablist">
-                <li class="nav-item"><button class="nav-link active fw-bold px-4" data-bs-toggle="tab" data-bs-target="#pendentes" type="button"><i class="bi bi-hourglass-split me-2"></i>Fila de Pendentes</button></li>
-                <li class="nav-item"><button class="nav-link fw-bold px-4 text-danger" data-bs-toggle="tab" data-bs-target="#ocultos" type="button"><i class="bi bi-eye-slash-fill me-2"></i>Itens Ocultos & Rejeitados</button></li>
+            <ul class="nav nav-tabs card-header-tabs gap-2 flex-nowrap overflow-auto" role="tablist" style="white-space: nowrap;">
+                <li class="nav-item"><button class="nav-link active fw-bold px-4" data-bs-toggle="tab" data-bs-target="#pendentes" type="button"><i class="bi bi-hourglass-split me-2"></i>Pendentes</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold px-4 text-danger" data-bs-toggle="tab" data-bs-target="#ocultos" type="button"><i class="bi bi-eye-slash-fill me-2"></i>Ocultos</button></li>
                 <li class="nav-item"><button class="nav-link fw-bold px-4 text-dark" data-bs-toggle="tab" data-bs-target="#banidos" type="button"><i class="bi bi-slash-circle me-2"></i>Banidos</button></li>
-                <li class="nav-item"><button class="nav-link fw-bold px-4 text-primary" data-bs-toggle="tab" data-bs-target="#tags" type="button"><i class="bi bi-tags-fill me-2"></i>Tags & Categorias</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold px-4 text-primary" data-bs-toggle="tab" data-bs-target="#tags" type="button"><i class="bi bi-tags-fill me-2"></i>Tags</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold px-4 text-danger" data-bs-toggle="tab" data-bs-target="#bugs" type="button"><i class="bi bi-bug-fill me-2"></i>Bugs</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold px-4 text-warning-emphasis" data-bs-toggle="tab" data-bs-target="#avaliacoes" type="button"><i class="bi bi-star-fill me-2"></i>Avaliações (TCC)</button></li>
             </ul>
         </div>
 
@@ -92,7 +96,6 @@
                     </ul>
 
                     <div class="tab-content bg-body-tertiary p-3 rounded-4 border shadow-sm" id="pills-ocultos-tabContent">
-                        
                         <div class="tab-pane fade show active" id="pills-topicos" role="tabpanel">
                             <div class="list-group list-group-flush rounded-3">
                                 {% for item in topicos_ocultos %}
@@ -114,9 +117,7 @@
                                     <span class="badge {% if item.status == 'REJEITADO' %}bg-danger{% else %}bg-dark{% endif %} mb-2">Comentário {{ item.get_status_display }}</span>
                                     <h5 class="h6 fw-bold mb-1 text-primary">Tópico: {{ item.topico.titulo }}</h5>
                                     <small class="text-muted d-block mb-2">Por @{{ item.autor.profile.slug }}</small>
-                                    
                                     <p class="small text-body bg-light border p-2 rounded-2 mb-2 text-truncate">"{{ item.conteudo|striptags }}"</p>
-                                    
                                     <p class="small text-danger-emphasis bg-danger-subtle p-2 rounded-2 fst-italic mb-2"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</p>
                                     <a href="{% url 'aprovar_item' 'resposta' item.id %}" class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="return confirm('Readmitir comentário?');"><i class="bi bi-arrow-counterclockwise"></i> Readmitir Comentário</a>
                                 </div>
@@ -151,7 +152,6 @@
                                 {% empty %}<p class="text-muted text-center my-3 fst-italic">Nenhuma avaliação oculta.</p>{% endfor %}
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -225,6 +225,73 @@
                     </div>
                 </div>
 
+                <div class="tab-pane fade" id="bugs">
+                    <h3 class="h5 fw-bold mb-4 border-bottom pb-2 text-danger"><i class="bi bi-bug-fill me-2"></i>Bugs Reportados pelos Usuários</h3>
+                    <div class="list-group list-group-flush shadow-sm rounded-3">
+                        {% for bug in bugs %}
+                        <div class="list-group-item p-4 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm position-relative">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge {% if bug.status == 'PENDENTE' %}bg-danger{% elif bug.status == 'ANALISE' %}bg-warning text-dark{% else %}bg-success{% endif %} mb-2">{{ bug.get_status_display }}</span>
+                                <small class="text-muted">{{ bug.data_reporte|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <p class="mb-1 fw-bold text-primary">Por: {% if bug.usuario %}@{{ bug.usuario.profile.slug }}{% else %}Visitante Anônimo{% endif %}</p>
+                            <p class="text-body bg-light border p-3 rounded-3 fst-italic mt-2 mb-2">"{{ bug.descricao }}"</p>
+                            
+                            {% if bug.url_erro %}
+                                <p class="small mb-2"><strong>Onde aconteceu:</strong> <a href="{{ bug.url_erro }}" target="_blank" class="text-primary text-break">{{ bug.url_erro }}</a></p>
+                            {% endif %}
+                            
+                            {% if bug.print_tela %}
+                                <a href="{{ bug.print_tela.url }}" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill mt-2 fw-bold"><i class="bi bi-image me-2"></i>Ver Print da Tela</a>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5 text-muted"><i class="bi bi-shield-check fs-1 d-block mb-2 text-success"></i><p>Nenhum bug reportado. O sistema está liso! ✨</p></div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="avaliacoes">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+                        <h3 class="h5 fw-bold text-warning-emphasis mb-0"><i class="bi bi-star-fill me-2"></i>Avaliações do Crivo (Dados do TCC)</h3>
+                        <button type="button" class="btn btn-warning fw-bold rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#modalRelatorioTCC" onclick="renderizarGrafico()">
+                            <i class="bi bi-bar-chart-line-fill me-2"></i>Gerar Relatório Gráfico
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        {% for av in avaliacoes %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border border-warning border-opacity-25 shadow-sm rounded-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="fw-bold text-primary mb-1">@{{ av.usuario.profile.slug }}</h5>
+                                        <span class="badge bg-warning text-dark fs-6"><i class="bi bi-star-fill me-1"></i>{{ av.nota_geral }}</span>
+                                    </div>
+                                    <small class="text-muted d-block mb-3">{{ av.data_avaliacao|date:"d/m/Y" }}</small>
+                                    
+                                    <div class="small d-flex flex-column gap-1 mb-3">
+                                        <div><strong>Usabilidade:</strong> {{ av.nota_usabilidade }}/5</div>
+                                        <div><strong>Acessibilidade:</strong> {{ av.nota_acessibilidade }}/5</div>
+                                        <div><strong>Design:</strong> {{ av.nota_design }}/5</div>
+                                        <div class="text-success fw-bold"><strong>NPS (Recomendação):</strong> {{ av.probabilidade_recomendar }}/10</div>
+                                    </div>
+
+                                    {% if av.feedback_aberto %}
+                                        <p class="small text-muted bg-light p-2 rounded-3 fst-italic mb-0 border">"{{ av.feedback_aberto }}"</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center py-5 text-muted">
+                            <i class="bi bi-journal-x fs-1 d-block mb-2"></i>
+                            <p>Ainda não há avaliações. Divulgue a plataforma para a coleta de dados!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -254,6 +321,79 @@
     </div>
 </div>
 {% endfor %}
+
+<div class="modal fade" id="modalRelatorioTCC" tabindex="-1" aria-labelledby="modalRelatorioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-warning border-bottom-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-dark" id="modalRelatorioLabel"><i class="bi bi-bar-chart-line-fill me-2"></i>Relatório de Validação (TCC)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-4 bg-white">
+                <p class="text-muted mb-4 text-center">Baseado em <strong>{{ avaliacoes.count }}</strong> avaliações recebidas.</p>
+                {% if avaliacoes.count > 0 %}
+                    <canvas id="graficoTCC" width="400" height="200"></canvas>
+                {% else %}
+                    <p class="text-center text-danger fw-bold py-5">Não há dados suficientes para gerar o gráfico.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let graficoRenderizado = false;
+
+    function renderizarGrafico() {
+        if (graficoRenderizado) return;
+        
+        const ctx = document.getElementById('graficoTCC');
+        if (!ctx) return;
+
+        const mediaGeral = parseFloat("{{ medias.nota_geral__avg|default:0|stringformat:'f' }}".replace(',', '.'));
+        const mediaUsab = parseFloat("{{ medias.nota_usabilidade__avg|default:0|stringformat:'f' }}".replace(',', '.'));
+        const mediaAcess = parseFloat("{{ medias.nota_acessibilidade__avg|default:0|stringformat:'f' }}".replace(',', '.'));
+        const mediaDesign = parseFloat("{{ medias.nota_design__avg|default:0|stringformat:'f' }}".replace(',', '.'));
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Nota Geral', 'Usabilidade', 'Acessibilidade', 'Design'],
+                datasets: [{
+                    label: 'Média das Notas (de 1 a 5)',
+                    data: [mediaGeral, mediaUsab, mediaAcess, mediaDesign],
+                    backgroundColor: [
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(13, 110, 253, 0.7)',
+                        'rgba(25, 135, 84, 0.7)',
+                        'rgba(220, 53, 69, 0.7)'  
+                    ],
+                    borderColor: [
+                        'rgb(255, 193, 7)',
+                        'rgb(13, 110, 253)',
+                        'rgb(25, 135, 84)',
+                        'rgb(220, 53, 69)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+        graficoRenderizado = true;
+    }
+</script>
 
 <style>
     .btn-3d { border-radius: 12px; font-weight: 700; transition: all 0.2s ease; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;}

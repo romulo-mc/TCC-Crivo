@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container py-5" id="main-content" tabindex="-1">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            
+            <div class="text-center mb-5">
+                <div class="d-inline-flex justify-content-center align-items-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-star-fill fs-1"></i>
+                </div>
+                <h1 class="fw-bold text-dark mb-2">Avalia o Crivo</h1>
+                <p class="text-muted fs-5">A tua opinião é fundamental para a validação desta plataforma no meu TCC! 🎓✨</p>
+                
+                {% if ja_avaliou %}
+                    <div class="alert alert-info border-info border-opacity-25 rounded-3 d-inline-block shadow-sm mt-3">
+                        <i class="bi bi-info-circle-fill me-2"></i> Já avaliaste a plataforma! Mas se quiseres, podes atualizar as tuas notas abaixo.
+                    </div>
+                {% endif %}
+            </div>
+
+            <form method="POST" class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                {% csrf_token %}
+                
+                <h3 class="h5 fw-bold text-primary border-bottom pb-2 mb-4">Critérios de Avaliação (1 a 5)</h3>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="fw-bold mb-2">{{ form.nota_geral.label }}</label>
+                        {{ form.nota_geral }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold mb-2">{{ form.nota_usabilidade.label }}</label>
+                        {{ form.nota_usabilidade }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold mb-2">{{ form.nota_acessibilidade.label }}</label>
+                        {{ form.nota_acessibilidade }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-bold mb-2">{{ form.nota_design.label }}</label>
+                        {{ form.nota_design }}
+                    </div>
+                </div>
+
+                <div class="p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-4 mb-4 text-center">
+                    <label class="fw-bold fs-5 text-primary mb-3 d-block">{{ form.probabilidade_recomendar.label }}</label>
+                    <div class="d-flex justify-content-center">
+                        <div style="max-width: 150px; width: 100%;">
+                            {{ form.probabilidade_recomendar }}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2 small text-muted px-md-5">
+                        <span>0 - Nunca</span>
+                        <span>10 - Com certeza!</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="fw-bold mb-2">{{ form.feedback_aberto.label }}</label>
+                    {{ form.feedback_aberto }}
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{% url 'perfil_usuario' request.user.profile.slug %}" class="btn btn-light rounded-pill px-4 fw-bold">Cancelar</a>
+                    <button type="submit" class="btn btn-warning rounded-pill px-5 fw-bold shadow-sm py-2 hover-lift text-dark">
+                        <i class="bi bi-send-fill me-2"></i>Enviar Avaliação
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
+
+<style>
+    .hover-lift { transition: transform 0.2s ease; display: inline-block; }
+    .hover-lift:hover { transform: translateY(-2px); }
+</style>
+{% endblock %}

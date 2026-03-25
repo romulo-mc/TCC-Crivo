@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.contrib.auth.models import User
 from forum.models import Topico, Resposta, Categoria
 from library.models import LibraryItem, Review, Condicao, Gatilho
@@ -10,6 +10,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.utils.text import slugify
 from django.utils import timezone
+from feedbacks.models import BugReport, AvaliacaoPlataforma
 
 def home(request):
     return render(request, 'core/index.html')
@@ -94,7 +95,17 @@ def painel_moderacao(request):
         'categorias': Categoria.objects.all().order_by('nome'),
         'condicoes': Condicao.objects.all().order_by('nome'),
         'gatilhos': Gatilho.objects.all().order_by('nome'),
+        
+        'bugs': BugReport.objects.all().order_by('-data_reporte'),
+        'avaliacoes': AvaliacaoPlataforma.objects.all().order_by('-data_avaliacao'),
     }
+    
+    if contexto['avaliacoes'].exists():
+        medias = AvaliacaoPlataforma.objects.aggregate(
+            Avg('nota_geral'), Avg('nota_usabilidade'), Avg('nota_acessibilidade'), Avg('nota_design'), Avg('probabilidade_recomendar')
+        )
+        contexto['medias'] = medias
+
     contexto['total_pendentes'] = contexto['topicos_pendentes'].count() + contexto['respostas_pendentes'].count() + contexto['acervo_pendente'].count()
     return render(request, 'core/painel_moderacao.html', contexto)
 
