@@ -225,7 +225,7 @@
                                     <h3 class="h6 fw-bold mb-1">
                                         {% if topico.status == 'APROVADO' %}<a href="{% url 'detalhe_topico' topico.slug %}" class="text-dark text-decoration-none">{{ topico.titulo }}</a>{% else %}<span class="text-dark">{{ topico.titulo }}</span>{% endif %}
                                     </h3>
-                                    <p class="mb-2 text-muted small text-truncate">{{ topico.conteudo }}</p>
+                                    <p class="mb-2 text-muted small text-truncate">{{ topico.conteudo|striptags|truncatechars:150 }}</p>
                                     
                                     {% if is_dono and topico.motivo_rejeicao %}
                                         {% if topico.status == 'REJEITADO' or topico.status == 'OCULTO' %}
@@ -254,7 +254,7 @@
                                                 {% elif resposta.status == 'PENDENTE' %}<span class="badge bg-warning text-dark small">Em Análise</span>{% endif %}
                                             {% endif %}
                                         </div>
-                                        <p class="mb-1 text-dark">"{{ resposta.conteudo|truncatechars:200 }}"</p>
+                                        <p class="mb-1 text-dark">"{{ resposta.conteudo|striptags|truncatechars:200 }}"</p>
                                         <small class="text-muted"><i class="bi bi-calendar-event me-1"></i>{{ resposta.data_postagem|date:"d/m/Y H:i" }}</small>
                                         
                                         {% if is_dono and resposta.motivo_rejeicao %}

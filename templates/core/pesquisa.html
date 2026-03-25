@@ -153,7 +153,7 @@
                             </div>
                             
                             <p class="mb-3 text-secondary" style="font-size: 0.95rem; max-width: 95%;">
-                                {{ topico.conteudo|truncatechars:180 }}
+                                {{ topico.conteudo|striptags|truncatechars:180 }}
                             </p>
                             
                             <div class="d-flex flex-wrap gap-3 align-items-center mt-auto">

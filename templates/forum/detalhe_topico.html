@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 <main class="container py-4" id="main-content">
     <nav class="mb-4" aria-label="Navegação de retorno">
@@ -82,8 +83,8 @@
                 </div>
             {% endif %}
 
-            <div class="content fs-5 mb-5 text-dark markdown-render" style="line-height: 1.7;" tabindex="0" aria-label="Conteúdo da discussão">
-                {{ topico.conteudo }}
+            <div class="content fs-5 mb-5 text-dark" style="line-height: 1.7;" tabindex="0" aria-label="Conteúdo da discussão">
+                {{ topico.conteudo|safe }}
             </div>
 
             <div class="d-flex gap-3 border-top pt-3">
@@ -128,35 +129,45 @@
                 <span>Respondendo a...</span>
                 <button type="button" class="btn-close btn-close-white ms-2" style="font-size: 0.5em" onclick="cancelarResposta()"></button>
             </div>
+            
             <form method="post" id="form-comentario">
                 {% csrf_token %}
                 <input type="hidden" name="pai_id" id="pai_id_input" value="">
-                <textarea name="conteudo" id="id_conteudo_resposta" class="form-control mb-3" rows="4" placeholder="Escreva seu comentário..." required></textarea>
-                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow">Publicar</button>
+                
+                <div id="editor-container" style="height: 120px; font-size: 1rem; background-color: #fff;"></div>
+                
+                <textarea name="conteudo" id="id_conteudo_resposta" class="d-none"></textarea>
+                
+                <button type="submit" class="btn btn-primary px-5 mt-3 rounded-pill fw-bold shadow">Publicar</button>
             </form>
         </div>
     </section>
     
-    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
-    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.markdown-render').forEach(function(el) {
-                el.innerHTML = marked.parse(el.textContent || el.innerText);
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                placeholder: 'Escreva sua resposta de forma respeitosa...',
+                modules: { toolbar: [ ['bold', 'italic', 'strike'], ['blockquote'], [{'list': 'ordered'}, {'list': 'bullet'}], ['clean'] ] }
             });
 
-            new EasyMDE({
-                element: document.getElementById('id_conteudo_resposta'),
-                spellChecker: false,
-                status: false,
-                toolbar: ["bold", "italic", "strikethrough", "|", "heading", "quote", "|", "unordered-list", "ordered-list"],
-                placeholder: "Escreva sua resposta de forma respeitosa..."
-            });
+            var textareaConteudo = document.querySelector('#id_conteudo_resposta');
+            var form = document.querySelector('#form-comentario');
+            
+            form.onsubmit = function(event) {
+                if (quill.getText().trim().length === 0) {
+                    event.preventDefault();
+                    alert("Por favor, escreva alguma coisa antes de publicar.");
+                    return false;
+                }
+                textareaConteudo.value = quill.root.innerHTML;
+            };
         });
     </script>
     <style>
-        .editor-toolbar { border-radius: 12px 12px 0 0; border-color: #dee2e6; opacity: 0.8; }
-        .CodeMirror { border-radius: 0 0 12px 12px; border-color: #dee2e6; min-height: 120px; }
+        .ql-toolbar.ql-snow { border-radius: 12px 12px 0 0; background-color: #f8f9fa; border-color: #dee2e6; }
+        .ql-container.ql-snow { border-color: #dee2e6; border-radius: 0 0 12px 12px; }
+        .content ul, .content ol { padding-left: 2rem; margin-bottom: 1rem; }
     </style>
     {% endif %}
 </main>

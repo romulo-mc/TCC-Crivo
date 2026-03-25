@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container py-5">
-        <nav class="mb-4" aria-label="Navegação">
+    <nav class="mb-4" aria-label="Navegação">
         <a href="{% url 'lista_library' %}" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
             <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Voltar ao Acervo
         </a>
@@ -33,7 +33,16 @@
                             <div class="col-md-3"><label for="id_pais_origem">País</label>{{ item_form.pais_origem }}</div>
                             <div class="col-md-3" id="div_idioma"><label for="id_idioma">Idioma</label>{{ item_form.idioma }}</div>
                             <div class="col-md-3" id="div_classificacao"><label for="id_classificacao_indicativa">Classificação</label>{{ item_form.classificacao_indicativa }}</div>
-                            <div class="col-md-6"><label for="id_capa">Capa/Imagem</label>{{ item_form.capa }}</div>
+                            
+                            <div class="col-md-6">
+                                <label class="fw-bold text-success mb-2"><i class="bi bi-image me-2"></i>Capa/Imagem</label>
+                                <div id="dropzone_capa" tabindex="0" class="border rounded-3 p-4 text-center bg-white shadow-sm hover-dropzone" style="border: 2px dashed #198754 !important; cursor: pointer; outline: none; transition: 0.2s;">
+                                    <i class="bi bi-card-image display-4 text-success mb-2" id="icone_capa"></i>
+                                    <p class="mb-1 fw-bold text-dark file-name-text" id="texto_capa">Clique, arraste a imagem ou dê Ctrl+V aqui</p>
+                                </div>
+                                <div class="d-none">{{ item_form.capa }}</div>
+                            </div>
+                            
                             <div class="col-md-6"><label for="id_link_acesso">Link/Onde encontrar (Opcional)</label>{{ item_form.link_acesso }}</div>
                             <div class="col-12" id="div_sinopse"><label for="id_sinopse">Sinopse</label>{{ item_form.sinopse }}</div>
                         </div>
@@ -215,6 +224,10 @@
     </div>
 </div>
 
+<style>
+    .hover-dropzone:focus, .hover-dropzone:hover { background-color: #f8f9fa !important; transform: scale(1.02); }
+</style>
+
 <script>
     const selectTipoRep = document.getElementById('id_tipo_representacao');
     const divTipoOutro = document.getElementById('div_tipo_outro');
@@ -373,6 +386,51 @@
     document.addEventListener('DOMContentLoaded', function() {
         setupModalSync('sync-condicao', 'id_condicoes', 'badges_condicoes', 'bg-primary text-white');
         setupModalSync('sync-gatilho', 'id_gatilhos', 'badges_gatilhos', 'bg-danger text-white');
+
+        function setupDropzone(dropzoneId, inputId, textId, iconId, successColor) {
+            const dropzone = document.getElementById(dropzoneId);
+            const fileInput = document.getElementById(inputId);
+            const texto = document.getElementById(textId);
+            const icone = document.getElementById(iconId);
+
+            if (!dropzone || !fileInput) return;
+
+            dropzone.addEventListener('click', () => fileInput.click());
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+            });
+            function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => dropzone.style.backgroundColor = '#e9ecef', false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => dropzone.style.backgroundColor = '#fff', false);
+            });
+
+            dropzone.addEventListener('drop', (e) => {
+                let files = e.dataTransfer.files;
+                if(files.length) { fileInput.files = files; atualizarVisual(files[0].name); }
+            });
+
+            document.addEventListener('paste', (e) => {
+                let files = e.clipboardData.files;
+                if(files.length) { fileInput.files = files; atualizarVisual(files[0].name); }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if(this.files.length) { atualizarVisual(this.files[0].name); }
+            });
+
+            function atualizarVisual(nomeArquivo) {
+                texto.innerHTML = `<span class="text-${successColor}">Arquivo pronto: <strong>${nomeArquivo}</strong></span>`;
+                icone.className = `bi bi-check-circle-fill display-4 text-${successColor} mb-2`;
+                dropzone.style.borderColor = `var(--bs-${successColor}) !important`;
+            }
+        }
+        
+        setupDropzone('dropzone_capa', 'id_capa', 'texto_capa', 'icone_capa', 'success');
     });
 </script>
 {% endblock %}

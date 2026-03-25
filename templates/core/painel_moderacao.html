@@ -114,7 +114,9 @@
                                     <span class="badge {% if item.status == 'REJEITADO' %}bg-danger{% else %}bg-dark{% endif %} mb-2">Comentário {{ item.get_status_display }}</span>
                                     <h5 class="h6 fw-bold mb-1 text-primary">Tópico: {{ item.topico.titulo }}</h5>
                                     <small class="text-muted d-block mb-2">Por @{{ item.autor.profile.slug }}</small>
-                                    <p class="small text-body bg-light border p-2 rounded-2 mb-2 text-truncate">"{{ item.conteudo }}"</p>
+                                    
+                                    <p class="small text-body bg-light border p-2 rounded-2 mb-2 text-truncate">"{{ item.conteudo|striptags }}"</p>
+                                    
                                     <p class="small text-danger-emphasis bg-danger-subtle p-2 rounded-2 fst-italic mb-2"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</p>
                                     <a href="{% url 'aprovar_item' 'resposta' item.id %}" class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="return confirm('Readmitir comentário?');"><i class="bi bi-arrow-counterclockwise"></i> Readmitir Comentário</a>
                                 </div>
