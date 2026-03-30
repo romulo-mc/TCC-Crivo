@@ -33,6 +33,12 @@ class LibraryItemForm(forms.ModelForm):
     class Meta:
         model = LibraryItem
         exclude = ['status', 'usuario_criador']
+        labels = {
+            'combate_ou_reforca': 'Impacto da Obra (Em relação ao Capacitismo):',
+            'alt_text': 'Descrição da Imagem (Texto Alternativo para Cegos/Baixa Visão):',
+            'capa': 'Capa/Pôster da Obra:',
+            'titulo': 'Título da Obra:',
+        }
         widgets = {
             'sinopse': forms.Textarea(attrs={'rows': 3}),
             'elenco_principal': forms.Textarea(attrs={'rows': 2}),
@@ -40,6 +46,7 @@ class LibraryItemForm(forms.ModelForm):
             'analise_critica': forms.Textarea(attrs={'rows': 3, 'placeholder': 'O que você achou dessa abordagem?'}),
             'pontos_positivos': forms.Textarea(attrs={'rows': 2}),
             'pontos_problematicos': forms.Textarea(attrs={'rows': 2}),
+            'alt_text': forms.TextInput(attrs={'placeholder': 'Ex: Pôster do filme mostrando um homem em uma cadeira de rodas olhando para o mar...'}),
         }
 
     def __init__(self, *args, **kwargs):

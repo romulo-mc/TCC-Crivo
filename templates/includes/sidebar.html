@@ -1,4 +1,4 @@
-<aside id="sidebar-wrapper" class="border-end shadow-sm d-flex flex-column" role="complementary">
+<aside id="sidebar-wrapper" class="shadow-sm d-flex flex-column" role="complementary">
     
     <nav class="py-3" aria-label="Menu Principal">
         <ul class="nav flex-column mb-0 gap-2">
@@ -42,7 +42,7 @@
         <ul class="nav flex-column gap-1">
 
             {% if '/forum/' in request.path %}
-                <li class="nav-item px-3 mt-3 mb-1">
+                <li class="nav-item px-3 mt-3 mb-1 sidebar-header">
                     <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap" style="letter-spacing: 1px;">Explorar Fórum</span>
                 </li>
                 <li class="nav-item">
@@ -66,7 +66,7 @@
 
                 <hr class="my-2 mx-3 opacity-25">
 
-                <li class="nav-item px-3 mb-1">
+                <li class="nav-item px-3 mb-1 sidebar-header">
                     <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap">Categorias</span>
                 </li>
                 {% for cat in categorias %}
@@ -79,7 +79,7 @@
                 {% endfor %}
             
             {% elif '/library/' in request.path %}
-                <li class="nav-item px-3 mt-3 mb-1">
+                <li class="nav-item px-3 mt-3 mb-1 sidebar-header">
                     <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap" style="letter-spacing: 1px;">Explorar Acervo</span>
                 </li>
                 <li class="nav-item">
@@ -97,7 +97,7 @@
 
                 <hr class="my-2 mx-3 opacity-25">
 
-                <li class="nav-item px-3 mb-1">
+                <li class="nav-item px-3 mb-1 sidebar-header">
                     <span class="text-uppercase fw-bold text-body opacity-75 small link-text text-wrap" style="letter-spacing: 1px;">Formatos</span>
                 </li>
                 <li class="nav-item"><a href="{% url 'lista_library' %}?tipo=FILME" class="nav-link text-body py-2 px-3 d-flex gap-3 align-items-center hover-bg-light rounded mx-2 {% if 'FILME' in request.GET.tipo %}fw-bold{% endif %}"><i class="bi bi-film fs-5"></i><span class="link-text">Filmes</span></a></li>

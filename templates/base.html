@@ -1,6 +1,8 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-br" {% if user_prefs.modo_escuro %}data-bs-theme="dark"{% endif %}>
+<html lang="pt-br" 
+      class="fonte-{{ user_prefs.tamanho_fonte|default:'M' }}" 
+      {% if user_prefs.modo_escuro %}data-bs-theme="dark"{% endif %}>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,15 +21,23 @@
             --form-input-bg: #f8f9fa; --form-input-text: #6c757d;
             --card-bg: #ffffff; --border-color: #dee2e6;
             --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-size: 1rem; --transition-speed: 0.3s;
+            --transition-speed: 0.3s;
         }
+
+        html.fonte-XP { font-size: 12px !important; }
+        html.fonte-P { font-size: 14px !important; }
+        html.fonte-M { font-size: 16px !important; }
+        html.fonte-G { font-size: 20px !important; }
+        html.fonte-XG { font-size: 24px !important; }
 
         body {
             background-color: var(--bg-body); color: var(--text-color);
-            font-family: var(--font-base); font-size: var(--font-size);
-            overflow-x: hidden; padding-top: 60px;
+            font-family: var(--font-base); 
+            overflow-x: hidden; 
+            padding-top: 60px !important;
             transition: background-color var(--transition-speed), color var(--transition-speed);
         }
+
 
         [data-bs-theme="dark"] {
             --bg-body: #121212; --text-color: #f8f9fa; --bg-sidebar: #1a2c22;
@@ -41,72 +51,81 @@
         [data-bs-theme="dark"] .border, [data-bs-theme="dark"] .border-bottom, [data-bs-theme="dark"] .border-top, [data-bs-theme="dark"] hr { border-color: #333 !important; }
         [data-bs-theme="dark"] .card { background-color: #1e1e1e !important; border-color: #333 !important; }
 
-        body.fonte-dislexia, body.fonte-dislexia *:not([class*="bi-"]) { font-family: 'OpenDyslexic', sans-serif !important; letter-spacing: 0.5px !important; }
-        body.fonte-tdah, body.fonte-tdah *:not([class*="bi-"]) { font-family: 'FastFont', sans-serif !important; letter-spacing: 0.3px !important; }
-        body.fonte-tdah.fonte-dislexia, body.fonte-tdah.fonte-dislexia *:not([class*="bi-"]) { font-family: 'FastOpenDyslexic', sans-serif !important; letter-spacing: 0.5px !important; }
-        
-        body.fonte-tdah b.bionic-fix { font-weight: 900 !important; color: inherit; }
+        body.alto-contraste { background-color: #000000 !important; color: #FFFFFF !important; }
+        body.alto-contraste * { background-color: transparent !important; color: #FFFFFF !important; border-color: #FFFF00 !important; }
+        body.alto-contraste .card, body.alto-contraste .bg-white, body.alto-contraste .bg-light, body.alto-contraste .navbar, body.alto-contraste #sidebar-wrapper { background-color: #000000 !important; border: 2px solid #FFFFFF !important; }
+        body.alto-contraste a, body.alto-contraste a *, body.alto-contraste .text-primary { color: #FFFF00 !important; text-decoration: underline !important; }
+        body.alto-contraste .btn, body.alto-contraste .badge { background-color: #000000 !important; border: 2px solid #FFFF00 !important; color: #FFFF00 !important; }
+        body.alto-contraste [class^="bi-"], body.alto-contraste [class*=" bi-"] { color: inherit !important; }
 
-        body.fonte-XP { --font-size: 0.75rem; } body.fonte-P { --font-size: 0.85rem; }
-        body.fonte-G { --font-size: 1.25rem; } body.fonte-XG { --font-size: 1.5rem; }
+        body.fonte-dislexia, body.fonte-dislexia * { font-family: 'OpenDyslexic', sans-serif !important; letter-spacing: 0.5px !important; }
+        body.fonte-tdah, body.fonte-tdah * { font-family: 'FastFont', sans-serif !important; letter-spacing: 0.3px !important; }
+        body.fonte-tdah.fonte-dislexia, body.fonte-tdah.fonte-dislexia * { font-family: 'FastOpenDyslexic', sans-serif !important; letter-spacing: 0.5px !important; }
         
-        body.reduzir-animacoes *:not([vw]):not([vw] *) { 
+        body.fonte-tdah [class^="bi-"], body.fonte-tdah [class*=" bi-"], 
+        body.fonte-dislexia [class^="bi-"], body.fonte-dislexia [class*=" bi-"] {
+            font-family: bootstrap-icons !important; letter-spacing: normal !important;
+        }
+
+        body.reduzir-animacoes *, body.reduzir-animacoes *:not([vw]):not([vw] *) { 
             --transition-speed: 0s !important; transition: none !important; animation: none !important; 
         }
 
-        .skip-link {
-            position: absolute; top: -40px; left: 0; background: #4A90E2; color: white; padding: 8px;
-            z-index: 2000; transition: top 0.2s; text-decoration: none; border-bottom-right-radius: 8px;
-        }
+        .skip-link { position: absolute; top: -40px; left: 0; background: #4A90E2; color: white; padding: 8px; z-index: 2000; transition: top 0.2s; text-decoration: none; border-bottom-right-radius: 8px; }
         .skip-link:focus { top: 0; outline: 3px solid #FFF; }
-
-        #sidebar-wrapper {
-            position: fixed; top: 60px; left: 0; bottom: 0; width: 220px;
-            height: calc(100vh - 60px); background-color: var(--bg-sidebar);
-            transition: width var(--transition-speed) ease; overflow-y: auto; z-index: 1000; border-right: 1px solid rgba(0,0,0,0.1);
-        }
-        #sidebar-wrapper.toggled { width: 80px; }
-        #sidebar-wrapper.toggled .link-text, #sidebar-wrapper.toggled .sidebar-header, #sidebar-wrapper.toggled small { display: none !important; }
-        #sidebar-wrapper.toggled .nav-link { justify-content: center !important; gap: 0 !important; padding: 0 !important; }
-        #page-content-wrapper { width: 100%; margin-left: 220px; transition: margin-left var(--transition-speed) ease; }
-        #sidebar-wrapper.toggled ~ #page-content-wrapper { margin-left: 80px; }
         :focus-visible { outline: 3px solid #4A90E2 !important; outline-offset: 2px; }
 
-        @media (max-width: 768px) {
-            #sidebar-wrapper { margin-left: -220px; }
-            #sidebar-wrapper.toggled { margin-left: 0; width: 220px; }
-            #page-content-wrapper { margin-left: 0 !important; }
-            #sidebar-wrapper.toggled .link-text { display: inline !important; }
-            #sidebar-wrapper.toggled .nav-link { justify-content: flex-start !important; gap: 1rem !important; padding-left: 1rem !important; }
+        nav.navbar.fixed-top {
+            z-index: 1050 !important;
+            min-height: 60px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
         }
-        
-        .hover-dropzone:focus, .hover-dropzone:hover { background-color: #f8f9fa !important; transform: scale(1.02); }
 
-        .btn-outline-custom-warning {
-            border: 2px solid #ffc107;
-            color: var(--text-color);
-            background-color: transparent;
-            transition: all 0.3s ease;
+        #sidebar-wrapper {
+            position: fixed !important; 
+            top: 60px !important; 
+            left: 0; bottom: 0; width: 250px;
+            background-color: var(--bg-sidebar) !important; 
+            z-index: 1040 !important; 
+            overflow-y: auto; 
+            border-right: 1px solid rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
         }
-        .btn-outline-custom-warning i { color: #ffc107; transition: color 0.3s ease; }
-        .btn-outline-custom-warning:hover {
-            background-color: #ffc107;
-            color: #000;
-        }
-        .btn-outline-custom-warning:hover i { color: #000; }
 
-        .btn-outline-custom-danger {
-            border: 2px solid #dc3545;
-            color: var(--text-color);
-            background-color: transparent;
-            transition: all 0.3s ease;
+        #page-content-wrapper {
+            width: calc(100% - 250px); 
+            margin-left: 250px;
+            min-height: calc(100vh - 60px);
+            transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
         }
-        .btn-outline-custom-danger i { color: #dc3545; transition: color 0.3s ease; }
-        .btn-outline-custom-danger:hover {
-            background-color: #dc3545;
-            color: #fff;
+
+        @media (min-width: 992px) {
+            #wrapper.toggled #sidebar-wrapper { width: 80px !important; }
+            #wrapper.toggled #page-content-wrapper { margin-left: 80px !important; width: calc(100% - 80px) !important; }
+            #wrapper.toggled .link-text, #wrapper.toggled .sidebar-header, #wrapper.toggled small, #wrapper.toggled hr { display: none !important; }
+            #wrapper.toggled .nav-link { justify-content: center !important; padding: 0.5rem 0 !important; margin: 0.5rem !important; }
         }
-        .btn-outline-custom-danger:hover i { color: #fff; }
+
+        @media (max-width: 991.98px) {
+            #sidebar-wrapper { transform: translateX(-100%); width: 280px !important; box-shadow: 4px 0 10px rgba(0,0,0,0.1); }
+            #page-content-wrapper { margin-left: 0 !important; width: 100% !important; }
+            
+            #wrapper.toggled #sidebar-wrapper { transform: translateX(0); }
+            #wrapper.toggled #page-content-wrapper { margin-left: 0 !important; width: 100% !important; }
+            #wrapper.toggled .link-text, #wrapper.toggled .sidebar-header { display: inline !important; }
+            #wrapper.toggled .nav-link { justify-content: flex-start !important; padding: 0.5rem 1rem !important; margin: 0.5rem 1rem !important; }
+        }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.6); z-index: 1030 !important; 
+        }
+        @media (max-width: 991.98px) {
+            #wrapper.toggled .sidebar-overlay { display: block; }
+        }
+
+        .badge-animada { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-flex; align-items: center; }
+        body:not(.reduzir-animacoes) .badge-animada:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important; filter: brightness(1.1); }
     </style>
 </head>
 
@@ -115,7 +134,6 @@
     {% if user_prefs.fonte_dislexia %}fonte-dislexia{% endif %}
     {% if user_prefs.fonte_tdah %}fonte-tdah{% endif %}
     {% if user_prefs.reduzir_animacoes %}reduzir-animacoes{% endif %}
-    fonte-{{ user_prefs.tamanho_fonte|default:'M' }}
 ">
 
     <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
@@ -124,10 +142,11 @@
 
     <div class="d-flex" id="wrapper">
         {% if user.is_authenticated %}
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
             {% include 'includes/sidebar.html' %}
         {% endif %}
 
-        <div id="page-content-wrapper" style="{% if not user.is_authenticated %} margin-left: 0 !important; {% endif %}">
+        <div id="page-content-wrapper" style="{% if not user.is_authenticated %} margin-left: 0 !important; width: 100% !important; {% endif %}">
             <main class="container-fluid p-4 bionic-target" id="main-content" tabindex="-1">
                 {% block content %}
                 {% endblock %}
@@ -138,77 +157,119 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-function votar(identificador, tipo, isResposta = false) {
-    let url = isResposta 
-        ? `/forum/resposta/${identificador}/votar/${tipo}/` 
-        : `/forum/topico/${identificador}/votar/${tipo}/`;
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Erro na rede');
-        return response.json();
-    })
-    .then(data => {
-        const spanId = isResposta ? `votos-resp-${identificador}` : `votos-${identificador}`;
-        const spanVotos = document.getElementById(spanId);
-        if (spanVotos) spanVotos.innerText = data.total;
-
-        let btnLike, btnDeslike;
-
-        if (!isResposta) {
-            btnLike = document.getElementById(`btn-like-topico-${identificador}`);
-            btnDeslike = document.getElementById(`btn-deslike-topico-${identificador}`);
-        } else {
-            const container = document.getElementById(`votos-resp-${identificador}`).parentElement;
-            btnLike = container.querySelector('button[onclick*="like"]');
-            btnDeslike = container.querySelector('button[onclick*="deslike"]');
-        }
-
-        if (btnLike && btnDeslike) {
-            btnLike.classList.remove('text-primary');
-            btnDeslike.classList.remove('text-danger');
-            btnLike.classList.add('text-muted');
-            btnDeslike.classList.add('text-muted');
+        window.applyBionicReading = function() {
+            const targetArea = document.querySelector('.bionic-target') || document.getElementById('main-content');
+            if(!targetArea || targetArea.classList.contains('bionic-applied')) return;
             
-            const iconLike = btnLike.querySelector('i');
-            const iconDeslike = btnDeslike.querySelector('i');
+            targetArea.classList.add('bionic-applied');
+            const walker = document.createTreeWalker(targetArea, NodeFilter.SHOW_TEXT, null, false);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
 
-            if(iconLike.classList.contains('bi-hand-thumbs-up')) {
-                iconLike.className = 'bi bi-hand-thumbs-up';
-                iconDeslike.className = 'bi bi-hand-thumbs-down';
-            } else {
-                iconLike.className = 'bi bi-caret-up-fill';
-                iconDeslike.className = 'bi bi-caret-down-fill';
+            nodes.forEach(node => {
+                const parent = node.parentElement;
+                
+                if (!parent || 
+                    ['SCRIPT', 'STYLE', 'I', 'BUTTON'].includes(parent.tagName) || 
+                    parent.classList.contains('bionic-fix') || 
+                    parent.closest('.navbar') || 
+                    parent.closest('#sidebar-wrapper')) {
+                    return;
+                }
+                
+                const words = node.nodeValue.split(/(\s+)/);
+                let changed = false;
+                const bionicHTML = words.map(word => {
+                    if (word.trim().length > 2) {
+                        changed = true;
+                        const boldLength = Math.ceil(word.length / 2);
+                        return `<b class="bionic-fix" style="font-weight: 900 !important; color: inherit;">${word.slice(0, boldLength)}</b>${word.slice(boldLength)}`;
+                    }
+                    return word;
+                }).join('');
+                
+                if(changed && bionicHTML !== node.nodeValue) {
+                    const span = document.createElement('span');
+                    span.innerHTML = bionicHTML;
+                    node.parentNode.replaceChild(span, node);
+                }
+            });
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (document.body.classList.contains('fonte-tdah')) {
+                setTimeout(applyBionicReading, 100);
             }
 
-            if (data.user_voto === 'like') {
-                btnLike.classList.replace('text-muted', 'text-primary');
-                if(iconLike.classList.contains('bi-hand-thumbs-up')) iconLike.className = 'bi bi-hand-thumbs-up-fill';
-            } else if (data.user_voto === 'deslike') {
-                btnDeslike.classList.replace('text-muted', 'text-danger');
-                if(iconDeslike.classList.contains('bi-hand-thumbs-down')) iconDeslike.className = 'bi bi-hand-thumbs-down-fill';
+            const toggleBtn = document.getElementById("menu-toggle");
+            const wrapper = document.getElementById("wrapper");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            if (toggleBtn && wrapper) {
+                toggleBtn.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    wrapper.classList.toggle("toggled");
+                });
             }
+
+            if (overlay) {
+                overlay.addEventListener("click", function() {
+                    wrapper.classList.remove("toggled");
+                });
+            }
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) { return new bootstrap.Tooltip(tooltipTriggerEl) })
+        });
+
+
+        function votar(identificador, tipo, isResposta = false) {
+            let url = isResposta ? `/forum/resposta/${identificador}/votar/${tipo}/` : `/forum/topico/${identificador}/votar/${tipo}/`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erro na rede');
+                return response.json();
+            })
+            .then(data => {
+                const spanVotos = document.getElementById(isResposta ? `votos-resp-${identificador}` : `votos-${identificador}`);
+                if (spanVotos) spanVotos.innerText = data.total;
+
+                let btnLike, btnDeslike;
+                if (!isResposta) {
+                    btnLike = document.getElementById(`btn-like-topico-${identificador}`);
+                    btnDeslike = document.getElementById(`btn-deslike-topico-${identificador}`);
+                } else {
+                    const container = spanVotos.parentElement;
+                    btnLike = container.querySelector('button[onclick*="like"]');
+                    btnDeslike = container.querySelector('button[onclick*="deslike"]');
+                }
+
+                if (btnLike && btnDeslike) {
+                    btnLike.classList.remove('text-primary'); btnDeslike.classList.remove('text-danger');
+                    btnLike.classList.add('text-muted'); btnDeslike.classList.add('text-muted');
+                    
+                    const iconLike = btnLike.querySelector('i');
+                    const iconDeslike = btnDeslike.querySelector('i');
+                    iconLike.className = iconLike.classList.contains('bi-hand-thumbs-up') ? 'bi bi-hand-thumbs-up' : 'bi bi-caret-up-fill';
+                    iconDeslike.className = iconDeslike.classList.contains('bi-hand-thumbs-down') ? 'bi bi-hand-thumbs-down' : 'bi bi-caret-down-fill';
+
+                    if (data.user_voto === 'like') {
+                        btnLike.classList.replace('text-muted', 'text-primary');
+                        if(iconLike.classList.contains('bi-hand-thumbs-up')) iconLike.className = 'bi bi-hand-thumbs-up-fill';
+                    } else if (data.user_voto === 'deslike') {
+                        btnDeslike.classList.replace('text-muted', 'text-danger');
+                        if(iconDeslike.classList.contains('bi-hand-thumbs-down')) iconDeslike.className = 'bi bi-hand-thumbs-down-fill';
+                    }
+                }
+            })
+            .catch(error => { alert('Você precisa estar logado para votar!'); });
         }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        alert('Você precisa estar logado para votar!');
-    });
-}
-</script>
+    </script>
 
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
-    </div>
+    <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
 </body>

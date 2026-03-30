@@ -42,7 +42,9 @@
         <aside class="col-lg-4" aria-labelledby="ficha-tecnica">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                 {% if item.capa %}
-                    <img src="{{ item.capa.url }}" class="w-100 object-fit-cover" alt="Capa da obra {{ item.titulo }}" style="max-height: 500px;">
+                    <div class="bg-light text-center" style="max-height: 500px; display: flex; justify-content: center; align-items: center;">
+                        <img src="{{ item.capa.url }}" class="w-100 h-100 object-fit-contain p-2" alt="{% if item.alt_text %}{{ item.alt_text }}{% else %}Capa da obra {{ item.titulo }}{% endif %}" style="max-height: 500px;">
+                    </div>
                 {% else %}
                     <div class="bg-light d-flex flex-column align-items-center justify-content-center text-secondary p-5" style="height: 400px;" aria-hidden="true">
                         <i class="bi bi-image display-1 mb-3"></i>
@@ -152,54 +154,61 @@
                     {% for review in reviews %}
                         <div class="card border border-light shadow-sm rounded-4 {% if review.user == item.usuario_criador %}bg-primary bg-opacity-10 border-primary-subtle{% endif %}">
                             <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div class="d-flex flex-wrap align-items-center gap-2">
-                                        {% if not review.user.is_active %}
-                                            <span class="text-secondary"><del>@{{ review.user.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
-                                        {% else %}
-                                            <a href="{% url 'perfil_usuario' review.user.profile.slug %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-2">
-                                                {% if review.user.profile.foto %}
-                                                    <img src="{{ review.user.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-white" style="width: 28px; height: 28px;">
-                                                {% else %}
-                                                    <i class="bi bi-person-circle fs-5"></i>
-                                                {% endif %}
-                                                @{{ review.user.profile.slug }}
-                                            </a>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    
+                                    <div class="d-flex flex-column gap-2 w-100">
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            {% if not review.user.is_active %}
+                                                <span class="text-secondary"><del>@{{ review.user.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
+                                            {% else %}
+                                                <a href="{% url 'perfil_usuario' review.user.profile.slug %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-2">
+                                                    {% if review.user.profile.foto %}
+                                                        <img src="{{ review.user.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-white" style="width: 32px; height: 32px;">
+                                                    {% else %}
+                                                        <i class="bi bi-person-circle fs-4"></i>
+                                                    {% endif %}
+                                                    @{{ review.user.profile.slug }}
+                                                </a>
+                                            {% endif %}
                                             
-                                            {% for badge in review.user.profile.get_badges %}
-                                                <span class="badge bg-{{ badge.cor }} ms-1" style="font-size: 0.55em;" title="{{ badge.nome }}">
-                                                    <i class="bi bi-{{ badge.icone }}"></i>
-                                                </span>
-                                            {% endfor %}
-                                        {% endif %}
-                                        
-                                        {% if review.user == item.usuario_criador %}
-                                            <span class="badge bg-primary small ms-1">Autor do Cadastro</span>
-                                        {% endif %}
+                                            <small class="text-muted ms-auto ms-md-2 border-start-md ps-md-2 border-secondary border-opacity-25">&bull; {{ review.criado_em|date:"d M, Y" }}</small>
+                                            
+                                            {% if review.editado %}
+                                                <small class="fst-italic text-secondary ms-1"><i class="bi bi-pencil"></i> (Editado)</small>
+                                            {% endif %}
+                                        </div>
 
-                                        <small class="text-muted ms-1">&bull; {{ review.criado_em|date:"d M, Y" }}</small>
-                                        
-                                        {% if review.editado %}
-                                            <small class="fst-italic text-secondary ms-1"><i class="bi bi-pencil"></i> (Editado)</small>
+                                        {% if review.user.is_active %}
+                                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                                {% for badge in review.user.profile.get_badges %}
+                                                    <span class="badge bg-{{ badge.cor }} badge-animada shadow-sm border border-{{ badge.cor }}" style="font-size: 0.6em; cursor: help; letter-spacing: 0.5px;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ badge.tooltip }}">
+                                                        <i class="bi bi-{{ badge.icone }} me-1"></i>{{ badge.nome|upper }}
+                                                    </span>
+                                                {% endfor %}
+                                                
+                                                {% if review.user == item.usuario_criador %}
+                                                    <span class="badge bg-primary text-white shadow-sm border border-primary" style="font-size: 0.6em;">Autor do Cadastro</span>
+                                                {% endif %}
+                                            </div>
                                         {% endif %}
                                     </div>
                                     
-                                    <div class="d-flex">
+                                    <div class="d-flex flex-column align-items-end ms-3">
                                         {% if request.user == review.user %}
-                                            <a href="{% url 'editar_review' review.id %}" class="btn btn-sm btn-link text-secondary p-0 text-decoration-none" title="Editar Avaliação">
-                                                <i class="bi bi-pencil-square fs-5"></i>
+                                            <a href="{% url 'editar_review' review.id %}" class="btn btn-sm btn-outline-secondary rounded-circle mb-2" title="Editar Avaliação">
+                                                <i class="bi bi-pencil-square"></i>
                                             </a>
                                         {% endif %}
                                         
                                         {% if request.user.is_staff %}
-                                            <button type="button" class="btn btn-sm btn-link text-danger p-0 text-decoration-none ms-3" data-bs-toggle="modal" data-bs-target="#rejectModal-review-inline-{{ review.id }}" title="Moderar Avaliação">
-                                                <i class="bi bi-shield-lock-fill fs-5"></i>
+                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-circle" data-bs-toggle="modal" data-bs-target="#rejectModal-review-inline-{{ review.id }}" title="Moderar Avaliação">
+                                                <i class="bi bi-shield-lock-fill"></i>
                                             </button>
                                         {% endif %}
                                     </div>
                                 </div>
                                 
-                                <div class="d-flex gap-2 mb-3 mt-2">
+                                <div class="d-flex flex-wrap gap-2 mb-3 mt-2 border-top pt-3">
                                     <span class="badge bg-light text-dark border">Geral: <i class="bi bi-star-fill text-warning"></i> {{ review.nota_geral }}</span>
                                     <span class="badge bg-light text-dark border">Representatividade: <i class="bi bi-star-fill text-primary"></i> {{ review.nota_representatividade }}</span>
                                     <span class="badge bg-light text-dark border">Crítica: <i class="bi bi-star-fill text-danger"></i> {{ review.nota_critica }}</span>

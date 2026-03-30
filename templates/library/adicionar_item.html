@@ -41,6 +41,11 @@
                                     <p class="mb-1 fw-bold text-dark file-name-text" id="texto_capa">Clique, arraste a imagem ou dê Ctrl+V aqui</p>
                                 </div>
                                 <div class="d-none">{{ item_form.capa }}</div>
+                                
+                                <div class="mt-3">
+                                    <label for="id_alt_text" class="fw-bold text-secondary small"><i class="bi bi-eye-slash-fill me-1"></i>{{ item_form.alt_text.label }}</label>
+                                    {{ item_form.alt_text }}
+                                </div>
                             </div>
                             
                             <div class="col-md-6"><label for="id_link_acesso">Link/Onde encontrar (Opcional)</label>{{ item_form.link_acesso }}</div>
@@ -121,7 +126,7 @@
                             <div class="col-12"><label for="id_analise_critica" class="fw-bold">Análise Crítica</label>{{ item_form.analise_critica }}</div>
                             <div class="col-md-6"><label for="id_pontos_positivos">Pontos Positivos</label>{{ item_form.pontos_positivos }}</div>
                             <div class="col-md-6"><label for="id_pontos_problematicos">Pontos Problemáticos</label>{{ item_form.pontos_problematicos }}</div>
-                            <div class="col-md-6"><label for="id_combate_ou_reforca">A Obra:</label>{{ item_form.combate_ou_reforca }}</div>
+                            <div class="col-md-6"><label for="id_combate_ou_reforca">{{ item_form.combate_ou_reforca.label }}</label>{{ item_form.combate_ou_reforca }}</div>
                         </div>
                     </div>
 

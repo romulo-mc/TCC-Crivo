@@ -25,7 +25,11 @@
                         
                         <span class="d-inline-flex gap-1 ms-2">
                             {% for badge in perfil.get_badges %}
-                                <span class="badge bg-{{ badge.cor }} shadow-sm" style="font-size: 0.55em; letter-spacing: 0.5px;">
+                                <span class="badge bg-{{ badge.cor }} shadow-sm badge-animada" 
+                                      style="font-size: 0.55em; letter-spacing: 0.5px; cursor: help;"
+                                      data-bs-toggle="tooltip" 
+                                      data-bs-placement="top" 
+                                      data-bs-title="{{ badge.tooltip }}">
                                     <i class="bi bi-{{ badge.icone }} me-1"></i>{{ badge.nome|upper }}
                                 </span>
                             {% endfor %}
@@ -298,4 +302,18 @@
     </div>
 </div>
 {% endif %}
+
+<style>
+    .badge-animada {
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    body:not(.reduzir-animacoes) .badge-animada:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+        filter: brightness(1.1);
+    }
+</style>
 {% endblock %}

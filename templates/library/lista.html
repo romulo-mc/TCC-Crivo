@@ -51,9 +51,9 @@
         <article class="col-sm-6 col-lg-4 col-xl-3">
             <div class="card h-100 shadow-sm border-0 hover-lift bg-white rounded-4 overflow-hidden position-relative focus-ring-custom">
                 
-                <div class="position-relative bg-light border-bottom" style="height: 240px;">
+                <div class="position-relative bg-light border-bottom d-flex align-items-center justify-content-center" style="height: 240px;">
                     {% if item.capa %}
-                        <img src="{{ item.capa.url }}" class="w-100 h-100 object-fit-cover" alt="Capa de {{ item.titulo }}">
+                        <img src="{{ item.capa.url }}" class="w-100 h-100 object-fit-contain p-2" alt="{% if item.alt_text %}{{ item.alt_text }}{% else %}Capa da obra {{ item.titulo }}{% endif %}">
                     {% else %}
                         <div class="d-flex flex-column align-items-center justify-content-center h-100 text-secondary opacity-50" aria-hidden="true">
                             <i class="bi bi-film display-4 mb-2"></i>

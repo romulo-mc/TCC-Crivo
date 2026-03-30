@@ -51,20 +51,22 @@
                                 @{{ topico.autor.profile.slug }}
                             </a>
                             
-                            {% for badge in topico.autor.profile.get_badges %}
-                                <span class="badge bg-{{ badge.cor }} border border-{{ badge.cor }}" style="font-size: 0.6em;">
-                                    <i class="bi bi-{{ badge.icone }}"></i> {{ badge.nome }}
-                                </span>
-                            {% endfor %}
+                            <div class="d-inline-flex gap-1 ms-1">
+                                {% for badge in topico.autor.profile.get_badges %}
+                                    <span class="badge bg-{{ badge.cor }} badge-animada" style="font-size: 0.6em; cursor: help; letter-spacing: 0.5px;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ badge.tooltip }}">
+                                        <i class="bi bi-{{ badge.icone }} me-1"></i>{{ badge.nome|upper }}
+                                    </span>
+                                {% endfor %}
+                            </div>
                         {% endif %}
                     {% else %}
                         <span class="fst-italic text-secondary badge bg-light border text-dark"><i class="bi bi-person-x me-1"></i>Conta Deletada</span>
                     {% endif %}
                     
-                    <span class="ms-1"><i class="bi bi-calendar3 me-1"></i>{{ topico.data_criacao|date:"d/m/Y H:i" }}</span>
+                    <span class="ms-2 border-start ps-2 border-secondary border-opacity-25"><i class="bi bi-calendar3 me-1"></i>{{ topico.data_criacao|date:"d/m/Y H:i" }}</span>
                     
                     {% if topico.editado %}
-                        <span class="fst-italic text-secondary ms-2" title="Atualizado em {{ topico.data_atualizacao|date:'d/m/Y H:i' }}">
+                        <span class="fst-italic text-secondary ms-1" title="Atualizado em {{ topico.data_atualizacao|date:'d/m/Y H:i' }}">
                             <i class="bi bi-pencil me-1"></i>(Editado)
                         </span>
                     {% endif %}

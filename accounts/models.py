@@ -87,15 +87,37 @@ class UserProfile(models.Model):
     @property
     def get_badges(self):
         badges = []
+        
         if self.user.is_staff:
-            badges.append({'nome': 'Crivo Oficial', 'cor': 'primary', 'icone': 'shield-check'})
+            badges.append({'nome': 'Crivo Oficial', 'cor': 'primary', 'icone': 'shield-check', 'tooltip': 'Equipe de Moderação'})
+        
         if self.is_pcd:
-            nome_pcd = f'PCD (CID: {self.cid})' if self.cid else 'PCD'
-            badges.append({'nome': nome_pcd, 'cor': 'info', 'icone': 'universal-access'})
-        if self.is_profissional_saude and self.exibir_registro:
-            badges.append({'nome': 'Profissional', 'cor': 'success', 'icone': 'heart-pulse'})
+            tooltip_pcd = f'PCD (CID: {self.cid})' if self.cid else 'Pessoa com Deficiência'
+            badges.append({'nome': 'PCD', 'cor': 'info', 'icone': 'universal-access', 'tooltip': tooltip_pcd})
+        
+        if self.is_profissional_saude:
+            prof_nome = self.profissao if self.profissao else 'Profissional de Saúde'
+            
+            if self.exibir_registro and self.conselho and self.registro_profissional:
+                tooltip_prof = f'{prof_nome}: {self.conselho} {self.registro_profissional} - {self.uf_registro}'.strip()
+            else:
+                tooltip_prof = f'{prof_nome} (Registro Privado)'
+            
+            badges.append({'nome': 'Profissional', 'cor': 'success', 'icone': 'heart-pulse', 'tooltip': tooltip_prof})
+        
         if self.is_aliado:
-            badges.append({'nome': 'Aliado', 'cor': 'secondary', 'icone': 'people'})
+            tipos = []
+            if self.aliado_familiar: tipos.append('Familiar')
+            if self.aliado_educador: tipos.append('Educador')
+            if self.aliado_estudante: tipos.append('Estudante')
+            
+            if tipos and not self.aliado_apenas:
+                tooltip_aliado = f'Aliado: {", ".join(tipos)}'
+            else:
+                tooltip_aliado = 'Aliado da Causa'
+                
+            badges.append({'nome': 'Aliado', 'cor': 'secondary', 'icone': 'people', 'tooltip': tooltip_aliado})
+            
         return badges
 
     def save(self, *args, **kwargs):

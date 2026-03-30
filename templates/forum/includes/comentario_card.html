@@ -15,9 +15,10 @@
                             {% endif %}
                             @{{ node.autor.profile.slug }}
                         </a>
+                        
                         {% for badge in node.autor.profile.get_badges %}
-                            <span class="badge bg-{{ badge.cor }} ms-1" style="font-size: 0.55em;" title="{{ badge.nome }}">
-                                <i class="bi bi-{{ badge.icone }}"></i>
+                            <span class="badge bg-{{ badge.cor }} ms-1 badge-animada" style="font-size: 0.55em; cursor: help; letter-spacing: 0.5px;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ badge.tooltip }}">
+                                <i class="bi bi-{{ badge.icone }} me-1"></i>{{ badge.nome|upper }}
                             </span>
                         {% endfor %}
                     {% endif %}
