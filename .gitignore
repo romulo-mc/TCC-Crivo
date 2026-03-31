@@ -19,5 +19,4 @@ media/
 *.wav
 *.webm
 limpa_migrations.py
-setup/settings.py
 !core/static/img/

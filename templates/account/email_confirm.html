@@ -1,0 +1,45 @@
+{% extends "base_auth.html" %}
+{% load account %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center w-100 py-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0" style="border-radius: 30px; overflow: hidden;">
+            <div class="p-5 bg-white text-center">
+                
+                <i class="bi bi-envelope-check-fill" style="font-size: 5rem; color: #90E0AA;"></i>
+                <h2 class="fw-bold mt-3 mb-4 text-dark">Confirmar E-mail</h2>
+                
+                {% if confirmation %}
+                    <p class="text-muted mb-4" style="font-size: 1.1rem;">
+                        Você está prestes a ativar sua conta Crivo confirmando o e-mail:
+                        <br>
+                        <strong class="text-dark">{{ confirmation.email_address.email }}</strong>
+                    </p>
+
+                    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-lg fw-bold shadow-sm px-5 hover-lift" style="background-color: #90e0aa; border-radius: 20px; color: #333;">
+                            Confirmar <i class="bi bi-check-circle ms-2"></i>
+                        </button>
+                    </form>
+                {% else %}
+                    <i class="bi bi-exclamation-triangle-fill text-danger mb-3" style="font-size: 3rem;"></i>
+                    <p class="text-danger mb-4 fw-bold">Este link de confirmação é inválido ou já expirou.</p>
+                    <p class="text-muted small">Isso pode acontecer se você já confirmou sua conta antes ou demorou muito para clicar no link.</p>
+                    
+                    <a href="{% url 'login' %}" class="btn btn-outline-dark rounded-pill fw-bold hover-lift mt-3">
+                        <i class="bi bi-arrow-left me-2"></i>Voltar ao Login
+                    </a>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); }
+</style>
+{% endblock %}

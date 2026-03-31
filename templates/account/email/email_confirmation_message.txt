@@ -1,0 +1,8 @@
+Olá, {{ user.first_name|default:user.username }}!
+
+Falta muito pouco para você acessar a comunidade Crivo.
+Por favor, acesse o link abaixo para confirmar seu endereço de e-mail e ativar sua conta:
+
+{{ activate_url }}
+
+Se você não se cadastrou no Crivo, pode ignorar este e-mail tranquilamente.

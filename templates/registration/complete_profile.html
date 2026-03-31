@@ -52,6 +52,26 @@
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
+            {% if 'editar' in request.path %}
+            <fieldset class="mb-4">
+              <legend class="h5 text-muted border-bottom pb-2 mb-3">Dados da Conta</legend>
+              <div class="row">
+                  <div class="col-md-6 mb-3">
+                      <label class="form-label fw-bold text-secondary">Nome</label>
+                      {{ form.first_name }}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label class="form-label fw-bold text-secondary">Sobrenome</label>
+                      {{ form.last_name }}
+                  </div>
+                  <div class="col-md-12 mb-3">
+                      <label class="form-label fw-bold text-secondary">Usuário (@)</label>
+                      {{ form.username }}
+                  </div>
+              </div>
+            </fieldset>
+            {% endif %}
+
             <fieldset class="mb-4">
               <legend class="h5 text-muted border-bottom pb-2 mb-3">Aparência</legend>
 

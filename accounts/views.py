@@ -13,13 +13,20 @@ from forum.models import Topico, Resposta
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
+from allauth.account.models import EmailAddress
 
 class SignupView(CreateView):
     form_class = CadastroBasicoForm
     template_name = 'registration/signup.html'
     
     def form_valid(self, form):
-        user = form.save()
+        user = form.save()        
+        EmailAddress.objects.get_or_create(
+            user=user, 
+            email=user.email,
+            defaults={'primary': True, 'verified': False}
+        )
+        
         self.request.session['registro_usuario_id'] = user.id
         return redirect('complete_profile')
 
@@ -29,10 +36,8 @@ class CompleteProfileView(UpdateView):
     template_name = 'registration/complete_profile.html'
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('home')
-        if not request.session.get('registro_usuario_id'):
-            return redirect('signup')
+        if request.user.is_authenticated: return redirect('home')
+        if not request.session.get('registro_usuario_id'): return redirect('signup')
         return super().dispatch(request, *args, **kwargs)
 
     def get_object(self):
@@ -51,16 +56,17 @@ class CompleteProfileView(UpdateView):
         user_id = self.request.session.get('registro_usuario_id')
         user = get_object_or_404(User, id=user_id)
         
-        login(self.request, user)
-        
+        email_obj = EmailAddress.objects.get(user=user, primary=True)
+        email_obj.send_confirmation(self.request, signup=True)
+
         if 'registro_usuario_id' in self.request.session:
             del self.request.session['registro_usuario_id']
             
-        messages.success(self.request, 'Conta criada com sucesso! Bem-vindo(a) ao Crivo!')
+        messages.success(self.request, 'Perfil criado! Agora, acesse seu e-mail para ativar sua conta antes de fazer o login.')
         return response
 
     def get_success_url(self):
-        return reverse_lazy('perfil_usuario', kwargs={'slug': self.object.slug})
+        return reverse_lazy('login')
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = UserProfile
@@ -85,10 +91,8 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
 def perfil_usuario(request, slug):
     request.session['ultimo_contexto'] = 'perfil'
-    
     perfil = get_object_or_404(UserProfile, slug=slug)
     user_perfil = perfil.user
-    
     is_dono = (request.user == user_perfil)
     
     itens_acervo = LibraryItem.objects.filter(usuario_criador=user_perfil).order_by('-criado_em')
@@ -109,9 +113,7 @@ def perfil_usuario(request, slug):
         'topicos': topicos,
         'respostas': respostas,
     }
-    
     return render(request, 'accounts/perfil.html', contexto)
-
 
 class AcessibilidadeView(View):
     def get(self, request):
@@ -133,28 +135,17 @@ class AcessibilidadeView(View):
                 form.save()
             else:
                 dados = form.cleaned_data
-                request.session['acessibilidade'] = {
-                    'modo_escuro': dados.get('modo_escuro', False),
-                    'alto_contraste': dados.get('alto_contraste', False),
-                    'fonte_dislexia': dados.get('fonte_dislexia', False),
-                    'fonte_tdah': dados.get('fonte_tdah', False),
-                    'reduzir_animacoes': dados.get('reduzir_animacoes', False),
-                    'tamanho_fonte': dados.get('tamanho_fonte', 'M'),
-                }
-
+                request.session['acessibilidade'] = dados
             messages.success(request, 'Preferências de acessibilidade atualizadas!')
             return redirect('acessibilidade')
         return render(request, 'accounts/acessibilidade.html', {'form': form})
-
 
 class ConfiguracoesView(LoginRequiredMixin, UpdateView):
     model = UserProfile
     form_class = ConfiguracoesForm
     template_name = 'accounts/configuracoes.html'
-
     def get_object(self):
         return self.request.user.profile
-
     def get_success_url(self):
         messages.success(self.request, 'Configurações salvas com sucesso!')
         return reverse_lazy('configuracoes')
@@ -163,21 +154,18 @@ class CustomAuthForm(AuthenticationForm):
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-
-        if username is not None and password:
+        if username and password:
             try:
-                user = User.objects.get(username=username)             
-                if user.check_password(password) and not user.is_active:
-                    motivo = getattr(user.profile, 'motivo_banimento', 'Violação das regras da comunidade.')
-                    data_ban = getattr(user.profile, 'data_banimento', None)
+                user = User.objects.get(username=username)            
+                if user.check_password(password):
+                    if not user.is_active:
+                        raise ValidationError("Sua conta foi banida.", code='inactive')
                     
-                    data_str = data_ban.strftime('%d/%m/%Y às %H:%M') if data_ban else "Data não registrada"                 
-                    raise ValidationError(
-                        f"Sua conta foi BANIDA em {data_str}. Motivo: {motivo}",
-                        code='inactive',
-                    )
+                    email_verified = EmailAddress.objects.filter(user=user, verified=True).exists()
+                    if not email_verified:
+                        raise ValidationError("Você precisa confirmar seu e-mail antes de entrar! Verifique sua caixa de entrada.", code='email_unverified')
             except User.DoesNotExist:
-                pass           
+                pass          
         return super().clean()
 
 class CustomLoginView(LoginView):
