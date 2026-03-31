@@ -21,7 +21,6 @@
                         {% csrf_token %}
                         
                         <h2 class="h5 fw-bold text-dark border-bottom pb-3 mb-4">Comunicações</h2>
-                        
                         <div class="mb-5">
                             <div class="form-check form-switch fs-5 mb-2 custom-switch-wrapper">
                                 {{ form.receber_notificacoes }}
@@ -33,7 +32,6 @@
                         </div>
 
                         <h2 class="h5 fw-bold text-dark border-bottom pb-3 mb-4">Privacidade do Acervo</h2>
-
                         <div class="mb-5">
                             <div class="form-check form-switch fs-5 mb-2 custom-switch-wrapper">
                                 {{ form.ocultar_avaliacoes }}
@@ -42,6 +40,17 @@
                                 </label>
                             </div>
                             <small class="text-muted d-block ms-1">Ao ativar, suas avaliações de obras não aparecerão no seu Perfil Público.</small>
+                        </div>
+
+                        <h2 class="h5 fw-bold text-dark border-bottom pb-3 mb-4 mt-5">Segurança</h2>
+                        <div class="mb-5">
+                            <p class="text-muted mb-3">Mantenha sua conta segura atualizando sua senha regularmente.</p>
+                            <a href="{% url 'account_change_password' %}" class="btn btn-outline-dark fw-bold rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-key me-2"></i> Alterar Minha Senha
+                            </a>
+                            <a href="{% url 'account_email' %}" class="btn btn-outline-dark fw-bold rounded-pill px-4 shadow-sm ms-2 mt-2 mt-md-0">
+                                <i class="bi bi-envelope me-2"></i> Alterar E-mail
+                            </a>
                         </div>
 
                         <div class="d-flex gap-3 pt-3 border-top mt-4">

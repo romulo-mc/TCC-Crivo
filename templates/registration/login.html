@@ -38,6 +38,10 @@
                         <div class="mb-3">
                             <label for="id_password" class="form-label fw-bold text-secondary">Senha</label>
                             <input type="password" name="password" id="id_password" class="form-control form-control-lg custom-input" autocomplete="current-password" required>
+                            
+                            <div class="text-end mt-2">
+                                <a href="{% url 'account_reset_password' %}" class="small fw-bold text-decoration-none" style="color: #9b59b6;">Esqueceu sua senha?</a>
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2 mt-4">

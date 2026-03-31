@@ -1,0 +1,33 @@
+{% load account %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background-color: #FFB684; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; color: #333333; font-size: 26px; }
+        .content { padding: 40px 30px; text-align: center; color: #444444; }
+        .content p { font-size: 16px; line-height: 1.6; }
+        .footer { background-color: #f1f1f1; padding: 20px; text-align: center; font-size: 13px; color: #888888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Aviso do Crivo</h1>
+        </div>
+        <div class="content">
+            <p>Olá!</p>
+            <p>Alguém tentou redefinir a senha de uma conta no <strong>Crivo</strong> usando o e-mail: <strong style="color: #1a1a1a;">{{ email }}</strong>.</p>
+            <p>No entanto, não encontramos nenhuma conta cadastrada com este e-mail no nosso banco de dados.</p>
+            
+            <p style="font-size: 14px; margin-top: 30px; color: #888;">Se você não solicitou isso ou digitou o e-mail errado, pode ignorar esta mensagem.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Comunidade Crivo. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

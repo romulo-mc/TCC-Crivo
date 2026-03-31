@@ -1,0 +1,35 @@
+{% load account %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { background-color: #90E0AA; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; color: #1a1a1a; font-size: 26px; }
+        .content { padding: 40px 30px; text-align: center; color: #444444; }
+        .content p { font-size: 16px; line-height: 1.6; }
+        .btn { display: inline-block; padding: 14px 35px; margin: 25px 0; background-color: #1a1a1a; color: #ffffff !important; text-decoration: none; font-weight: bold; border-radius: 30px; font-size: 16px; }
+        .footer { background-color: #f1f1f1; padding: 20px; text-align: center; font-size: 13px; color: #888888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bem-vindo(a) ao Crivo!</h1>
+        </div>
+        <div class="content">
+            <p>Olá, <strong style="color: #1a1a1a;">{{ user.first_name|default:user.username }}</strong>!</p>
+            <p>Falta muito pouco para você acessar a nossa comunidade. Por favor, clique no botão abaixo para confirmar seu e-mail e ativar sua conta.</p>
+            
+            <a href="{{ activate_url }}" class="btn">Confirmar meu E-mail</a>
+            
+            <p style="font-size: 14px; margin-top: 30px; color: #888;">Se você não se cadastrou no Crivo, ignore este e-mail.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Comunidade Crivo. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
