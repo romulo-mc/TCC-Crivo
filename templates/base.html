@@ -186,8 +186,8 @@
                     <span class="fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Ei, o que você está achando do Crivo?</span>
                     <span class="small">Sua avaliação é super rápida e me ajuda muito no TCC!</span>
                     <div class="mt-2">
-                        <a href="{% url 'avaliar_plataforma' %}" class="btn btn-sm btn-warning fw-bold rounded-pill text-dark" onclick="dispensarToastAvaliacao(true)">Avaliar Agora</a>
-                        <button type="button" class="btn btn-sm btn-outline-light rounded-pill ms-2" onclick="dispensarToastAvaliacao(false)" data-bs-dismiss="toast">Lembrar depois</button>
+                    <a href="https://forms.gle/Gxh5Rz7bD4zzgEcG7" target="_blank" class="btn btn-sm btn-warning fw-bold rounded-pill text-dark" onclick="dispensarToastAvaliacao(true)">Avaliar Agora</a>                        
+                    <button type="button" class="btn btn-sm btn-outline-light rounded-pill ms-2" onclick="dispensarToastAvaliacao(false)" data-bs-dismiss="toast">Lembrar depois</button>
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close" onclick="dispensarToastAvaliacao(false)"></button>
@@ -211,10 +211,10 @@
                 <div class="modal-body p-4 d-flex flex-column gap-3 text-center">
                     <p class="text-muted small mb-1">Escolha uma opção abaixo:</p>
                     
-                    <a href="{% url 'avaliar_plataforma' %}" class="btn btn-outline-custom-warning btn-lg rounded-4 fw-bold shadow-sm d-flex flex-column align-items-center py-3">
+                    <button type="button" onclick="window.open('https://forms.gle/Gxh5Rz7bD4zzgEcG7', '_blank');" class="btn btn-outline-custom-warning btn-lg rounded-4 fw-bold shadow-sm d-flex flex-column align-items-center py-3" data-bs-dismiss="modal">
                         <i class="bi bi-star-fill fs-2 mb-1"></i>
                         Avaliar Plataforma
-                    </a>
+                    </button>
                     
                     <button type="button" class="btn btn-outline-custom-danger btn-lg rounded-4 fw-bold shadow-sm d-flex flex-column align-items-center py-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#bugModal">
                         <i class="bi bi-bug-fill fs-2 mb-1"></i>
