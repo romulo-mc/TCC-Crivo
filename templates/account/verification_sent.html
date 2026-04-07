@@ -1,0 +1,37 @@
+{% extends "base_auth.html" %}
+{% load i18n %}
+
+{% block title %}Verifique seu E-mail - Crivo{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center w-100 py-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0" style="border-radius: 30px; overflow: hidden;">
+            <div class="p-5 bg-white text-center">
+                
+                <i class="bi bi-envelope-paper-fill" style="font-size: 5rem; color: #90E0AA;"></i>
+                <h2 class="fw-bold mt-3 mb-4 text-dark">Verifique seu e-mail</h2>
+                
+                <p class="text-muted mb-4" style="font-size: 1.1rem;">
+                    Acabamos de enviar um link de confirmação para o seu endereço de e-mail.
+                </p>
+                
+                <div class="alert text-start mb-4" style="background-color: #f8f9fa; border-radius: 15px; border-left: 5px solid #90E0AA;" role="alert">
+                    <i class="bi bi-info-circle-fill me-2" style="color: #90E0AA;"></i>
+                    <small class="text-muted">Siga o link fornecido no e-mail para finalizar seu cadastro. Caso não o encontre, não esqueça de verificar a sua pasta de <strong>Spam</strong>.</small>
+                </div>
+                
+                <a href="{% url 'account_login' %}" class="btn btn-outline-dark rounded-pill fw-bold hover-lift mt-3 px-5 py-2">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar ao Login
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); }
+</style>
+{% endblock %}
