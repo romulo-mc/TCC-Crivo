@@ -132,10 +132,11 @@
             hasUnsavedChanges = true;
             const target = e.target;
             const body = document.body;
+            const htmlTag = document.documentElement;
 
             if (target.id === 'id_modo_escuro') {
-                if (target.checked) document.documentElement.setAttribute('data-bs-theme', 'dark');
-                else document.documentElement.removeAttribute('data-bs-theme');
+                if (target.checked) htmlTag.setAttribute('data-bs-theme', 'dark');
+                else htmlTag.removeAttribute('data-bs-theme');
             }
 
             if (target.id === 'id_alto_contraste') body.classList.toggle('alto-contraste', target.checked);
@@ -151,8 +152,10 @@
             }
             
             if (target.id === 'id_tamanho_fonte') {
-                body.classList.remove('fonte-XP', 'fonte-P', 'fonte-M', 'fonte-G', 'fonte-XG');
-                body.classList.add('fonte-' + target.value);
+                htmlTag.classList.remove('fonte-XP', 'fonte-P', 'fonte-M', 'fonte-G', 'fonte-XG');
+                if (target.value) {
+                    htmlTag.classList.add('fonte-' + target.value);
+                }
             }
         });
 

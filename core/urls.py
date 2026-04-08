@@ -17,4 +17,6 @@ urlpatterns = [
     path('moderacao/usuario/<int:user_id>/toggle-ban/', views.toggle_ban_usuario, name='toggle_ban_usuario'),
     
     path('moderacao/tag/adicionar/', views.adicionar_tag_moderacao, name='adicionar_tag_moderacao'),
+    path('moderacao/tag/editar/', views.editar_tag_moderacao, name='editar_tag_moderacao'),
+    path('moderacao/tag/excluir/<str:tipo>/<int:tag_id>/', views.excluir_tag_moderacao, name='excluir_tag_moderacao'),
 ]

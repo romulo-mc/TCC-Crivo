@@ -36,6 +36,11 @@
               {% endif %}
           </div>
 
+          <div class="alert alert-info rounded-4 shadow-sm mb-4" style="background-color: #e0f0f5; border-left: 5px solid #90e0aa; color: #333;">
+            <i class="bi bi-info-circle-fill me-2" style="color: #90e0aa;"></i>
+            <strong>Dica:</strong> Você pode <strong>pular</strong> esta etapa e completar seu perfil depois, mas preencher agora ajuda a comunidade a te conhecer melhor!
+          </div>
+
           {% if form.errors %}
             <div class="alert alert-danger rounded-4 shadow-sm mb-4">
                 <h5 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Atenção aos erros abaixo:</h5>
@@ -214,9 +219,8 @@
                 <hr aria-hidden="true" class="opacity-25" />
 
                 <div class="form-check mb-2">
-                  <input type="checkbox" class="form-check-input" style="width: 1.3em; height: 1.3em" id="check_aliado_trigger" onchange="toggleAliadoOptions(this)" aria-controls="aliado_options" aria-expanded="false" {% if form.instance.is_aliado %}checked{% endif %} />
-                  <label class="form-check-label fw-bold text-dark" for="check_aliado_trigger">Sou Aliado / Interessado</label>
-                  <div class="visually-hidden">{{ form.is_aliado }}</div>
+                  {{ form.is_aliado }}
+                  <label class="form-check-label fw-bold text-dark" for="{{ form.is_aliado.id_for_label }}">Sou Aliado / Interessado</label>
                 </div>
 
                 <div id="aliado_options" class="ms-4 d-none" aria-live="polite">
@@ -247,9 +251,13 @@
               </div>
             </fieldset>
 
-            <div class="d-grid gap-2 mt-5">
-              <button type="submit" class="btn btn-lg fw-bold shadow-sm" style="background-color: #90e0aa; border-radius: 20px; color: #333;">
+            <div class="d-flex flex-column flex-md-row gap-3 mt-5">
+              <button type="submit" name="salvar" class="btn btn-lg fw-bold shadow-sm flex-grow-1" style="background-color: #90e0aa; border-radius: 20px; color: #333;">
                 Salvar Alterações <i class="bi bi-check2-circle ms-2" aria-hidden="true"></i>
+              </button>
+              
+              <button type="submit" name="pular" value="1" class="btn btn-lg btn-outline-secondary fw-bold shadow-sm flex-grow-1" style="border-radius: 20px;" formnovalidate>
+                Completar Depois <i class="bi bi-arrow-right-circle ms-2" aria-hidden="true"></i>
               </button>
             </div>
           </form>
@@ -314,9 +322,12 @@
           document.getElementById('div_genero_outro').classList.remove('d-none');
       }
 
-      const triggerAliado = document.getElementById("check_aliado_trigger");
-      if(triggerAliado && triggerAliado.checked) {
-          toggleAliadoOptions(triggerAliado);
+      const checkAliado = document.getElementById("id_is_aliado");
+      if(checkAliado) {
+          if(checkAliado.checked) toggleAliadoOptions(checkAliado);
+          checkAliado.addEventListener("change", function() {
+              toggleAliadoOptions(this);
+          });
       }
   });
 
@@ -339,8 +350,6 @@
 
   function toggleAliadoOptions(trigger) {
     var optionsDiv = document.getElementById("aliado_options");
-    var realField = document.getElementById("id_is_aliado");
-    realField.checked = trigger.checked;
     trigger.setAttribute("aria-expanded", trigger.checked);
 
     if (trigger.checked) {
@@ -356,9 +365,11 @@
     if (this.checked) {
       document.getElementById("id_is_pcd").checked = false;
       document.getElementById("id_is_profissional_saude").checked = false;
-      var checkAliado = document.getElementById("check_aliado_trigger");
-      checkAliado.checked = false;
-      toggleAliadoOptions(checkAliado);
+      var checkAliado = document.getElementById("id_is_aliado");
+      if(checkAliado) {
+          checkAliado.checked = false;
+          toggleAliadoOptions(checkAliado);
+      }
       toggleCid();
       toggleProfSaude();
     }

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Avg
 from django.contrib.auth.models import User
 from forum.models import Topico, Resposta, Categoria
-from library.models import LibraryItem, Review, Condicao, Gatilho
+from library.models import LibraryItem, Review, Condicao, Gatilho, CategoriaCondicao, CategoriaGatilho
 from educacao.models import RecursoEducativo
 from .models import Notificacao
 from django.core.exceptions import PermissionDenied
@@ -93,18 +93,11 @@ def painel_moderacao(request):
         'usuarios_banidos': User.objects.filter(is_active=False).exclude(profile__isnull=True),
         
         'categorias': Categoria.objects.all().order_by('nome'),
-        'condicoes': Condicao.objects.all().order_by('nome'),
-        'gatilhos': Gatilho.objects.all().order_by('nome'),
+        'categorias_condicao': CategoriaCondicao.objects.all().order_by('nome'),
+        'categorias_gatilho': CategoriaGatilho.objects.all().order_by('nome'),
         
         'bugs': BugReport.objects.all().order_by('-data_reporte'),
-        'avaliacoes': AvaliacaoPlataforma.objects.all().order_by('-data_avaliacao'),
     }
-    
-    if contexto['avaliacoes'].exists():
-        medias = AvaliacaoPlataforma.objects.aggregate(
-            Avg('nota_geral'), Avg('nota_usabilidade'), Avg('nota_acessibilidade'), Avg('nota_design'), Avg('probabilidade_recomendar')
-        )
-        contexto['medias'] = medias
 
     contexto['total_pendentes'] = contexto['topicos_pendentes'].count() + contexto['respostas_pendentes'].count() + contexto['acervo_pendente'].count()
     return render(request, 'core/painel_moderacao.html', contexto)
@@ -206,11 +199,62 @@ def adicionar_tag_moderacao(request):
     nome = request.POST.get('nome')
     
     try:
-        if tipo == 'categoria': Categoria.objects.create(nome=nome, slug=slugify(nome))
-        elif tipo == 'condicao': Condicao.objects.create(nome=nome)
-        elif tipo == 'gatilho': Gatilho.objects.create(nome=nome)
-        messages.success(request, f"Nova tag '{nome}' cadastrada!")
+        if tipo == 'categoria': 
+            Categoria.objects.create(nome=nome, slug=slugify(nome))
+        elif tipo == 'categoria_condicao':
+            CategoriaCondicao.objects.create(nome=nome)
+        elif tipo == 'categoria_gatilho':
+            CategoriaGatilho.objects.create(nome=nome)
+        elif tipo == 'condicao':
+            cat_id = request.POST.get('categoria_id')
+            cat_obj = CategoriaCondicao.objects.get(id=cat_id) if cat_id else None
+            Condicao.objects.create(nome=nome, categoria=cat_obj)
+        elif tipo == 'gatilho':
+            cat_id = request.POST.get('categoria_id')
+            cat_obj = CategoriaGatilho.objects.get(id=cat_id) if cat_id else None
+            Gatilho.objects.create(nome=nome, categoria=cat_obj)
+            
+        messages.success(request, f"Nova tag '{nome}' adicionada!")
     except Exception as e:
         messages.error(request, "Erro: Essa tag já existe ou o nome é inválido.")
+        
+    return redirect('painel_moderacao')
+
+@login_required
+def editar_tag_moderacao(request):
+    if not request.user.is_staff or request.method != 'POST': raise PermissionDenied()
+    tipo = request.POST.get('tipo_tag')
+    tag_id = request.POST.get('tag_id')
+    novo_nome = request.POST.get('novo_nome')
+
+    try:
+        if tipo == 'categoria':
+            obj = get_object_or_404(Categoria, id=tag_id)
+            obj.nome = novo_nome; obj.slug = slugify(novo_nome)
+        elif tipo == 'categoria_condicao': obj = get_object_or_404(CategoriaCondicao, id=tag_id); obj.nome = novo_nome
+        elif tipo == 'categoria_gatilho': obj = get_object_or_404(CategoriaGatilho, id=tag_id); obj.nome = novo_nome
+        elif tipo == 'condicao': obj = get_object_or_404(Condicao, id=tag_id); obj.nome = novo_nome
+        elif tipo == 'gatilho': obj = get_object_or_404(Gatilho, id=tag_id); obj.nome = novo_nome
+        
+        obj.save()
+        messages.success(request, f"Tag atualizada para '{novo_nome}'!")
+    except Exception:
+        messages.error(request, "Erro ao atualizar. Verifique se o nome já não existe.")
+
+    return redirect('painel_moderacao')
+
+@login_required
+def excluir_tag_moderacao(request, tipo, tag_id):
+    if not request.user.is_staff: raise PermissionDenied()
+    
+    try:
+        if tipo == 'categoria': get_object_or_404(Categoria, id=tag_id).delete()
+        elif tipo == 'categoria_condicao': get_object_or_404(CategoriaCondicao, id=tag_id).delete()
+        elif tipo == 'categoria_gatilho': get_object_or_404(CategoriaGatilho, id=tag_id).delete()
+        elif tipo == 'condicao': get_object_or_404(Condicao, id=tag_id).delete()
+        elif tipo == 'gatilho': get_object_or_404(Gatilho, id=tag_id).delete()
+        messages.success(request, "Item excluído permanentemente!")
+    except Exception:
+        messages.error(request, "Erro ao excluir o item.")
         
     return redirect('painel_moderacao')

@@ -2,7 +2,36 @@ from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
 def criar_dados_iniciais(sender, **kwargs):
-    from .models import Condicao, Gatilho
+    from .models import Condicao, Gatilho, CategoriaCondicao, CategoriaGatilho
+
+    map_cat_condicao = {
+        'NEURO': 'Neurodesenvolvimento',
+        'NEUROLOGICA': 'Condições Neurológicas',
+        'FISICA': 'Deficiências Físicas / Motoras',
+        'AUDITIVA': 'Deficiência Auditiva',
+        'VISUAL': 'Deficiência Visual',
+        'GENETICA': 'Condições Genéticas / Síndromes',
+        'CRONICA': 'Condições Crônicas e Invisíveis',
+        'PSICOSSOCIAL': 'Condições Psicossociais',
+    }
+    
+    obj_cat_condicao = {}
+    for key, nome in map_cat_condicao.items():
+        obj, _ = CategoriaCondicao.objects.get_or_create(nome=nome)
+        obj_cat_condicao[key] = obj
+
+    map_cat_gatilho = {
+        'SAUDE_MENTAL': 'Saúde mental e sofrimento psicológico',
+        'VIOLENCIA': 'Violência e abuso',
+        'MEDICO': 'Contexto médico',
+        'EXCLUSAO': 'Exclusão social',
+        'OUTROS': 'Outros temas sensíveis',
+    }
+    
+    obj_cat_gatilho = {}
+    for key, nome in map_cat_gatilho.items():
+        obj, _ = CategoriaGatilho.objects.get_or_create(nome=nome)
+        obj_cat_gatilho[key] = obj
 
     condicoes_padrao = [
         # NEURODESENVOLVIMENTO
@@ -97,13 +126,18 @@ def criar_dados_iniciais(sender, **kwargs):
     for c in condicoes_padrao:
         Condicao.objects.get_or_create(
             nome=c['nome'], 
-            defaults={'categoria': c['categoria'], 'tipo': c['tipo']}
+            defaults={
+                'categoria': obj_cat_condicao.get(c['categoria']), 
+                'tipo': c['tipo']
+            }
         )
 
     for g in gatilhos_padrao:
         Gatilho.objects.get_or_create(
             nome=g['nome'], 
-            defaults={'categoria': g['categoria']}
+            defaults={
+                'categoria': obj_cat_gatilho.get(g['categoria'])
+            }
         )
 
 class LibraryConfig(AppConfig):

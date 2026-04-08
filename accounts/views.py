@@ -51,6 +51,22 @@ class CompleteProfileView(UpdateView):
         ctx['usuario_registro'] = get_object_or_404(User, id=user_id)
         return ctx
 
+    def post(self, request, *args, **kwargs):
+        if 'pular' in request.POST:
+            user_id = self.request.session.get('registro_usuario_id')
+            user = get_object_or_404(User, id=user_id)
+            
+            email_obj = EmailAddress.objects.get(user=user, primary=True)
+            email_obj.send_confirmation(self.request, signup=True)
+
+            if 'registro_usuario_id' in self.request.session:
+                del self.request.session['registro_usuario_id']
+                
+            messages.info(self.request, 'Cadastro adiado! Enviamos um link de ativação para o seu e-mail. Verifique sua caixa de entrada para fazer o login.')
+            return redirect(self.get_success_url())
+            
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
         response = super().form_valid(form)
         user_id = self.request.session.get('registro_usuario_id')

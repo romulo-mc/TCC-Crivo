@@ -2,43 +2,31 @@ from django.db import models
 from django.contrib.auth.models import User
 from core.models import TimeStampedModel
 
+class CategoriaCondicao(models.Model):
+    nome = models.CharField(max_length=100, unique=True)
+    def __str__(self): return self.nome
+
+class CategoriaGatilho(models.Model):
+    nome = models.CharField(max_length=100, unique=True)
+    def __str__(self): return self.nome
+
 class Condicao(models.Model):
-    CATEGORIA_CHOICES = [
-        ('NEURO', 'Neurodesenvolvimento'),
-        ('NEUROLOGICA', 'Condições Neurológicas'),
-        ('FISICA', 'Deficiências Físicas / Motoras'),
-        ('AUDITIVA', 'Deficiência Auditiva'),
-        ('VISUAL', 'Deficiência Visual'),
-        ('GENETICA', 'Condições Genéticas / Síndromes'),
-        ('CRONICA', 'Condições Crônicas e Invisíveis'),
-        ('PSICOSSOCIAL', 'Condições Psicossociais'),
-    ]
     TIPO_CHOICES = [
         ('FISICA', 'Física'), ('SENSORIAL', 'Sensorial'), 
         ('INTELECTUAL', 'Intelectual'), ('PSICOSSOCIAL', 'Psicossocial'), 
         ('MULTIPLA', 'Múltipla'), ('OUTRO', 'Outro')
     ]
-    
     nome = models.CharField(max_length=100, unique=True)
-    categoria = models.CharField(max_length=50, choices=CATEGORIA_CHOICES, blank=True)
+    categoria = models.ForeignKey(CategoriaCondicao, on_delete=models.CASCADE, related_name='condicoes', null=True, blank=True)
     tipo = models.CharField(max_length=50, choices=TIPO_CHOICES, blank=True)
 
     def __str__(self): return self.nome
 
 class Gatilho(models.Model):
-    CATEGORIA_CHOICES = [
-        ('SAUDE_MENTAL', 'Saúde mental e sofrimento psicológico'),
-        ('VIOLENCIA', 'Violência e abuso'),
-        ('MEDICO', 'Contexto médico'),
-        ('EXCLUSAO', 'Exclusão social'),
-        ('OUTROS', 'Outros temas sensíveis'),
-    ]
-    
     nome = models.CharField(max_length=100, unique=True)
-    categoria = models.CharField(max_length=50, choices=CATEGORIA_CHOICES, blank=True)
+    categoria = models.ForeignKey(CategoriaGatilho, on_delete=models.CASCADE, related_name='gatilhos', null=True, blank=True)
 
     def __str__(self): return self.nome
-
 
 class LibraryItem(TimeStampedModel):
     STATUS_CHOICES = [('PENDENTE', 'Pendente'), ('ATIVO', 'Aprovado'), ('REJEITADO', 'Rejeitado'), ('OCULTO', 'Ocultado (Moderação)')]

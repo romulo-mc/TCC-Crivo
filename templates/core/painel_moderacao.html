@@ -2,8 +2,6 @@
 {% load static %}
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <main class="container py-5" id="main-content" tabindex="-1">
     <header class="d-flex flex-wrap justify-content-between align-items-center mb-5 gap-3 border-bottom pb-4">
         <div>
@@ -19,9 +17,8 @@
                 <li class="nav-item"><button class="nav-link active fw-bold px-4" data-bs-toggle="tab" data-bs-target="#pendentes" type="button"><i class="bi bi-hourglass-split me-2"></i>Pendentes</button></li>
                 <li class="nav-item"><button class="nav-link fw-bold px-4 text-danger" data-bs-toggle="tab" data-bs-target="#ocultos" type="button"><i class="bi bi-eye-slash-fill me-2"></i>Ocultos</button></li>
                 <li class="nav-item"><button class="nav-link fw-bold px-4 text-dark" data-bs-toggle="tab" data-bs-target="#banidos" type="button"><i class="bi bi-slash-circle me-2"></i>Banidos</button></li>
-                <li class="nav-item"><button class="nav-link fw-bold px-4 text-primary" data-bs-toggle="tab" data-bs-target="#tags" type="button"><i class="bi bi-tags-fill me-2"></i>Tags</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold px-4 text-primary" data-bs-toggle="tab" data-bs-target="#tags" type="button"><i class="bi bi-tags-fill me-2"></i>Taxonomia (Tags)</button></li>
                 <li class="nav-item"><button class="nav-link fw-bold px-4 text-danger" data-bs-toggle="tab" data-bs-target="#bugs" type="button"><i class="bi bi-bug-fill me-2"></i>Bugs</button></li>
-                <li class="nav-item"><button class="nav-link fw-bold px-4 text-warning-emphasis" data-bs-toggle="tab" data-bs-target="#avaliacoes" type="button"><i class="bi bi-star-fill me-2"></i>Avaliações (TCC)</button></li>
             </ul>
         </div>
 
@@ -79,22 +76,11 @@
 
                 <div class="tab-pane fade" id="ocultos">
                     <h3 class="h5 fw-bold mb-4 border-bottom pb-2 text-danger">Itens Removidos da Comunidade</h3>
-                    
                     <ul class="nav nav-pills mb-4 gap-2" id="pills-ocultos-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-topicos" type="button" role="tab">Tópicos ({{ topicos_ocultos.count }})</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-respostas" type="button" role="tab">Comentários ({{ respostas_ocultas.count }})</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-acervo" type="button" role="tab">Obras ({{ acervo_oculto.count }})</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-reviews" type="button" role="tab">Avaliações ({{ reviews_ocultas.count }})</button>
-                        </li>
+                        <li class="nav-item" role="presentation"><button class="nav-link active btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-topicos" type="button" role="tab">Tópicos ({{ topicos_ocultos.count }})</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-respostas" type="button" role="tab">Comentários ({{ respostas_ocultas.count }})</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link btn-sm rounded-pill border shadow-sm" data-bs-toggle="pill" data-bs-target="#pills-acervo" type="button" role="tab">Obras ({{ acervo_oculto.count }})</button></li>
                     </ul>
-
                     <div class="tab-content bg-body-tertiary p-3 rounded-4 border shadow-sm" id="pills-ocultos-tabContent">
                         <div class="tab-pane fade show active" id="pills-topicos" role="tabpanel">
                             <div class="list-group list-group-flush rounded-3">
@@ -102,54 +88,33 @@
                                 <div class="list-group-item p-3 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm">
                                     <span class="badge {% if item.status == 'REJEITADO' %}bg-danger{% else %}bg-dark{% endif %} mb-2">{{ item.get_status_display }}</span>
                                     <h5 class="h6 fw-bold mb-1">{{ item.titulo }}</h5>
-                                    <small class="text-muted d-block mb-2">Por @{{ item.autor.profile.slug }}</small>
                                     <p class="small text-danger-emphasis bg-danger-subtle p-2 rounded-2 fst-italic mb-2"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</p>
                                     <a href="{% url 'aprovar_item' 'topico' item.id %}" class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="return confirm('Readmitir tópico no fórum?');"><i class="bi bi-arrow-counterclockwise"></i> Readmitir Tópico</a>
                                 </div>
-                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Nenhum tópico oculto.</p>{% endfor %}
+                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Vazio.</p>{% endfor %}
                             </div>
                         </div>
-
                         <div class="tab-pane fade" id="pills-respostas" role="tabpanel">
                             <div class="list-group list-group-flush rounded-3">
                                 {% for item in respostas_ocultas %}
                                 <div class="list-group-item p-3 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm">
                                     <span class="badge {% if item.status == 'REJEITADO' %}bg-danger{% else %}bg-dark{% endif %} mb-2">Comentário {{ item.get_status_display }}</span>
                                     <h5 class="h6 fw-bold mb-1 text-primary">Tópico: {{ item.topico.titulo }}</h5>
-                                    <small class="text-muted d-block mb-2">Por @{{ item.autor.profile.slug }}</small>
                                     <p class="small text-body bg-light border p-2 rounded-2 mb-2 text-truncate">"{{ item.conteudo|striptags }}"</p>
-                                    <p class="small text-danger-emphasis bg-danger-subtle p-2 rounded-2 fst-italic mb-2"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</p>
                                     <a href="{% url 'aprovar_item' 'resposta' item.id %}" class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="return confirm('Readmitir comentário?');"><i class="bi bi-arrow-counterclockwise"></i> Readmitir Comentário</a>
                                 </div>
-                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Nenhum comentário oculto.</p>{% endfor %}
+                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Vazio.</p>{% endfor %}
                             </div>
                         </div>
-
                         <div class="tab-pane fade" id="pills-acervo" role="tabpanel">
                             <div class="list-group list-group-flush rounded-3">
                                 {% for item in acervo_oculto %}
                                 <div class="list-group-item p-3 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm">
                                     <span class="badge {% if item.status == 'REJEITADO' %}bg-danger{% else %}bg-dark{% endif %} mb-2">Obra {{ item.get_status_display }}</span>
                                     <h5 class="h6 fw-bold mb-1">{{ item.titulo }}</h5>
-                                    <small class="text-muted d-block mb-2">Sugerido por @{{ item.usuario_criador.profile.slug }}</small>
-                                    <p class="small text-danger-emphasis bg-danger-subtle p-2 rounded-2 fst-italic mb-2"><strong>Motivo:</strong> {{ item.motivo_rejeicao }}</p>
                                     <a href="{% url 'aprovar_item' 'acervo' item.id %}" class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="return confirm('Readmitir obra?');"><i class="bi bi-arrow-counterclockwise"></i> Readmitir Obra</a>
                                 </div>
-                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Nenhuma obra oculta.</p>{% endfor %}
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="pills-reviews" role="tabpanel">
-                            <div class="list-group list-group-flush rounded-3">
-                                {% for item in reviews_ocultas %}
-                                <div class="list-group-item p-3 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm">
-                                    <span class="badge bg-dark mb-2">Avaliação Ocultada</span>
-                                    <h5 class="h6 fw-bold mb-1 text-primary">Obra: {{ item.item.titulo }}</h5>
-                                    <small class="text-muted d-block mb-2">Por @{{ item.user.profile.slug }}</small>
-                                    <p class="small text-danger-emphasis bg-danger-subtle p-2 rounded-2 fst-italic mb-2"><strong>Motivo:</strong> {{ item.motivo_moderacao }}</p>
-                                    <a href="{% url 'aprovar_item' 'review' item.id %}" class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="return confirm('Readmitir avaliação?');"><i class="bi bi-arrow-counterclockwise"></i> Readmitir Avaliação</a>
-                                </div>
-                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Nenhuma avaliação oculta.</p>{% endfor %}
+                                {% empty %}<p class="text-muted text-center my-3 fst-italic">Vazio.</p>{% endfor %}
                             </div>
                         </div>
                     </div>
@@ -180,114 +145,160 @@
 
                 <div class="tab-pane fade" id="tags">
                     <div class="row g-4">
+                        
                         <div class="col-md-4">
-                            <div class="card bg-body-tertiary h-100 p-3 shadow-sm border-0">
-                                <h4 class="h6 fw-bold border-bottom pb-2"><i class="bi bi-folder-fill me-2 text-primary"></i>Nova Categoria (Fórum)</h4>
+                            <div class="card bg-body-tertiary h-100 p-3 shadow-sm border-0 rounded-4">
+                                <h4 class="h6 fw-bold border-bottom pb-2 text-primary"><i class="bi bi-folder-fill me-2"></i>Fórum (Categorias)</h4>
                                 <form method="POST" action="{% url 'adicionar_tag_moderacao' %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="tipo_tag" value="categoria">
-                                    <input type="text" name="nome" class="form-control mb-2 rounded-3" placeholder="Nome da categoria" required>
-                                    <button type="submit" class="btn btn-primary btn-sm w-100 btn-3d">Adicionar</button>
+                                    <div class="input-group input-group-sm mb-3">
+                                        <input type="text" name="nome" class="form-control border-primary border-opacity-25" placeholder="Nova Categoria..." required>
+                                        <button type="submit" class="btn btn-primary fw-bold">Add</button>
+                                    </div>
                                 </form>
-                                <div class="mt-3 small d-flex flex-wrap gap-1">
-                                    {% for c in categorias %}<span class="badge bg-primary bg-opacity-10 text-primary border border-primary">{{ c.nome }}</span>{% endfor %}
+                                <div class="mt-2 small d-flex flex-wrap gap-2">
+                                    {% for c in categorias %}
+                                    <span class="badge bg-white text-primary border border-primary border-opacity-25 shadow-sm d-inline-flex align-items-center tag-edit-badge rounded-pill px-3 py-2" title="Clique para editar">
+                                        <span class="cursor-pointer" onclick="openEditModal('categoria', {{ c.id }}, '{{ c.nome|escapejs }}')">{{ c.nome }}</span>
+                                        <a href="{% url 'excluir_tag_moderacao' 'categoria' c.id %}" class="text-danger ms-2 btn-close-tag" onclick="return confirm('Apagar permanente?');"><i class="bi bi-x-circle-fill"></i></a>
+                                    </span>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-4">
-                            <div class="card bg-body-tertiary h-100 p-3 shadow-sm border-0">
-                                <h4 class="h6 fw-bold border-bottom pb-2"><i class="bi bi-universal-access me-2 text-info"></i>Nova Condição (Acervo)</h4>
-                                <form method="POST" action="{% url 'adicionar_tag_moderacao' %}">
+                            <div class="card bg-body-tertiary h-100 p-3 shadow-sm border-0 rounded-4">
+                                <h4 class="h6 fw-bold border-bottom pb-2 text-info"><i class="bi bi-universal-access me-2"></i>Condições</h4>
+                                
+                                <form method="POST" action="{% url 'adicionar_tag_moderacao' %}" class="mb-3 bg-white p-3 rounded-3 border border-info border-opacity-25 shadow-sm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tipo_tag" value="categoria_condicao">
+                                    <label class="small fw-bold text-muted mb-1 d-block"><i class="bi bi-plus-circle me-1"></i>Criar novo Separador</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="nome" class="form-control border-info border-opacity-25" placeholder="Ex: Doenças Raras" required>
+                                        <button type="submit" class="btn btn-outline-info text-dark fw-bold">Criar</button>
+                                    </div>
+                                </form>
+
+                                <form method="POST" action="{% url 'adicionar_tag_moderacao' %}" class="mb-4 bg-white p-3 rounded-3 border border-info border-opacity-25 shadow-sm">
                                     {% csrf_token %}
                                     <input type="hidden" name="tipo_tag" value="condicao">
-                                    <input type="text" name="nome" class="form-control mb-2 rounded-3" placeholder="Ex: Síndrome de Down" required>
-                                    <button type="submit" class="btn btn-info btn-sm w-100 btn-3d text-white">Adicionar</button>
+                                    <label class="small fw-bold text-muted mb-1 d-block"><i class="bi bi-tag-fill me-1"></i>Adicionar Condição em:</label>
+                                    <select name="categoria_id" class="form-select form-select-sm mb-2 border-info border-opacity-25" required>
+                                        <option value="">Selecione o Separador...</option>
+                                        {% for cc in categorias_condicao %}<option value="{{ cc.id }}">{{ cc.nome }}</option>{% endfor %}
+                                    </select>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="nome" class="form-control border-info border-opacity-25" placeholder="Nova Condição" required>
+                                        <button type="submit" class="btn btn-info text-white fw-bold">Add</button>
+                                    </div>
                                 </form>
-                                <div class="mt-3 small d-flex flex-wrap gap-1">
-                                    {% for c in condicoes %}<span class="badge bg-info text-dark border">{{ c.nome }}</span>{% endfor %}
+
+                                <div class="accordion accordion-flush" id="accCondicoes">
+                                    {% for cc in categorias_condicao %}
+                                    <div class="accordion-item bg-white rounded-3 mb-2 shadow-sm border overflow-hidden">
+                                        <h2 class="accordion-header d-flex align-items-center position-relative separator-header">
+                                            <button class="accordion-button collapsed py-2 px-3 shadow-none fw-bold text-dark fs-6" type="button" data-bs-toggle="collapse" data-bs-target="#cc{{ cc.id }}">
+                                                {{ cc.nome }}
+                                            </button>
+                                            
+                                            <div class="separator-actions position-absolute end-0 me-5 pe-2 d-flex gap-2">
+                                                <button class="btn btn-sm btn-light text-primary border rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;" onclick="openEditModal('categoria_condicao', {{ cc.id }}, '{{ cc.nome|escapejs }}')" title="Renomear Separador"><i class="bi bi-pencil-fill" style="font-size: 0.8rem;"></i></button>
+                                                <a href="{% url 'excluir_tag_moderacao' 'categoria_condicao' cc.id %}" class="btn btn-sm btn-light text-danger border rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;" onclick="return confirm('Apagar este separador DELETARÁ TODAS as condições dentro dele! Tem certeza?');" title="Excluir Separador"><i class="bi bi-trash3-fill" style="font-size: 0.8rem;"></i></a>
+                                            </div>
+                                        </h2>
+                                        <div id="cc{{ cc.id }}" class="accordion-collapse collapse" data-bs-parent="#accCondicoes">
+                                            <div class="accordion-body p-3 pt-1 border-top d-flex flex-wrap gap-2 bg-light">
+                                                {% for c in cc.condicoes.all %}
+                                                <span class="badge bg-white text-dark border border-info shadow-sm d-inline-flex align-items-center tag-edit-badge rounded-pill px-3 py-2" title="Editar">
+                                                    <span class="cursor-pointer" onclick="openEditModal('condicao', {{ c.id }}, '{{ c.nome|escapejs }}')">{{ c.nome }}</span>
+                                                    <a href="{% url 'excluir_tag_moderacao' 'condicao' c.id %}" class="text-danger ms-2 btn-close-tag" onclick="return confirm('Apagar permanente?');"><i class="bi bi-x-circle-fill"></i></a>
+                                                </span>
+                                                {% empty %}
+                                                <span class="small text-muted fst-italic w-100 text-center">Nenhuma condição neste separador.</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-4">
-                            <div class="card bg-body-tertiary h-100 p-3 shadow-sm border-0">
-                                <h4 class="h6 fw-bold border-bottom pb-2"><i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Novo Gatilho (Acervo)</h4>
-                                <form method="POST" action="{% url 'adicionar_tag_moderacao' %}">
+                            <div class="card bg-body-tertiary h-100 p-3 shadow-sm border-0 rounded-4">
+                                <h4 class="h6 fw-bold border-bottom pb-2 text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Gatilhos</h4>
+                                
+                                <form method="POST" action="{% url 'adicionar_tag_moderacao' %}" class="mb-3 bg-white p-3 rounded-3 border border-danger border-opacity-25 shadow-sm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tipo_tag" value="categoria_gatilho">
+                                    <label class="small fw-bold text-muted mb-1 d-block"><i class="bi bi-plus-circle me-1"></i>Criar novo Separador</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="nome" class="form-control border-danger border-opacity-25" placeholder="Ex: Violência" required>
+                                        <button type="submit" class="btn btn-outline-danger fw-bold">Criar</button>
+                                    </div>
+                                </form>
+
+                                <form method="POST" action="{% url 'adicionar_tag_moderacao' %}" class="mb-4 bg-white p-3 rounded-3 border border-danger border-opacity-25 shadow-sm">
                                     {% csrf_token %}
                                     <input type="hidden" name="tipo_tag" value="gatilho">
-                                    <input type="text" name="nome" class="form-control mb-2 rounded-3" placeholder="Ex: Violência Física" required>
-                                    <button type="submit" class="btn btn-danger btn-sm w-100 btn-3d">Adicionar</button>
+                                    <label class="small fw-bold text-muted mb-1 d-block"><i class="bi bi-tag-fill me-1"></i>Adicionar Gatilho em:</label>
+                                    <select name="categoria_id" class="form-select form-select-sm mb-2 border-danger border-opacity-25" required>
+                                        <option value="">Selecione o Separador...</option>
+                                        {% for cg in categorias_gatilho %}<option value="{{ cg.id }}">{{ cg.nome }}</option>{% endfor %}
+                                    </select>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="nome" class="form-control border-danger border-opacity-25" placeholder="Novo Gatilho" required>
+                                        <button type="submit" class="btn btn-danger text-white fw-bold">Add</button>
+                                    </div>
                                 </form>
-                                <div class="mt-3 small d-flex flex-wrap gap-1">
-                                    {% for g in gatilhos %}<span class="badge bg-danger text-white border">{{ g.nome }}</span>{% endfor %}
+
+                                <div class="accordion accordion-flush" id="accGatilhos">
+                                    {% for cg in categorias_gatilho %}
+                                    <div class="accordion-item bg-white rounded-3 mb-2 shadow-sm border overflow-hidden">
+                                        <h2 class="accordion-header d-flex align-items-center position-relative separator-header">
+                                            <button class="accordion-button collapsed py-2 px-3 shadow-none fw-bold text-dark fs-6" type="button" data-bs-toggle="collapse" data-bs-target="#cg{{ cg.id }}">
+                                                {{ cg.nome }}
+                                            </button>
+                                            
+                                            <div class="separator-actions position-absolute end-0 me-5 pe-2 d-flex gap-2">
+                                                <button class="btn btn-sm btn-light text-primary border rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;" onclick="openEditModal('categoria_gatilho', {{ cg.id }}, '{{ cg.nome|escapejs }}')" title="Renomear Separador"><i class="bi bi-pencil-fill" style="font-size: 0.8rem;"></i></button>
+                                                <a href="{% url 'excluir_tag_moderacao' 'categoria_gatilho' cg.id %}" class="btn btn-sm btn-light text-danger border rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;" onclick="return confirm('Apagar este separador DELETARÁ TODOS os gatilhos dentro dele! Tem certeza?');" title="Excluir Separador"><i class="bi bi-trash3-fill" style="font-size: 0.8rem;"></i></a>
+                                            </div>
+                                        </h2>
+                                        <div id="cg{{ cg.id }}" class="accordion-collapse collapse" data-bs-parent="#accGatilhos">
+                                            <div class="accordion-body p-3 pt-1 border-top d-flex flex-wrap gap-2 bg-light">
+                                                {% for g in cg.gatilhos.all %}
+                                                <span class="badge bg-white text-danger border border-danger shadow-sm d-inline-flex align-items-center tag-edit-badge rounded-pill px-3 py-2" title="Editar">
+                                                    <span class="cursor-pointer" onclick="openEditModal('gatilho', {{ g.id }}, '{{ g.nome|escapejs }}')">{{ g.nome }}</span>
+                                                    <a href="{% url 'excluir_tag_moderacao' 'gatilho' g.id %}" class="text-danger ms-2 btn-close-tag" onclick="return confirm('Apagar permanente?');"><i class="bi bi-x-circle-fill"></i></a>
+                                                </span>
+                                                {% empty %}
+                                                <span class="small text-muted fst-italic w-100 text-center">Nenhum gatilho neste separador.</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="tab-pane fade" id="bugs">
-                    <h3 class="h5 fw-bold mb-4 border-bottom pb-2 text-danger"><i class="bi bi-bug-fill me-2"></i>Bugs Reportados pelos Usuários</h3>
+                    <h3 class="h5 fw-bold mb-4 border-bottom pb-2 text-danger"><i class="bi bi-bug-fill me-2"></i>Bugs Reportados</h3>
                     <div class="list-group list-group-flush shadow-sm rounded-3">
                         {% for bug in bugs %}
                         <div class="list-group-item p-4 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm position-relative">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="badge {% if bug.status == 'PENDENTE' %}bg-danger{% elif bug.status == 'ANALISE' %}bg-warning text-dark{% else %}bg-success{% endif %} mb-2">{{ bug.get_status_display }}</span>
-                                <small class="text-muted">{{ bug.data_reporte|date:"d/m/Y H:i" }}</small>
-                            </div>
-                            <p class="mb-1 fw-bold text-primary">Por: {% if bug.usuario %}@{{ bug.usuario.profile.slug }}{% else %}Visitante Anônimo{% endif %}</p>
+                            <p class="mb-1 fw-bold text-primary">Por: {% if bug.usuario %}@{{ bug.usuario.profile.slug }}{% else %}Anônimo{% endif %}</p>
                             <p class="text-body bg-light border p-3 rounded-3 fst-italic mt-2 mb-2">"{{ bug.descricao }}"</p>
-                            
-                            {% if bug.url_erro %}
-                                <p class="small mb-2"><strong>Onde aconteceu:</strong> <a href="{{ bug.url_erro }}" target="_blank" class="text-primary text-break">{{ bug.url_erro }}</a></p>
-                            {% endif %}
-                            
-                            {% if bug.print_tela %}
-                                <a href="{{ bug.print_tela.url }}" target="_blank" class="btn btn-sm btn-outline-danger rounded-pill mt-2 fw-bold"><i class="bi bi-image me-2"></i>Ver Print da Tela</a>
-                            {% endif %}
                         </div>
                         {% empty %}
-                        <div class="text-center py-5 text-muted"><i class="bi bi-shield-check fs-1 d-block mb-2 text-success"></i><p>Nenhum bug reportado. O sistema está liso! ✨</p></div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="avaliacoes">
-                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
-                        <h3 class="h5 fw-bold text-warning-emphasis mb-0"><i class="bi bi-star-fill me-2"></i>Avaliações do Crivo (Dados do TCC)</h3>
-                        <button type="button" class="btn btn-warning fw-bold rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#modalRelatorioTCC" onclick="renderizarGrafico()">
-                            <i class="bi bi-bar-chart-line-fill me-2"></i>Gerar Relatório Gráfico
-                        </button>
-                    </div>
-
-                    <div class="row g-3">
-                        {% for av in avaliacoes %}
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card h-100 border border-warning border-opacity-25 shadow-sm rounded-4">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <h5 class="fw-bold text-primary mb-1">@{{ av.usuario.profile.slug }}</h5>
-                                        <span class="badge bg-warning text-dark fs-6"><i class="bi bi-star-fill me-1"></i>{{ av.nota_geral }}</span>
-                                    </div>
-                                    <small class="text-muted d-block mb-3">{{ av.data_avaliacao|date:"d/m/Y" }}</small>
-                                    
-                                    <div class="small d-flex flex-column gap-1 mb-3">
-                                        <div><strong>Usabilidade:</strong> {{ av.nota_usabilidade }}/5</div>
-                                        <div><strong>Acessibilidade:</strong> {{ av.nota_acessibilidade }}/5</div>
-                                        <div><strong>Design:</strong> {{ av.nota_design }}/5</div>
-                                        <div class="text-success fw-bold"><strong>NPS (Recomendação):</strong> {{ av.probabilidade_recomendar }}/10</div>
-                                    </div>
-
-                                    {% if av.feedback_aberto %}
-                                        <p class="small text-muted bg-light p-2 rounded-3 fst-italic mb-0 border">"{{ av.feedback_aberto }}"</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <div class="col-12 text-center py-5 text-muted">
-                            <i class="bi bi-journal-x fs-1 d-block mb-2"></i>
-                            <p>Ainda não há avaliações. Divulgue a plataforma para a coleta de dados!</p>
-                        </div>
+                        <div class="text-center py-5 text-muted"><p>O sistema está liso!</p></div>
                         {% endfor %}
                     </div>
                 </div>
@@ -297,105 +308,77 @@
     </div>
 </main>
 
+<div class="modal fade" id="editTagModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <form method="POST" action="{% url 'editar_tag_moderacao' %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
+            {% csrf_token %}
+            <input type="hidden" name="tipo_tag" id="edit_tipo_tag">
+            <input type="hidden" name="tag_id" id="edit_tag_id">
+            
+            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                <h5 class="fw-bold text-primary"><i class="bi bi-pencil-square me-2"></i>Renomear</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="text" name="novo_nome" id="edit_novo_nome" class="form-control rounded-3" required>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                <button type="submit" class="btn btn-primary w-100 btn-3d">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% for item in topicos_pendentes %}
 <div class="modal fade" id="rejectModal-topico-{{ item.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form method="POST" action="{% url 'rejeitar_item' 'topico' item.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
             {% csrf_token %}
             <div class="modal-header border-bottom-0 pb-0 pt-4 px-4"><h5 class="fw-bold text-danger">Rejeitar Tópico</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body p-4"><textarea name="motivo_rejeicao" class="form-control rounded-3" rows="3" required placeholder="Motivo da rejeição..."></textarea></div>
+            <div class="modal-body p-4"><textarea name="motivo_rejeicao" class="form-control rounded-3" rows="3" required placeholder="Motivo..."></textarea></div>
             <div class="modal-footer border-top-0 pt-0 pb-4 px-4"><button type="submit" class="btn btn-danger btn-3d px-4">Confirmar</button></div>
         </form>
     </div>
 </div>
 {% endfor %}
+
 {% for item in acervo_pendente %}
 <div class="modal fade" id="rejectModal-acervo-{{ item.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <form method="POST" action="{% url 'rejeitar_item' 'acervo' item.id %}" class="modal-content border-0 shadow-lg rounded-4 bg-body">
             {% csrf_token %}
             <div class="modal-header border-bottom-0 pb-0 pt-4 px-4"><h5 class="fw-bold text-danger">Rejeitar Obra</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body p-4"><textarea name="motivo_rejeicao" class="form-control rounded-3" rows="3" required placeholder="Motivo da rejeição..."></textarea></div>
+            <div class="modal-body p-4"><textarea name="motivo_rejeicao" class="form-control rounded-3" rows="3" required placeholder="Motivo..."></textarea></div>
             <div class="modal-footer border-top-0 pt-0 pb-4 px-4"><button type="submit" class="btn btn-danger btn-3d px-4">Confirmar</button></div>
         </form>
     </div>
 </div>
 {% endfor %}
 
-<div class="modal fade" id="modalRelatorioTCC" tabindex="-1" aria-labelledby="modalRelatorioLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-warning border-bottom-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold text-dark" id="modalRelatorioLabel"><i class="bi bi-bar-chart-line-fill me-2"></i>Relatório de Validação (TCC)</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body p-4 bg-white">
-                <p class="text-muted mb-4 text-center">Baseado em <strong>{{ avaliacoes.count }}</strong> avaliações recebidas.</p>
-                {% if avaliacoes.count > 0 %}
-                    <canvas id="graficoTCC" width="400" height="200"></canvas>
-                {% else %}
-                    <p class="text-center text-danger fw-bold py-5">Não há dados suficientes para gerar o gráfico.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    let graficoRenderizado = false;
-
-    function renderizarGrafico() {
-        if (graficoRenderizado) return;
-        
-        const ctx = document.getElementById('graficoTCC');
-        if (!ctx) return;
-
-        const mediaGeral = parseFloat("{{ medias.nota_geral__avg|default:0|stringformat:'f' }}".replace(',', '.'));
-        const mediaUsab = parseFloat("{{ medias.nota_usabilidade__avg|default:0|stringformat:'f' }}".replace(',', '.'));
-        const mediaAcess = parseFloat("{{ medias.nota_acessibilidade__avg|default:0|stringformat:'f' }}".replace(',', '.'));
-        const mediaDesign = parseFloat("{{ medias.nota_design__avg|default:0|stringformat:'f' }}".replace(',', '.'));
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Nota Geral', 'Usabilidade', 'Acessibilidade', 'Design'],
-                datasets: [{
-                    label: 'Média das Notas (de 1 a 5)',
-                    data: [mediaGeral, mediaUsab, mediaAcess, mediaDesign],
-                    backgroundColor: [
-                        'rgba(255, 193, 7, 0.7)',
-                        'rgba(13, 110, 253, 0.7)',
-                        'rgba(25, 135, 84, 0.7)',
-                        'rgba(220, 53, 69, 0.7)'  
-                    ],
-                    borderColor: [
-                        'rgb(255, 193, 7)',
-                        'rgb(13, 110, 253)',
-                        'rgb(25, 135, 84)',
-                        'rgb(220, 53, 69)'
-                    ],
-                    borderWidth: 2,
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5,
-                        ticks: { stepSize: 1 }
-                    }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-        graficoRenderizado = true;
+    function openEditModal(tipo, id, nomeOriginal) {
+        document.getElementById('edit_tipo_tag').value = tipo;
+        document.getElementById('edit_tag_id').value = id;
+        document.getElementById('edit_novo_nome').value = nomeOriginal;
+        var modal = new bootstrap.Modal(document.getElementById('editTagModal'));
+        modal.show();
     }
 </script>
 
 <style>
+    .tag-edit-badge { transition: all 0.2s ease-in-out; }
+    .tag-edit-badge:hover { transform: scale(1.05); z-index: 2; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+    
+    .btn-close-tag { opacity: 0; width: 0; overflow: hidden; transition: all 0.3s ease; display: inline-flex; justify-content: center; align-items: center;}
+    .tag-edit-badge:hover .btn-close-tag { opacity: 1; width: auto; }
+
+    .separator-actions { opacity: 0; transition: opacity 0.2s ease; z-index: 5; pointer-events: none;}
+    .separator-header:hover .separator-actions { opacity: 1; pointer-events: auto;}
+    .separator-actions button, .separator-actions a { transition: transform 0.1s ease; }
+    .separator-actions button:hover, .separator-actions a:hover { transform: scale(1.15); }
+
+    .cursor-pointer { cursor: pointer; }
+
     .btn-3d { border-radius: 12px; font-weight: 700; transition: all 0.2s ease; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;}
     .btn-3d.btn-success { border-bottom: 4px solid #1e7e34 !important; }
     .btn-3d.btn-danger { border-bottom: 4px solid #bd2130 !important; }

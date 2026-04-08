@@ -357,12 +357,18 @@
 
             const toastEl = document.getElementById('toastAvaliacao');
             if (toastEl) {
-                const dismissData = localStorage.getItem('crivo_feedback_dismissed');
-                if (!dismissData || (Date.now() > parseInt(dismissData))) {
+                let dismissData = localStorage.getItem('crivo_feedback_dismissed');
+                
+                if (!dismissData) {
+                    dismissData = Date.now() + (30 * 60 * 1000);
+                    localStorage.setItem('crivo_feedback_dismissed', dismissData);
+                }
+
+                if (Date.now() > parseInt(dismissData)) {
                     setTimeout(() => {
                         const toast = new bootstrap.Toast(toastEl);
                         toast.show();
-                    }, 3000);
+                    }, 3000); 
                 }
             }
 
