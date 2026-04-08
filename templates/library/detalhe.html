@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            {% if item.condicoes.exists %}
+            {% if item.condicoes.exists or item.condicao_outra %}
             <div class="card border-0 shadow-sm rounded-4 bg-primary-subtle border border-primary-subtle p-4 mb-4" aria-labelledby="condicoes-relacionadas">
                 <h3 id="condicoes-relacionadas" class="h6 fw-bold text-primary mb-3 d-flex align-items-center gap-2">
                     <i class="bi bi-universal-access fs-5" aria-hidden="true"></i> Condições Abordadas
@@ -80,6 +80,10 @@
                     {% for condicao in item.condicoes.all %}
                         <span class="badge bg-primary text-white px-3 py-2 rounded-pill text-wrap text-start lh-base" style="max-width: 100%;">{{ condicao.nome }}</span>
                     {% endfor %}
+                    
+                    {% if item.condicao_outra %}
+                        <span class="badge bg-secondary text-white px-3 py-2 rounded-pill text-wrap text-start lh-base" style="max-width: 100%;">{{ item.condicao_outra }}</span>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}

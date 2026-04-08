@@ -40,7 +40,7 @@ def lista_library(request):
 
     gatilhos_dict = {}
     for g in Gatilho.objects.all().order_by('categoria', 'nome'):
-        cat = c.categoria.nome if c.categoria else "Outros"
+        cat = g.categoria.nome if g.categoria else "Outros"
         if cat not in gatilhos_dict: gatilhos_dict[cat] = []
         gatilhos_dict[cat].append(g)
 
@@ -90,7 +90,7 @@ def adicionar_item(request):
 
     gatilhos_dict = {}
     for g in Gatilho.objects.all().order_by('categoria', 'nome'):
-        cat = c.categoria.nome if c.categoria else "Outros"
+        cat = g.categoria.nome if g.categoria else "Outros"
         if cat not in gatilhos_dict: gatilhos_dict[cat] = []
         gatilhos_dict[cat].append(g)
 
@@ -170,7 +170,7 @@ def editar_item(request, id):
 
     gatilhos_dict = {}
     for g in Gatilho.objects.all().order_by('categoria', 'nome'):
-        cat = c.categoria.nome if c.categoria else "Outros"
+        cat = g.categoria.nome if g.categoria else "Outros"
         if cat not in gatilhos_dict: gatilhos_dict[cat] = []
         gatilhos_dict[cat].append(g)
 

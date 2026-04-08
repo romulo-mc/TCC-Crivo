@@ -103,6 +103,12 @@
                                 <i class="bi bi-tag-fill me-1" aria-hidden="true"></i>{{ condicao.nome }}
                             </span>
                         {% endfor %}
+                        
+                        {% if item.condicao_outra %}
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 text-wrap text-start lh-base" style="max-width: 100%;">
+                                <i class="bi bi-tag-fill me-1" aria-hidden="true"></i>{{ item.condicao_outra }}
+                            </span>
+                        {% endif %}
                     </div>
                 </div>
 
