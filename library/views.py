@@ -34,13 +34,13 @@ def lista_library(request):
 
     condicoes_dict = {}
     for c in Condicao.objects.all().order_by('categoria', 'nome'):
-        cat = c.get_categoria_display() or "Outros"
+        cat = c.categoria.nome if c.categoria else "Outros"
         if cat not in condicoes_dict: condicoes_dict[cat] = []
         condicoes_dict[cat].append(c)
 
     gatilhos_dict = {}
     for g in Gatilho.objects.all().order_by('categoria', 'nome'):
-        cat = g.get_categoria_display() or "Outros"
+        cat = c.categoria.nome if c.categoria else "Outros"
         if cat not in gatilhos_dict: gatilhos_dict[cat] = []
         gatilhos_dict[cat].append(g)
 
@@ -84,13 +84,13 @@ def adicionar_item(request):
 
     condicoes_dict = {}
     for c in Condicao.objects.all().order_by('categoria', 'nome'):
-        cat = c.get_categoria_display() or "Outros"
+        cat = c.categoria.nome if c.categoria else "Outros"
         if cat not in condicoes_dict: condicoes_dict[cat] = []
         condicoes_dict[cat].append(c)
 
     gatilhos_dict = {}
     for g in Gatilho.objects.all().order_by('categoria', 'nome'):
-        cat = g.get_categoria_display() or "Outros"
+        cat = c.categoria.nome if c.categoria else "Outros"
         if cat not in gatilhos_dict: gatilhos_dict[cat] = []
         gatilhos_dict[cat].append(g)
 
@@ -164,13 +164,13 @@ def editar_item(request, id):
 
     condicoes_dict = {}
     for c in Condicao.objects.all().order_by('categoria', 'nome'):
-        cat = c.get_categoria_display() or "Outros"
+        cat = c.categoria.nome if c.categoria else "Outros"
         if cat not in condicoes_dict: condicoes_dict[cat] = []
         condicoes_dict[cat].append(c)
 
     gatilhos_dict = {}
     for g in Gatilho.objects.all().order_by('categoria', 'nome'):
-        cat = g.get_categoria_display() or "Outros"
+        cat = c.categoria.nome if c.categoria else "Outros"
         if cat not in gatilhos_dict: gatilhos_dict[cat] = []
         gatilhos_dict[cat].append(g)
 
