@@ -72,7 +72,12 @@ class LibraryItemForm(forms.ModelForm):
         if not texto_novo: 
             return texto_novo
 
-        textos_existentes = LibraryItem.objects.exclude(descricao_representacao="").values_list('descricao_representacao', flat=True)
+        itens_existentes = LibraryItem.objects.exclude(descricao_representacao="")
+        
+        if self.instance and self.instance.pk:
+            itens_existentes = itens_existentes.exclude(pk=self.instance.pk)
+            
+        textos_existentes = itens_existentes.values_list('descricao_representacao', flat=True)
         
         for texto_antigo in textos_existentes:
             similaridade = difflib.SequenceMatcher(None, texto_novo.lower(), texto_antigo.lower()).ratio()
