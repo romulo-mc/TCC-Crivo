@@ -172,6 +172,17 @@
 
         <div id="page-content-wrapper" style="{% if not user.is_authenticated %} margin-left: 0 !important; width: 100% !important; {% endif %}">
             <main class="container-fluid p-4 bionic-target" id="main-content" tabindex="-1">
+                
+                <div class="alert alert-warning border-start border-5 border-warning shadow-sm rounded-4 mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-3 me-3 text-warning"></i>
+                        <div>
+                            <h5 class="alert-heading fw-bold mb-1 text-dark">Ambiente de Testes Acadêmicos</h5>
+                            <p class="mb-0 small text-dark">Este sistema é um <strong>protótipo para fins de TCC</strong>. As discussões e interações presentes neste site foram geradas como dados de exemplo para demonstração de interface e validação de funcionalidades.</p>
+                        </div>
+                    </div>
+                </div>
+
                 {% block content %}
                 {% endblock %}
             </main>
@@ -186,7 +197,7 @@
                     <span class="fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Ei, o que você está achando do Crivo?</span>
                     <span class="small">Sua avaliação é super rápida e me ajuda muito no TCC!</span>
                     <div class="mt-2">
-                    <a href="https://forms.gle/Gxh5Rz7bD4zzgEcG7" target="_blank" class="btn btn-sm btn-warning fw-bold rounded-pill text-dark" onclick="dispensarToastAvaliacao(true)">Avaliar Agora</a>                        
+                    <a href="https://forms.gle/fj8Q361aG5uXQ6R98" target="_blank" class="btn btn-sm btn-warning fw-bold rounded-pill text-dark" onclick="dispensarToastAvaliacao(true)">Avaliar Agora</a>                        
                     <button type="button" class="btn btn-sm btn-outline-light rounded-pill ms-2" onclick="dispensarToastAvaliacao(false)" data-bs-dismiss="toast">Lembrar depois</button>
                     </div>
                 </div>
@@ -211,7 +222,7 @@
                 <div class="modal-body p-4 d-flex flex-column gap-3 text-center">
                     <p class="text-muted small mb-1">Escolha uma opção abaixo:</p>
                     
-                    <button type="button" onclick="window.open('https://forms.gle/Gxh5Rz7bD4zzgEcG7', '_blank');" class="btn btn-outline-custom-warning btn-lg rounded-4 fw-bold shadow-sm d-flex flex-column align-items-center py-3" data-bs-dismiss="modal">
+                    <button type="button" onclick="window.open('https://forms.gle/fj8Q361aG5uXQ6R98', '_blank');" class="btn btn-outline-custom-warning btn-lg rounded-4 fw-bold shadow-sm d-flex flex-column align-items-center py-3" data-bs-dismiss="modal">
                         <i class="bi bi-star-fill fs-2 mb-1"></i>
                         Avaliar Plataforma
                     </button>
