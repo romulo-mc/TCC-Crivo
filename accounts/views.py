@@ -85,30 +85,30 @@ class CompleteProfileView(UpdateView):
         return reverse_lazy('login')
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
-    model = UserProfile
-    form_class = UserProfileForm
-    template_name = 'registration/complete_profile.html'
+        model = UserProfile
+        form_class = UserProfileForm
+        template_name = 'registration/complete_profile.html'
 
-    def get_object(self):
-        return self.request.user.profile
+        def get_object(self):
+            return self.request.user.profile
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['base_template'] = 'base.html'
-        ctx['usuario_registro'] = self.request.user
-        return ctx
+        def get_context_data(self, **kwargs):
+            ctx = super().get_context_data(**kwargs)
+            ctx['base_template'] = 'base.html'
+            ctx['usuario_registro'] = self.request.user
+            return ctx
 
-    def form_valid(self, form):
-        messages.success(self.request, 'Perfil atualizado com sucesso!')
-        return super().form_valid(form)
+        def form_valid(self, form):
+            messages.success(self.request, 'Perfil atualizado com sucesso!')
+            return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse_lazy('perfil_usuario', kwargs={'slug': self.object.slug})
+        def get_success_url(self):
+            return reverse_lazy('perfil_usuario', kwargs={'username': self.request.user.username})
 
-def perfil_usuario(request, slug):
+def perfil_usuario(request, username):
     request.session['ultimo_contexto'] = 'perfil'
-    perfil = get_object_or_404(UserProfile, slug=slug)
-    user_perfil = perfil.user
+    user_perfil = get_object_or_404(User, username=username)
+    perfil = user_perfil.profile
     is_dono = (request.user == user_perfil)
     
     itens_acervo = LibraryItem.objects.filter(usuario_criador=user_perfil).order_by('-criado_em')

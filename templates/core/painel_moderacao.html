@@ -36,7 +36,7 @@
                             <div class="list-group-item p-3 border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
                                 <div>
                                     <h5 class="h6 fw-bold mb-1"><a href="{% url 'detalhe_topico' item.slug %}" target="_blank" class="text-decoration-none">{{ item.titulo }}</a></h5>
-                                    <small class="text-muted">Por @{{ item.autor.profile.slug }}</small>
+                                    <small class="text-muted">Por {{ item.autor.profile.arroba }}</small>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-danger btn-3d" data-bs-toggle="modal" data-bs-target="#rejectModal-topico-{{ item.id }}">Rejeitar</button>
@@ -57,7 +57,7 @@
                                 <div>
                                     <span class="badge bg-dark rounded-pill">{{ item.get_tipo_display }}</span>
                                     <h5 class="h6 fw-bold mb-1 d-inline ms-2"><a href="{% url 'detalhe_item' item.id %}" target="_blank" class="text-decoration-none">{{ item.titulo }}</a></h5>
-                                    <small class="text-muted d-block">Sugerido por @{{ item.usuario_criador.profile.slug }}</small>
+                                    <small class="text-muted d-block">Sugerido por {{ item.usuario_criador.profile.arroba }}</small>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-danger btn-3d" data-bs-toggle="modal" data-bs-target="#rejectModal-acervo-{{ item.id }}">Rejeitar</button>
@@ -130,7 +130,7 @@
                             <tbody>
                                 {% for u in usuarios_banidos %}
                                 <tr>
-                                    <td class="fw-bold">@{{ u.profile.slug }}</td>
+                                    <td class="fw-bold">{{ u.arroba }}</td>
                                     <td>{{ u.email }}</td>
                                     <td class="text-danger fst-italic small">{{ u.profile.motivo_banimento }}</td>
                                     <td><a href="{% url 'toggle_ban_usuario' u.id %}" class="btn btn-sm btn-success rounded-pill fw-bold" onclick="return confirm('Desbanir usuário?');">Desbanir</a></td>
@@ -294,7 +294,7 @@
                     <div class="list-group list-group-flush shadow-sm rounded-3">
                         {% for bug in bugs %}
                         <div class="list-group-item p-4 border-secondary border-opacity-25 mb-2 rounded-3 bg-white shadow-sm position-relative">
-                            <p class="mb-1 fw-bold text-primary">Por: {% if bug.usuario %}@{{ bug.usuario.profile.slug }}{% else %}Anônimo{% endif %}</p>
+                            <p class="mb-1 fw-bold text-primary">Por: {% if bug.usuario %}@{{ bug.usuario.profile.arroba }}{% else %}Anônimo{% endif %}</p>
                             <p class="text-body bg-light border p-3 rounded-3 fst-italic mt-2 mb-2">"{{ bug.descricao }}"</p>
                         </div>
                         {% empty %}

@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                    <a href="{% url 'perfil_usuario' request.user.profile.slug %}" class="btn btn-light rounded-pill px-4 fw-bold">Cancelar</a>
+                    <a href="{% url 'perfil_usuario' request.user.username %}" class="btn btn-light rounded-pill px-4 fw-bold">Cancelar</a>
                     <button type="submit" class="btn btn-warning rounded-pill px-5 fw-bold shadow-sm py-2 hover-lift text-dark">
                         <i class="bi bi-send-fill me-2"></i>Enviar Avaliação
                     </button>

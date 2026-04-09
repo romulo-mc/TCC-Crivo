@@ -5,15 +5,15 @@
             <div class="small d-flex align-items-center flex-wrap gap-1">
                 {% if node.autor %}
                     {% if not node.autor.is_active %}
-                        <span class="text-secondary"><del>@{{ node.autor.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
+                        <span class="text-secondary"><del>{{ node.autor.profile.arroba }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
                     {% else %}
-                        <a href="{% url 'perfil_usuario' node.autor.profile.slug %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-1">
+                        <a href="{% url 'perfil_usuario' node.autor.username %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-1">
                             {% if node.autor.profile.foto %}
                                 <img src="{{ node.autor.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover" style="width: 20px; height: 20px;">
                             {% else %}
                                 <i class="bi bi-person-circle"></i>
                             {% endif %}
-                            @{{ node.autor.profile.slug }}
+                            {{ node.autor.profile.arroba }}
                         </a>
                         
                         {% for badge in node.autor.profile.get_badges %}

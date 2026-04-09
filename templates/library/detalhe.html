@@ -163,15 +163,15 @@
                                     <div class="d-flex flex-column gap-2 w-100">
                                         <div class="d-flex flex-wrap align-items-center gap-2">
                                             {% if not review.user.is_active %}
-                                                <span class="text-secondary"><del>@{{ review.user.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
+                                                <span class="text-secondary"><del>{{ review.user.username }}</del> <span class="badge bg-dark" style="font-size: 0.6em;">Banido</span></span>
                                             {% else %}
-                                                <a href="{% url 'perfil_usuario' review.user.profile.slug %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-2">
+                                                <a href="{% url 'perfil_usuario' review.user.username %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center gap-2">
                                                     {% if review.user.profile.foto %}
                                                         <img src="{{ review.user.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-white" style="width: 32px; height: 32px;">
                                                     {% else %}
                                                         <i class="bi bi-person-circle fs-4"></i>
                                                     {% endif %}
-                                                    @{{ review.user.profile.slug }}
+                                                    @{{ review.user.username }}
                                                 </a>
                                             {% endif %}
                                             

@@ -109,8 +109,8 @@
                             <small class="text-muted ms-2">
                                 Por 
                                 {% if topico.autor %}
-                                    <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none fw-semibold text-body position-relative" style="z-index: 2;">
-                                        @{{ topico.autor.profile.slug }}
+                                    <a href="{% url 'perfil_usuario' topico.autor.username %}" class="text-decoration-none fw-semibold text-body position-relative" style="z-index: 2;">
+                                        {{ topico.autor.username }}
                                     </a>
                                 {% else %}
                                     <span class="text-secondary">Conta Deletada</span>

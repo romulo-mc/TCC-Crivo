@@ -36,7 +36,7 @@ def pesquisa_geral(request):
 
         if escopo in ['geral', 'usuarios']:
             resultados_usuarios = User.objects.filter(
-                Q(username__icontains=query) | Q(first_name__icontains=query) | Q(profile__slug__icontains=query),
+                Q(username__icontains=query) | Q(first_name__icontains=query) | Q(last_name__icontains=query),
                 is_active=True
             ).select_related('profile').order_by('username')
             

@@ -66,11 +66,11 @@
                                     {% endif %}
                                 </div>
                                 <h3 class="h6 fw-bold mb-1">
-                                    <a href="{% url 'perfil_usuario' p.profile.slug %}" class="text-body text-decoration-none stretched-link">
+                                    <a href="{% url 'perfil_usuario' p.username %}" class="text-body text-decoration-none stretched-link">
                                         {{ p.first_name|default:p.username }}
                                     </a>
                                 </h3>
-                                <p class="small text-muted mb-2">@{{ p.profile.slug }}</p>
+                                <p class="small text-muted mb-2">{{ p.arroba }}</p>
                                 
                                 {% if p.profile.bio and p.profile.show_bio %}
                                     <p class="text-secondary small mb-0" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
@@ -174,7 +174,7 @@
                                 <span class="text-muted small ms-auto z-2 position-relative">
                                     <span class="visually-hidden">Autor: </span>
                                     {% if topico.autor %}
-                                        <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none text-muted">@{{ topico.autor.profile.slug }}</a>
+                                        <a href="{% url 'perfil_usuario' topico.autor.username %}" class="text-decoration-none text-muted">{{ topico.autor.profile.arroba }}</a>
                                     {% else %}
                                         Conta Deletada
                                     {% endif %}

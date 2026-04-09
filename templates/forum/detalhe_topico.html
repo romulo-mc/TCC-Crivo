@@ -40,7 +40,7 @@
                             <span class="text-secondary"><del>{{ topico.autor.username }}</del></span>
                             <span class="badge bg-dark rounded-pill">Banido</span>
                         {% else %}
-                            <a href="{% url 'perfil_usuario' topico.autor.profile.slug %}" class="text-decoration-none d-flex align-items-center gap-2 fw-bold text-primary hover-lift">
+                            <a href="{% url 'perfil_usuario' topico.autor.username %}" class="text-decoration-none d-flex align-items-center gap-2 fw-bold text-primary hover-lift">
                                 {% if topico.autor.profile.foto %}
                                     <img src="{{ topico.autor.profile.foto.url }}" alt="" class="rounded-circle object-fit-cover shadow-sm border border-white" style="width: 28px; height: 28px;">
                                 {% else %}
@@ -48,7 +48,7 @@
                                         {{ topico.autor.username|first|upper }}
                                     </div>
                                 {% endif %}
-                                @{{ topico.autor.profile.slug }}
+                                {{ topico.autor.profile.arroba }}
                             </a>
                             
                             <div class="d-inline-flex gap-1 ms-1">

@@ -88,7 +88,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" aria-labelledby="userDropdown">
                     <li><h6 class="dropdown-header fs-6">Olá, {{ user.first_name|default:user.username }}</h6></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'perfil_usuario' user.profile.slug %}"><i class="bi bi-person-circle text-primary fs-5"></i> Meu Perfil</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'perfil_usuario' request.user.username %}"><i class="bi bi-person-circle text-primary fs-5"></i> Meu Perfil</a></li>
                     <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="{% url 'configuracoes' %}"><i class="bi bi-gear text-secondary fs-5"></i> Configurações</a></li>
                     {% if user.is_staff %}
                         <li><hr class="dropdown-divider"></li>
