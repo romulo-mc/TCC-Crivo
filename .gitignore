@@ -22,3 +22,4 @@ limpa_migrations.py
 !core/static/img/
 !/static/img/
 *.sqlite3
+requirements.txt
