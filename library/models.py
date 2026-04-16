@@ -53,7 +53,7 @@ class LibraryItem(TimeStampedModel):
     classificacao_indicativa = models.CharField(max_length=20, blank=True)
     
     capa = models.ImageField(upload_to='library/covers/', blank=True, null=True)
-    alt_text = models.CharField(max_length=255, blank=True, null=True, verbose_name="Texto Alternativo da Capa")
+    alt_text = models.TextField(blank=True, null=True, verbose_name="Texto Alternativo da Capa")
     
     link_acesso = models.URLField(blank=True, null=True)
     titulo_original = models.CharField(max_length=200, blank=True)

@@ -18,8 +18,7 @@ class RecursoEducativo(models.Model):
     arquivo = models.FileField(upload_to='educacao/arquivos/', blank=True, null=True, help_text="Upload do arquivo (PDF, MP3, MP4, JPG, PNG).")
     capa = models.ImageField(upload_to='educacao/capas/', blank=True, null=True, help_text="Capa ilustrativa (ideal para Links, Áudios ou PDFs).")
     
-    alt_text = models.CharField(
-        max_length=255, 
+    alt_text = models.TextField(
         blank=True, 
         null=True, 
         verbose_name="Texto Alternativo da Imagem (Acessibilidade)",
