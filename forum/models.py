@@ -57,7 +57,9 @@ class Resposta(models.Model):
     pai = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='filhas')
     likes = models.ManyToManyField(User, related_name='resposta_likes', blank=True)
     deslikes = models.ManyToManyField(User, related_name='resposta_deslikes', blank=True)
-    
+    data_atualizacao = models.DateTimeField(auto_now=True)
+    editado = models.BooleanField(default=False)
+    conteudo_original = models.TextField(blank=True, null=True, help_text="Visível apenas para admins")
     def __str__(self):
         if self.pai:
             return f"Réplica de {self.autor.username} ao comentário {self.pai.id}"
