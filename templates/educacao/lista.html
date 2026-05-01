@@ -34,7 +34,7 @@
                         </div>
                         <div>
                             <h2 class="h6 mb-0 fw-bold d-flex align-items-center gap-1 text-dark" style="font-size: 1.05rem;">
-                                Crivo Oficial <i class="bi bi-patch-check-fill text-primary" aria-label="Conta Verificada"></i>
+                                Crivo Oficial <i class="bi bi-patch-check-fill text-primary" role="img" aria-label="Conta Verificada"></i>
                             </h2>
                             <small class="text-muted" style="font-size: 0.8rem;">
                                 {{ post.data_publicacao|date:"d \d\e M Y" }} • 
@@ -45,8 +45,8 @@
 
                     {% if request.user.is_staff %}
                     <div class="dropdown">
-                        <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 35px; height: 35px;">
-                            <i class="bi bi-three-dots-vertical"></i>
+                        <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Opções do recurso" style="width: 35px; height: 35px;">
+                            <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
                             <li><a class="dropdown-item" href="{% url 'editar_recurso' post.pk %}"><i class="bi bi-pencil me-2 text-primary"></i>Editar</a></li>

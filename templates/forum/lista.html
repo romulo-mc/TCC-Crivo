@@ -36,24 +36,21 @@
     </header>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 bg-white p-2 rounded-4 shadow-sm border">
-        <div class="nav nav-pills gap-2 px-2 py-1">
+        <div class="nav nav-pills gap-2 px-2">
             <a href="?ordem=novos{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-            class="nav-link rounded-pill py-2 px-3 border d-inline-flex align-items-center {% if not request.GET.ordem or request.GET.ordem == 'novos' %}active bg-primary text-white{% else %}text-body hover-bg-light{% endif %}" style="line-height: 1;">
-            <i class="bi bi-stars me-2"></i> Novidades
+               class="nav-link rounded-pill py-1 px-3 border {% if not request.GET.ordem or request.GET.ordem == 'novos' %}active bg-primary{% else %}text-body hover-bg-light{% endif %}">
+               <i class="bi bi-stars me-1"></i> Novidades
             </a>
-            
             <a href="?ordem=populares{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-            class="nav-link rounded-pill py-2 px-3 border d-inline-flex align-items-center {% if request.GET.ordem == 'populares' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}" style="line-height: 1;">
-            <i class="bi bi-fire me-2"></i> Em alta
+               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'populares' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}">
+               <i class="bi bi-fire me-1"></i> Em alta
             </a>
-            
             <a href="?ordem=votos{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-            class="nav-link rounded-pill py-2 px-3 border d-inline-flex align-items-center {% if request.GET.ordem == 'votos' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}" style="line-height: 1;">
-            <i class="bi bi-star-fill me-2"></i> Melhor Avaliados
+               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'votos' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}">
+               <i class="bi bi-star-fill me-1"></i> Melhor Avaliados
             </a>
-            
-            <button type="button" class="btn btn-outline-primary rounded-pill py-2 px-3 border shadow-sm d-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalFiltrosForum" style="line-height: 1;">
-                <i class="bi bi-sliders me-2"></i> Filtros Avançados
+            <button type="button" class="btn btn-outline-primary rounded-pill py-1 px-3 border shadow-sm" data-bs-toggle="modal" data-bs-target="#modalFiltrosForum">
+                <i class="bi bi-sliders me-1"></i> Filtros Avançados
             </button>
         </div>
 
