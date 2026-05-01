@@ -483,20 +483,28 @@
                 }
 
                 if (btnLike && btnDeslike) {
-                    btnLike.classList.remove('text-primary'); btnDeslike.classList.remove('text-danger');
-                    btnLike.classList.add('text-muted'); btnDeslike.classList.add('text-muted');
+                    btnLike.classList.remove('text-primary', 'active');
+                    btnDeslike.classList.remove('text-danger', 'active');
+                    btnLike.classList.add('text-muted');
+                    btnDeslike.classList.add('text-muted');
                     
                     const iconLike = btnLike.querySelector('i');
                     const iconDeslike = btnDeslike.querySelector('i');
-                    iconLike.className = iconLike.classList.contains('bi-hand-thumbs-up') ? 'bi bi-hand-thumbs-up' : 'bi bi-caret-up-fill';
-                    iconDeslike.className = iconDeslike.classList.contains('bi-hand-thumbs-down') ? 'bi bi-hand-thumbs-down' : 'bi bi-caret-down-fill';
+                    
+                    iconLike.classList.remove('bi-caret-up-fill', 'bi-hand-thumbs-up-fill', 'bi-hand-thumbs-up');
+                    iconLike.classList.add('bi-caret-up');
+                    
+                    iconDeslike.classList.remove('bi-caret-down-fill', 'bi-hand-thumbs-down-fill', 'bi-hand-thumbs-down');
+                    iconDeslike.classList.add('bi-caret-down');
 
                     if (data.user_voto === 'like') {
                         btnLike.classList.replace('text-muted', 'text-primary');
-                        if(iconLike.classList.contains('bi-hand-thumbs-up')) iconLike.className = 'bi bi-hand-thumbs-up-fill';
+                        btnLike.classList.add('active');
+                        iconLike.classList.replace('bi-caret-up', 'bi-caret-up-fill');
                     } else if (data.user_voto === 'deslike') {
                         btnDeslike.classList.replace('text-muted', 'text-danger');
-                        if(iconDeslike.classList.contains('bi-hand-thumbs-down')) iconDeslike.className = 'bi bi-hand-thumbs-down-fill';
+                        btnDeslike.classList.add('active');
+                        iconDeslike.classList.replace('bi-caret-down', 'bi-caret-down-fill');
                     }
                 }
             })

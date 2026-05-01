@@ -36,21 +36,24 @@
     </header>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 bg-white p-2 rounded-4 shadow-sm border">
-        <div class="nav nav-pills gap-2 px-2">
+        <div class="nav nav-pills gap-2 px-2 py-1">
             <a href="?ordem=novos{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-               class="nav-link rounded-pill py-1 px-3 border {% if not request.GET.ordem or request.GET.ordem == 'novos' %}active bg-primary{% else %}text-body hover-bg-light{% endif %}">
-               <i class="bi bi-stars me-1"></i> Novidades
+            class="nav-link rounded-pill py-2 px-3 border d-inline-flex align-items-center {% if not request.GET.ordem or request.GET.ordem == 'novos' %}active bg-primary text-white{% else %}text-body hover-bg-light{% endif %}" style="line-height: 1;">
+            <i class="bi bi-stars me-2"></i> Novidades
             </a>
+            
             <a href="?ordem=populares{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'populares' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}">
-               <i class="bi bi-fire me-1"></i> Em alta
+            class="nav-link rounded-pill py-2 px-3 border d-inline-flex align-items-center {% if request.GET.ordem == 'populares' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}" style="line-height: 1;">
+            <i class="bi bi-fire me-2"></i> Em alta
             </a>
+            
             <a href="?ordem=votos{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}" 
-               class="nav-link rounded-pill py-1 px-3 border {% if request.GET.ordem == 'votos' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}">
-               <i class="bi bi-star-fill me-1"></i> Melhor Avaliados
+            class="nav-link rounded-pill py-2 px-3 border d-inline-flex align-items-center {% if request.GET.ordem == 'votos' %}active bg-danger border-danger text-white{% else %}text-body hover-bg-light{% endif %}" style="line-height: 1;">
+            <i class="bi bi-star-fill me-2"></i> Melhor Avaliados
             </a>
-            <button type="button" class="btn btn-outline-primary rounded-pill py-1 px-3 border shadow-sm" data-bs-toggle="modal" data-bs-target="#modalFiltrosForum">
-                <i class="bi bi-sliders me-1"></i> Filtros Avançados
+            
+            <button type="button" class="btn btn-outline-primary rounded-pill py-2 px-3 border shadow-sm d-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalFiltrosForum" style="line-height: 1;">
+                <i class="bi bi-sliders me-2"></i> Filtros Avançados
             </button>
         </div>
 
@@ -70,30 +73,28 @@
     <div class="row g-4">
         {% for topico in topicos %}
         <article class="col-12">
-            <div class="card shadow-sm border-0 hover-lift h-100 rounded-4 overflow-hidden bg-white" 
+            <div class="card shadow-sm border border-secondary border-opacity-25 hover-lift h-100 rounded-4 overflow-hidden bg-white" 
                  tabindex="0" 
                  aria-labelledby="titulo-{{ topico.slug }}" 
                  aria-describedby="resumo-{{ topico.slug }}">
                 
                 <div class="card-body d-flex align-items-start gap-3 p-4">
                     
-                    <div class="d-flex flex-column align-items-center rounded-3 py-2 px-1 bg-light border" 
-                         style="z-index: 2; min-width: 55px;">
-                        
+                    <div class="d-flex flex-column align-items-center rounded-3 py-2 px-1 bg-light border" style="z-index: 2; min-width: 55px;">
                         <button onclick="votar('{{ topico.slug }}', 'like')" 
                                 id="btn-like-topico-{{ topico.slug }}"
-                                class="btn-voto btn-like {% if user in topico.likes.all %}active{% endif %}"
+                                class="btn-voto btn-like {% if user in topico.likes.all %}active text-primary{% else %}text-muted{% endif %}"
                                 aria-label="Curtir post de {{ topico.autor.username }}">
-                            <i class="bi {% if user in topico.likes.all %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %} fs-5"></i> 
+                            <i class="bi {% if user in topico.likes.all %}bi-caret-up-fill{% else %}bi-caret-up{% endif %} fs-4"></i> 
                         </button>
                         
-                        <span id="votos-{{ topico.slug }}" class="fw-bold my-1 text-body" style="font-size: 1rem;" aria-label="{{ topico.total_votos }} votos total">{{ topico.total_votos }}</span>
+                        <span id="votos-{{ topico.slug }}" class="fw-bold my-1 text-body" style="font-size: 1.1rem;" aria-label="{{ topico.total_votos }} votos total">{{ topico.total_votos }}</span>
                         
                         <button onclick="votar('{{ topico.slug }}', 'deslike')" 
                                 id="btn-deslike-topico-{{ topico.slug }}"
-                                class="btn-voto btn-deslike {% if user in topico.deslikes.all %}active{% endif %}"
+                                class="btn-voto btn-deslike {% if user in topico.deslikes.all %}active text-danger{% else %}text-muted{% endif %}"
                                 aria-label="Descurtir post de {{ topico.autor.username }}">
-                            <i class="bi {% if user in topico.deslikes.all %}bi-hand-thumbs-down-fill{% else %}bi-hand-thumbs-down{% endif %} fs-5"></i>
+                            <i class="bi {% if user in topico.deslikes.all %}bi-caret-down-fill{% else %}bi-caret-down{% endif %} fs-4"></i>
                         </button>
                     </div>
 
