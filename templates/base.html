@@ -17,9 +17,9 @@
         @font-face { font-family: 'FastOpenDyslexic'; src: url("{% static 'fonts/Fast_OpenDyslexic.ttf' %}") format('truetype'); font-display: swap; }
 
         :root {
-            --bg-body: #FFF5EC; --text-color: #212529; --bg-sidebar: #90E0AA;
-            --navbar-bg: #4A90E2; --navbar-text: #ffffff;
-            --form-input-bg: #f8f9fa; --form-input-text: #6c757d;
+            --bg-body: #ffffff; --text-color: #6c757d; --bg-sidebar: #90E0AA;
+            --navbar-bg: #4A90E2;
+            --navbar-text: #ffffff;
             --card-bg: #ffffff; --border-color: #dee2e6;
             --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             --transition-speed: 0.3s;
@@ -47,7 +47,7 @@
         [data-bs-theme="dark"] body { background-color: var(--bg-body); color: var(--text-color); }
         [data-bs-theme="dark"] .bg-white, [data-bs-theme="dark"] .bg-light { background-color: #1e1e1e !important; color: #f8f9fa !important; border-color: #333 !important; }
         [data-bs-theme="dark"] .text-dark { color: #f8f9fa !important; }
-        [data-bs-theme="dark"] .text-muted, [data-bs-theme="dark"] .text-secondary { color: #adb5bd !important; }
+        [data-bs-theme="dark"] .text-muted, [data-bs-theme="dark"] .text-secondary { color: #5a6268 !important; }
         [data-bs-theme="dark"] .border, [data-bs-theme="dark"] .border-bottom, [data-bs-theme="dark"] .border-top, [data-bs-theme="dark"] hr { border-color: #333 !important; }
         [data-bs-theme="dark"] .card { background-color: #1e1e1e !important; border-color: #333 !important; }
 
@@ -71,7 +71,18 @@
             --transition-speed: 0s !important; transition: none !important; animation: none !important; 
         }
 
-        .skip-link { position: absolute; top: -40px; left: 0; background: #4A90E2; color: white; padding: 8px; z-index: 2000; transition: top 0.2s; text-decoration: none; border-bottom-right-radius: 8px; }
+        .skip-link { 
+            position: absolute; 
+            top: -40px; 
+            left: 0; 
+            background: #3a73b6;
+            color: white; 
+            padding: 8px; 
+            z-index: 2000; 
+            transition: top 0.2s; 
+            text-decoration: none; 
+            border-bottom-right-radius: 8px; 
+        }
         .skip-link:focus { top: 0; outline: 3px solid #FFF; }
         :focus-visible { outline: 3px solid #4A90E2 !important; outline-offset: 2px; }
 
@@ -150,6 +161,13 @@
             background-color: rgba(255, 255, 255, 0.7);
             animation: toastProgressAnim 10s linear forwards;
         }
+        .navbar a:focus-visible,
+        .navbar button:focus-visible,
+        .navbar select:focus-visible,
+        .navbar input:focus-visible {
+            outline: 3px solid #FFFFFF !important;
+            outline-offset: 4px !important;
+            border-radius: 6px;
     </style>
 </head>
 
@@ -255,7 +273,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label class="fw-bold mb-2 text-danger"><i class="bi bi-image me-2"></i>Print do Erro (Opcional)</label>
+                        <label for="id_print_tela_bug" class="fw-bold mb-2 text-danger"><i class="bi bi-image me-2"></i>Print do Erro (Opcional)</label>
                         <div id="dropzone_bug" tabindex="0" class="border rounded-3 p-4 text-center bg-light shadow-sm hover-dropzone" style="border: 2px dashed #dc3545 !important; cursor: pointer; outline: none; transition: 0.2s;">
                             <i class="bi bi-file-earmark-image display-4 text-danger mb-2" id="icone_bug"></i>
                             <p class="mb-0 fw-bold text-dark" id="texto_bug">Clique, arraste a imagem ou dê Ctrl+V aqui</p>

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg fixed-top px-3 shadow-sm" style="background-color: #4A90E2; min-height: 60px;" aria-label="Navegação Principal">
+<nav class="navbar navbar-expand-lg fixed-top px-3 shadow-sm" style="background-color: var(--navbar-bg); min-height: 60px;" aria-label="Navegação Principal">
     <div class="container-fluid d-flex flex-wrap align-items-center p-0 gap-2">
         
         <div class="d-flex align-items-center gap-2">
@@ -7,7 +7,7 @@
                 <i class="bi bi-list fs-4" aria-hidden="true"></i>
             </button>
             {% endif %}
-            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2 m-0" href="{% url 'home' %}" aria-label="Página Inicial">
+            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2 m-0" href="{% url 'home' %}" aria-label="Crivo - Página Inicial">
                 <i class="bi bi-puzzle-fill" aria-hidden="true"></i> 
                 <span class="d-none d-sm-inline">Crivo</span>
             </a>
@@ -126,7 +126,7 @@
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-muted">Onde pesquisar:</label>
-                        <select name="escopo" class="form-select form-select-lg rounded-3 bg-light border-0">
+                        <select name="escopo" id="navbar-search-scope" class="form-select border-0 text-secondary fw-bold" style="max-width: 140px; background-color: #f8f9fa; font-size: 0.85rem;" aria-label="Escolher escopo da pesquisa">
                             <option value="geral">Em todo o site</option>
                             <option value="forum">No Fórum</option>
                             <option value="library">No Acervo</option>
@@ -136,8 +136,8 @@
                     </div>
                     
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">Palavra-chave:</label>
-                        <input name="q" class="form-control form-control-lg rounded-3 bg-light border-0" type="search" placeholder="Digite aqui..." required autofocus>
+                        <label for="mobile-search-q" class="form-label fw-bold small text-muted">Palavra-chave:</label>
+                        <input id="mobile-search-q" name="q" class="form-control form-control-lg rounded-3 bg-light border-0" type="search" placeholder="Digite aqui..." required autofocus>
                     </div>
                     
                     <button class="btn btn-primary btn-lg w-100 rounded-pill fw-bold" type="submit">Buscar Agora</button>

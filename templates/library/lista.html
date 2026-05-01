@@ -97,7 +97,7 @@
                     </div>
                     {% endif %}
                     
-                    <div class="mt-auto pt-3 border-top d-flex flex-wrap gap-1" aria-label="Condições abordadas">
+                    <div class="mt-auto pt-3 border-top d-flex flex-wrap gap-1" role="group" aria-label="Tags e classificações da obra">
                         {% for condicao in item.condicoes.all|slice:":2" %}
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 text-wrap text-start lh-base" style="max-width: 100%;">
                                 <i class="bi bi-tag-fill me-1" aria-hidden="true"></i>{{ condicao.nome }}
